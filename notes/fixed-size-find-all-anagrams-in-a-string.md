@@ -14,11 +14,11 @@ Interview Frequency: High
 
 ### Ideas
 
-- Use a fixed-size sliding window of length `p`
-- Maintain a frequency map of characters in the current window
-- Compare the window's frequency map with `p`'s frequency map to check for anagrams
-- When the window exceeds size `p.length`, shrink from the left by decrementing the character count
-- **Time complexity:** O(n) where n is the length of s
+**Instinct: fixed target size → fixed window.** An anagram is just a rearrangement — same characters, same counts. The moment you notice the target has a fixed length, that's the signal: you don't need to search all substrings of every length, only substrings of exactly `p.length`. Fixed size = fixed window.
+
+**Instinct: equality of sets → frequency map comparison.** Two strings are anagrams when their character frequencies match. So instead of sorting every window (O(k log k) each), maintain a running frequency map and compare it against `p`'s map in O(1) — slide in the new character on the right, slide out the old character on the left.
+
+**Instinct: shrink before checking.** Add the right character first, then if the window is too big, evict the leftmost character. Only after the window is exactly `p.length` do you check for a match. This keeps the logic one clean pass with no edge cases.
 
 ### Solution
 
