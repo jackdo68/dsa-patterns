@@ -83,3 +83,15 @@ Uses Docsify for documentation site with search and tag filtering.
 3. Add entry to `_sidebar.md` under appropriate category
 4. Include Tags line with relevant keywords
 5. Add time/space complexity in the solution
+
+## Ideas Section Writing Convention
+
+The `Ideas` section must explain **thought process and instincts**, not just the solution steps. The goal is that a reader facing a similar unseen problem can reason their way to a solution — not just recognize this one.
+
+**Structure each Idea around:**
+- **What signals in the problem trigger this approach?** (e.g., "sorted array + two unknowns → two pointers")
+- **Why does this technique fit?** The underlying reasoning, not just "use X"
+- **What general instinct does this build?** State it as a reusable rule
+
+**Avoid:** listing steps without explaining why each step was chosen.
+**Aim for:** a reader who finishes the section could derive the implementation themselves.
