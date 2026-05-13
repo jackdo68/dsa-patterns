@@ -15,13 +15,13 @@ Interview Frequency: High
 *Notice that the solution set must not contain duplicate triplets.*
 ### Ideas
 
-Sort the array first. Then for each element `nums[i]`, use two pointers (`left` and `right`) on the remaining subarray to find pairs that sum to `-nums[i]`. This reduces the problem to a series of two-sum problems on a sorted array.
+**Instinct: reduce unknowns.** Three unknowns is hard to search efficiently. Fix one (`nums[i]`), and the problem collapses to "find two numbers that sum to `-nums[i]`" — a problem you already know how to solve in O(n).
 
-To avoid duplicates:
-- Skip `nums[i]` if it equals the previous element.
-- After finding a valid triplet, skip duplicate values for both `left` and `right`.
+**Instinct: sort when you need direction.** Two pointers work by moving toward the answer: sum too big → shrink right, sum too small → grow left. That only works if the array has order. Sorting is the move whenever you want to use a value's magnitude to guide a search.
 
-Sorting costs O(n log n), and the two-pointer scan for each element is O(n), giving O(n²) total — optimal for this problem since there can be O(n²) triplets.
+**Instinct: sort to kill duplicates cheaply.** The result must have no duplicate triplets, but the input can have repeats. Without sorting you'd need a hash set. After sorting, duplicates are adjacent — skip them with a single neighbor check.
+
+For each `nums[i]`, run two pointers on the rest to find pairs summing to `-nums[i]`. Skip `nums[i]` if it repeats the previous. Once `nums[i] > 0`, break — no triplet can sum to 0 from here. After a valid triplet, skip duplicate `left` and `right` values before continuing.
 
 ### Solution
 
