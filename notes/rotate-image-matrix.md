@@ -1,5 +1,11 @@
 # Rotate Image
 
+Topic: array, matrix
+
+Difficulty: Medium
+
+Interview Frequency: Medium
+
 Tags: matrix, in-place, medium
 
 ### Question
