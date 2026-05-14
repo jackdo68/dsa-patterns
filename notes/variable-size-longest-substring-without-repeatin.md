@@ -14,9 +14,13 @@ Interview Frequency: High
 
 ### Ideas
 
-- Use the sliding window technique, and a set to keep track of the character.
-- *Once we find a character that exist in the set, we keep deleting all the character from the start until the set has only unique character.*
-- *Then we move the right pointer forward.*
+**Instinct: "longest/shortest subarray/substring" → sliding window.** The question asks for the longest *contiguous* sequence satisfying a condition. Contiguous + optimize length is the classic signal for sliding window — you're not picking elements freely, you're expanding and contracting a range.
+
+**Instinct: variable window when the valid size isn't known upfront.** Unlike fixed-size problems where you know the window length, here the valid length depends on the content. So the window grows by default (expand `r`) and only shrinks when it becomes invalid (a duplicate appears).
+
+**Instinct: need O(1) duplicate detection → set.** You need to know instantly whether the incoming character already exists in the window. A set gives you that. When a duplicate is found, shrink from the left until the window is valid again — then continue expanding.
+
+Track `max` after each valid expansion.
 
 ### Solution
 
