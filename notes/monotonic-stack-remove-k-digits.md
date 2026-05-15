@@ -22,11 +22,13 @@ Explanation: Remove the three digits 4, 3, and 2 to form the new number 1219 whi
 
 ### Ideas
 
-**Why greedy works here:** in a number like `1432219`, the leftmost digits have the most weight (1 thousand vs 1 unit). So to minimize the result, we want to make the leftmost digits as small as possible.
+**Instinct: smallest number = smallest leading digits.** To minimize a number, you want the smallest digit as far left as possible — leftmost digits carry the most weight. So the question becomes: which digits should we remove to get the smallest leading sequence?
 
-**When should we remove a digit?** When we see a "drop" — a digit followed by a smaller one. In `14...`, the `4` is followed by `3`. Removing `4` shifts everything left, giving `13...` which is smaller than `14...`. We always prefer to remove the earlier, larger digit because it has more positional weight.
+With `162837`, `k = 3`: we want to keep the smallest leading digit, then the second smallest leading digit, then the third, and so on. Any digit that is *larger than the one following it* is a candidate for removal — it's hurting the number by sitting in front of something smaller.
 
-**The algorithm:** use a stack to build the result left to right. Before pushing a new digit, check: is the top of the stack larger than the current digit? If yes, pop it (that's a removal). This ensures we always catch the first "drop" and remove the larger digit.
+**Instinct: "remove larger before smaller" → monotonic stack.** We want to maintain a non-decreasing sequence of digits from left to right. Whenever the current digit is smaller than the top of the stack, the top is a digit that doesn't belong — pop it (remove it). This is exactly what a monotonic increasing stack does.
+
+**The algorithm:** scan left to right, maintaining a stack. Before pushing, pop any digit larger than the current one (counting each pop against `k`). The stack always holds the best prefix seen so far.
 
 Step by step with `num = "1432219"`, `k = 3`:
 
