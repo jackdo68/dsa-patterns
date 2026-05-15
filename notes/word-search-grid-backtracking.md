@@ -1,5 +1,11 @@
 # Word Search
 
+Topic: backtracking, matrix, dfs
+
+Difficulty: Medium
+
+Interview Frequency: High
+
 Tags: backtracking, matrix, dfs, medium
 
 ### Question
