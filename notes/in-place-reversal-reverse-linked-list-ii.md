@@ -10,7 +10,8 @@ Interview Frequency: High
 
 [LeetCode 92 - Reverse Linked List II](https://leetcode.com/problems/reverse-linked-list-ii/)
 
-*Given the `head` of a singly linked list and two integers `left` and `right` where `left <= right`, reverse the nodes of the list from position `left` to position `right`, and return the reversed list.*
+_Given the `head` of a singly linked list and two integers `left` and `right` where `left <= right`, reverse the nodes of the list from position `left` to position `right`, and return the reversed list._
+
 ### Ideas
 
 **Classic Reverse Linked List vs. This Problem:**
@@ -18,6 +19,7 @@ Interview Frequency: High
 In the classic "Reverse Linked List," you reverse the entire list. The algorithm is simple because there's no surrounding context to worry about — the new head is just the last node you visited, and the new tail points to `null`.
 
 This problem is harder because you reverse only a **sublist** (positions `left` to `right`). The core reversal logic is identical, but you now have **two boundary connections** to manage:
+
 - The node **before** the reversed section must point to the **new head** of the reversed part
 - The **old head** of the reversed section (now the tail) must point to the node **after** the reversed section
 
@@ -30,12 +32,13 @@ This problem is harder because you reverse only a **sublist** (positions `left` 
 **Key Insight:** Use a dummy node before `head` so that even if `left = 1`, you always have a `prev` node to anchor to. This eliminates edge-case handling.
 
 **Remembering the reversal loop:** It's just two logical steps repeated:
+
 1. **Flip** — save `curr.next`, then point `curr` backward (`curr.next = prevReversed`)
 2. **Advance** — slide both pointers one step forward (`prevReversed = curr`, `curr = next`)
 
 You save before flipping (so you don't lose the forward reference), then advance both pointers. That's it: **save, flip, advance, advance**.
 
-**Reconnection detail:** After reversal, `prev.next` still points to the node that *was* first in the sublist (now the tail of the reversed part). So `prev.next.next = curr` connects the reversed tail to the rest of the list, and `prev.next = prevReversed` connects `prev` to the new head of the reversed portion.
+**Reconnection detail:** After reversal, `prev.next` still points to the node that _was_ first in the sublist (now the tail of the reversed part). So `prev.next.next = curr` connects the reversed tail to the rest of the list, and `prev.next = prevReversed` connects `prev` to the new head of the reversed portion.
 
 ```
 Example: 1→2→3→4→5, left=2, right=4
@@ -61,17 +64,6 @@ Phase 3 - Reconnect:
 ### Solution
 
 ```typescript
-/**
- * Definition for singly-linked list.
- * class ListNode {
- *     val: number
- *     next: ListNode | null
- *     constructor(val?: number, next?: ListNode | null) {
- *         this.val = (val===undefined ? 0 : val)
- *         this.next = (next===undefined ? null : next)
- *     }
- * }
- */
 function reverseBetween(head: ListNode | null, left: number, right: number): ListNode | null {
   if (!head) return null;
   const dummy = new ListNode(-1, head);
@@ -100,5 +92,4 @@ function reverseBetween(head: ListNode | null, left: number, right: number): Lis
   prev!.next = prevReserved;
   return dummy.next;
 }
-
 ```

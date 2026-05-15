@@ -1,5 +1,11 @@
 # Construct Binary Tree from Preorder and Inorder Traversal
 
+Topic: tree, recursion, divide and conquer
+
+Difficulty: Medium
+
+Interview Frequency: Medium
+
 Tags: tree, recursion, hash-map, divide-conquer, medium
 
 ### Question
