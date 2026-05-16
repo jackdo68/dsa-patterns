@@ -498,18 +498,21 @@ function firstTrue(arr) {
 
 **Boundary — Finding Position (Lower Bound).** Right pointer is exclusive, never subtracts 1 from mid. Use when: finding insertion position, boundaries between regions
 ```javascript
+// Finds the leftmost position where `target` can be inserted to keep nums sorted.
+// Equivalently: the first index i such that nums[i] >= target.
+// If target is larger than all elements, returns nums.length.
 function lowerBound(nums, target) {
     let left = 0;
     let right = nums.length;
     while (left < right) {
         const mid = Math.floor((left + right) / 2);
         if (nums[mid] >= target) {
-            right = mid;
+            right = mid;     // mid might be the answer — keep it in range
         } else {
-            left = mid + 1;
+            left = mid + 1;  // mid is too small — exclude it
         }
     }
-    return left;  // first index where >= target
+    return left;  // first index where nums[i] >= target (or nums.length if none)
 }
 ```
 
