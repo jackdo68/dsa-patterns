@@ -224,40 +224,41 @@ function slidingWindow(s) {
 }
 ```
 
-### 3a. Pre-order Traversal (Root → Left → Right)
+### 3. Tree Traversals
+
+**Pre-order (Root → Left → Right)** — building a copy of tree, serialization, prefix expressions
 ```javascript
 function preorder(node) {
     if (!node) return;
-    process(node);        // ← root first
+    process(node);
     preorder(node.left);
     preorder(node.right);
 }
-// Use when: building a copy of tree, serialization, prefix expressions
 ```
 
-### 3b. In-order Traversal (Left → Root → Right)
+**In-order (Left → Root → Right)** — BST gives sorted order, validate BST, kth smallest
 ```javascript
 function inorder(node) {
     if (!node) return;
     inorder(node.left);
-    process(node);        // ← root in middle
+    process(node);
     inorder(node.right);
 }
-// Use when: BST gives sorted order, validate BST, kth smallest
 ```
 
-### 3c. Post-order Traversal (Left → Right → Root)
+**Post-order (Left → Right → Root)** — delete tree, calculate height/diameter, evaluate expressions
 ```javascript
 function postorder(node) {
     if (!node) return;
     postorder(node.left);
     postorder(node.right);
-    process(node);        // ← root last (children processed first)
+    process(node);
 }
-// Use when: delete tree, calculate height/diameter, evaluate expressions
 ```
 
-### 3d. DFS (Graph)
+### 4. Graph Traversals
+
+**DFS (Recursive)**
 ```javascript
 function dfs(node, visited = new Set()) {
     if (!node || visited.has(node)) return;
@@ -271,7 +272,7 @@ function dfs(node, visited = new Set()) {
 }
 ```
 
-### 4. BFS (Level Order)
+**BFS (Level Order)**
 ```javascript
 function bfs(start) {
     let queue = [start];
@@ -315,7 +316,9 @@ function backtrack(path, choices, result) {
 }
 ```
 
-### 6. Dynamic Programming (Top-down)
+### 6. Dynamic Programming
+
+**Top-down (Memoization)**
 ```javascript
 function dp(n, memo = {}) {
     if (baseCase) return baseValue;
@@ -326,7 +329,7 @@ function dp(n, memo = {}) {
 }
 ```
 
-### 7. Dynamic Programming (Bottom-up)
+**Bottom-up (Tabulation)**
 ```javascript
 function dp(n) {
     let dp = new Array(n + 1).fill(0);
@@ -339,43 +342,37 @@ function dp(n) {
 }
 ```
 
-### 7a. Dynamic Programming (0/1 Knapsack)
+**0/1 Knapsack** — each item used at most once → iterate BACKWARD. Use when: subset sum, partition equal subset, target sum
 ```javascript
-// Each item used at most once — iterate BACKWARD
 function knapsack01(nums, target) {
     const dp = new Array(target + 1).fill(false);
     dp[0] = true;
 
     for (const num of nums) {
-        for (let i = target; i >= num; i--) {  // backward!
+        for (let i = target; i >= num; i--) {  // backward prevents reuse
             dp[i] = dp[i] || dp[i - num];
         }
     }
     return dp[target];
 }
-// Backward prevents reusing the same number twice
-// Use when: subset sum, partition equal subset, target sum
 ```
 
-### 7b. Dynamic Programming (Unbounded Knapsack)
+**Unbounded Knapsack** — each item used unlimited times → iterate FORWARD. Use when: coin change, unbounded supply, combinations to reach target
 ```javascript
-// Each item used unlimited times — iterate FORWARD
 function knapsackUnbounded(coins, target) {
     const dp = new Array(target + 1).fill(0);
     dp[0] = 1;
 
     for (const coin of coins) {
-        for (let i = coin; i <= target; i++) {  // forward!
+        for (let i = coin; i <= target; i++) {  // forward allows reuse
             dp[i] += dp[i - coin];
         }
     }
     return dp[target];
 }
-// Forward allows reusing the same item multiple times
-// Use when: coin change, unbounded supply, combinations to reach target
 ```
 
-### 7c. Dynamic Programming (LCS)
+**LCS (Longest Common Subsequence)** — Use when: longest common subsequence, edit distance, diff
 ```javascript
 function lcs(s1, s2) {
     const dp = Array.from({ length: s1.length + 1 }, () =>
@@ -393,10 +390,9 @@ function lcs(s1, s2) {
     }
     return dp[s1.length][s2.length];
 }
-// Use when: longest common subsequence, edit distance, diff
 ```
 
-### 7d. Dynamic Programming (LIS)
+**LIS (Longest Increasing Subsequence)** — O(n log n) via patience sorting + binary search. Use when: longest increasing subsequence, Russian doll envelopes
 ```javascript
 function lis(nums) {
     const tails = []; // tails[i] = smallest tail of increasing subseq of length i+1
@@ -412,11 +408,9 @@ function lis(nums) {
     }
     return tails.length;
 }
-// O(n log n) using patience sorting + binary search
-// Use when: longest increasing subsequence, Russian doll envelopes
 ```
 
-### 7e. Dynamic Programming (Grid DP)
+**Grid DP** — Use when: unique paths, min path sum, grid traversal
 ```javascript
 function gridDP(grid) {
     const m = grid.length, n = grid[0].length;
@@ -433,10 +427,9 @@ function gridDP(grid) {
     }
     return dp[m - 1][n - 1];
 }
-// Use when: unique paths, min path sum, grid traversal
 ```
 
-### 7f. Dynamic Programming (Interval DP)
+**Interval DP** — Use when: burst balloons, matrix chain multiplication, palindrome partitioning
 ```javascript
 function intervalDP(arr) {
     const n = arr.length;
@@ -453,27 +446,38 @@ function intervalDP(arr) {
     }
     return dp[0][n - 1];
 }
-// Use when: burst balloons, matrix chain multiplication, palindrome partitioning
 ```
 
-### 8a. Binary Search (Classic - Exact Match)
+### 7. Binary Search
+
+**Choosing the form — `<=` vs `<`:**
+
+| Question | Form | Why |
+|----------|------|-----|
+| "Is X in the array?" | `while (left <= right)` with `right = n - 1` | Inclusive bounds; loop ends when search space is empty |
+| "Where should X go / first index where condition holds?" | `while (left < right)` with `right = n` | Exclusive right; loop ends when pointers converge ON the answer |
+
+- `<=` form: every iteration checks a real element. Skip `mid` after checking (`left = mid + 1`, `right = mid - 1`).
+- `<` form: `right = n` means "one past the last possible answer" — lets the answer be `n` itself (insertion at end). Don't skip `mid` on the answer side (`right = mid`, never `mid - 1`).
+
+**Trap:** mixing them. `right = mid - 1` with `<` skips the answer. `right = mid` with `<=` infinite loops when `left === right === mid`.
+
+**Classic — Exact Match.** Use when: searching for a specific value in sorted array
 ```javascript
 function binarySearch(arr, target) {
     let left = 0, right = arr.length - 1;
 
     while (left <= right) {
-        let mid = left + Math.floor((right - left) / 2);
+        const mid = Math.floor((left + right) / 2);
         if (arr[mid] === target) return mid;
         else if (arr[mid] < target) left = mid + 1;
         else right = mid - 1;
     }
     return -1;
 }
-// Uses left <= right, returns as soon as target is found
-// Use when: searching for a specific value in sorted array
 ```
 
-### 8b. Binary Search (First True - First Occurrence)
+**First True — First Occurrence.** Continues searching even after finding a match. Use when: "find first element that satisfies condition"
 ```javascript
 function firstTrue(arr) {
     let left = 0, right = arr.length - 1;
@@ -490,32 +494,28 @@ function firstTrue(arr) {
     }
     return firstTrueIndex;
 }
-// Continues searching even after finding a match
-// Use when: "find first element that satisfies condition"
 ```
 
-### 8c. Binary Search (Boundary - Finding Position)
+**Boundary — Finding Position (Lower Bound).** Right pointer is exclusive, never subtracts 1 from mid. Use when: finding insertion position, boundaries between regions
 ```javascript
-function lowerBound(arr, target) {
+function lowerBound(nums, target) {
     let left = 0;
     let right = nums.length;
     while (left < right) {
-        const mid = Math.floor((left+right)/2);
+        const mid = Math.floor((left + right) / 2);
         if (nums[mid] >= target) {
-            right = mid
+            right = mid;
         } else {
-            left = mid + 1
+            left = mid + 1;
         }
     }
-    return left;  // left  the first index where >= target
+    return left;  // first index where >= target
 }
-// Right pointer is exclusive boundary, never subtracts 1 from mid
-// Use when: finding insertion position, boundaries between regions
 ```
 
 See [Binary Search - Lower vs Upper Bound](/notes/binary-search-lowerbound-vs-upperbound.md) for detailed comparison and walkthroughs.
 
-### 9. Union Find
+### 8. Union Find
 ```javascript
 class UnionFind {
     constructor(n) {
@@ -550,7 +550,7 @@ class UnionFind {
 }
 ```
 
-### 10. Dijkstra's Algorithm
+### 9. Dijkstra's Algorithm
 ```javascript
 function dijkstra(graph, start) {
     let dist = new Array(n).fill(Infinity);
@@ -570,6 +570,25 @@ function dijkstra(graph, start) {
         }
     }
     return dist;
+}
+```
+
+### 10. Linked List
+
+**Reverse Linked List** — Pattern: save → flip → advance → advance. After the loop, `curr` is `null` and `prev` is the new head.
+```javascript
+function reverseList(head) {
+    let prev = null;
+    let curr = head;
+
+    while (curr) {
+        const next = curr.next;  // 1. save next before breaking link
+        curr.next = prev;         // 2. flip pointer backward
+        prev = curr;              // 3. advance prev
+        curr = next;              // 4. advance curr
+    }
+
+    return prev; // new head
 }
 ```
 
