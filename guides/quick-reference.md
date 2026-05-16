@@ -450,62 +450,32 @@ function intervalDP(arr) {
 
 ### 7. Binary Search
 
-See [Binary Search Variations Explained](/notes/binary-search-variations-explained.md) for when to use `while (left <= right)` vs `while (left < right)`, common traps, and lower vs upper bound walkthroughs.
+**The one form to memorize.** Every binary search problem reduces to *"find the first index where a predicate is true."* Reframe the question, then apply this template — it handles exact match, first/last occurrence, insertion position, and binary search on answer.
 
-**Classic — Exact Match.** Use when: searching for a specific value in sorted array
 ```javascript
-function binarySearch(arr, target) {
-    let left = 0, right = arr.length - 1;
-
-    while (left <= right) {
-        const mid = Math.floor((left + right) / 2);
-        if (arr[mid] === target) return mid;
-        else if (arr[mid] < target) left = mid + 1;
-        else right = mid - 1;
-    }
-    return -1;
-}
-```
-
-**First True — First Occurrence.** Continues searching even after finding a match. Use when: "find first element that satisfies condition"
-```javascript
-function firstTrue(arr) {
-    let left = 0, right = arr.length - 1;
-    let firstTrueIndex = -1;
-
-    while (left <= right) {
-        let mid = Math.floor((left + right) / 2);
-        if (feasible(mid)) {
-            firstTrueIndex = mid;
-            right = mid - 1;     // keep searching left for earlier match
-        } else {
-            left = mid + 1;
-        }
-    }
-    return firstTrueIndex;
-}
-```
-
-**Boundary — Finding Position (Lower Bound).** Right pointer is exclusive, never subtracts 1 from mid. Use when: finding insertion position, boundaries between regions
-```javascript
-// Finds the leftmost position where `target` can be inserted to keep nums sorted.
-// Equivalently: the first index i such that nums[i] >= target.
-// If target is larger than all elements, returns nums.length.
-function lowerBound(nums, target) {
-    let left = 0;
-    let right = nums.length;
+function binarySearch(nums, predicate) {
+    let left = 0, right = nums.length;
     while (left < right) {
         const mid = Math.floor((left + right) / 2);
-        if (nums[mid] >= target) {
-            right = mid;     // mid might be the answer — keep it in range
-        } else {
-            left = mid + 1;  // mid is too small — exclude it
-        }
+        if (predicate(mid)) right = mid;     // mid might be the answer
+        else left = mid + 1;                  // mid is not the answer
     }
-    return left;  // first index where nums[i] >= target (or nums.length if none)
+    return left;  // first index where predicate is true (or n if none)
 }
 ```
 
+**Cheat sheet — what predicate to use:**
+
+| Question | Predicate | Post-processing |
+|----------|-----------|-----------------|
+| Is X in array? | `nums[i] >= X` | Check `nums[result] === X`; else `-1` |
+| First occurrence of X | `nums[i] >= X` | Same as above |
+| Last occurrence of X | `nums[i] > X` | Subtract 1 |
+| Insertion position (lower bound) | `nums[i] >= X` | Use directly |
+| Upper bound | `nums[i] > X` | Use directly |
+| Smallest valid value | `isFeasible(mid)` | Use directly |
+
+See [Binary Search Variations Explained](/notes/binary-search-variations-explained.md) for the mental model, walkthroughs, and worked examples for every case.
 
 ### 8. Union Find
 ```javascript
