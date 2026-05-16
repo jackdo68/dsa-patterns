@@ -454,13 +454,18 @@ function intervalDP(arr) {
 
 ```javascript
 function binarySearch(nums, predicate) {
-    let left = 0, right = nums.length;
-    while (left < right) {
+    let left = 0, right = nums.length - 1;
+    let result = nums.length;                 // default: predicate never true
+    while (left <= right) {
         const mid = Math.floor((left + right) / 2);
-        if (predicate(mid)) right = mid;     // mid might be the answer
-        else left = mid + 1;                  // mid is not the answer
+        if (predicate(mid)) {
+            result = mid;                     // record this candidate
+            right = mid - 1;                  // search left for an earlier match
+        } else {
+            left = mid + 1;                   // mid is not the answer — exclude it
+        }
     }
-    return left;  // first index where predicate is true (or n if none)
+    return result;  // first index where predicate is true (or n if none)
 }
 ```
 

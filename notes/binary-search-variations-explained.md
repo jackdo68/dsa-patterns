@@ -15,16 +15,18 @@ Every binary search problem reduces to: **"find the first index where some predi
 ```typescript
 function binarySearch(nums: number[], predicate: (i: number) => boolean): number {
   let left = 0;
-  let right = nums.length;
-  while (left < right) {
+  let right = nums.length - 1;
+  let result = nums.length;          // default: predicate never true
+  while (left <= right) {
     const mid = Math.floor((left + right) / 2);
     if (predicate(mid)) {
-      right = mid;        // mid might be the answer — keep it in range
+      result = mid;                   // record this candidate
+      right = mid - 1;                // keep searching left for an earlier match
     } else {
-      left = mid + 1;     // mid is not the answer — exclude it
+      left = mid + 1;                 // mid is not the answer — exclude it
     }
   }
-  return left;            // first index where predicate is true (or n if none)
+  return result;                      // first index where predicate is true (or n if none)
 }
 ```
 
@@ -34,13 +36,15 @@ function binarySearch(nums: number[], predicate: (i: number) => boolean): number
 
 ## How the Form Works (Mental Model)
 
-- **Search space:** `[left, right)` — left inclusive, right exclusive.
-- **Initial state:** `right = nums.length` — out of bounds, representing "no valid answer found yet; insertion would go at the end."
-- **Loop ends** when `left === right` — the pointers converge ON the answer.
-- **`right = mid`:** `mid` was a valid candidate (predicate true), so we keep it in range by moving `right` to it.
-- **`left = mid + 1`:** `mid` was NOT a valid candidate, so we exclude it.
+- **Search space:** `[left, right]` — both endpoints are inclusive, valid candidates.
+- **Initial state:** `right = nums.length - 1` — the last valid index.
+- **Loop ends** when `left > right` — the pointers crossed past each other; no candidates remain.
+- **`result = mid; right = mid - 1`:** `mid` was a valid candidate (predicate true). Record it, then look further left for an even earlier match.
+- **`left = mid + 1`:** `mid` was NOT a valid candidate, so skip it.
 
-**Key trap:** never write `right = mid - 1` in this form — it skips the very position the pointers are converging to.
+**Why the extra `result` variable?** Both pointers always point at unchecked candidates that get skipped (`right = mid - 1`, `left = mid + 1`). The pointers don't converge ON the answer — they cross past it. So you have to record the best candidate as you go, otherwise it's lost.
+
+**Default `result = nums.length`:** if the predicate is never true, the answer is "out of range" — the same value the `<` form would naturally return.
 
 ---
 
@@ -52,14 +56,19 @@ Reframe as: "Find the first index where `nums[i] >= X`. Then check if it equals 
 
 ```typescript
 function search(nums: number[], target: number): number {
-  let left = 0, right = nums.length;
-  while (left < right) {
+  let left = 0, right = nums.length - 1;
+  let result = nums.length;
+  while (left <= right) {
     const mid = Math.floor((left + right) / 2);
-    if (nums[mid] >= target) right = mid;
-    else left = mid + 1;
+    if (nums[mid] >= target) {
+      result = mid;
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
   }
-  if (left === nums.length || nums[left] !== target) return -1;
-  return left;
+  if (result === nums.length || nums[result] !== target) return -1;
+  return result;
 }
 ```
 
@@ -78,15 +87,20 @@ Reframe as: "Find first index where `nums[i] > X`, then subtract 1."
 
 ```typescript
 function findLast(nums: number[], target: number): number {
-  let left = 0, right = nums.length;
-  while (left < right) {
+  let left = 0, right = nums.length - 1;
+  let result = nums.length;
+  while (left <= right) {
     const mid = Math.floor((left + right) / 2);
-    if (nums[mid] > target) right = mid;
-    else left = mid + 1;
+    if (nums[mid] > target) {
+      result = mid;
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
   }
-  // left is now the first index > target
-  if (left === 0 || nums[left - 1] !== target) return -1;
-  return left - 1;
+  // result is now the first index > target
+  if (result === 0 || nums[result - 1] !== target) return -1;
+  return result - 1;
 }
 ```
 
@@ -118,15 +132,20 @@ Used when the answer isn't an array index but a *value* (e.g., minimum capacity,
 
 ```typescript
 // predicate: isFeasible(value)
-// search space: [minPossible, maxPossible + 1)
+// search space: [minPossible, maxPossible]
 function smallestValid(lo: number, hi: number, isFeasible: (v: number) => boolean): number {
-  let left = lo, right = hi + 1;
-  while (left < right) {
+  let left = lo, right = hi;
+  let result = hi + 1;
+  while (left <= right) {
     const mid = Math.floor((left + right) / 2);
-    if (isFeasible(mid)) right = mid;
-    else left = mid + 1;
+    if (isFeasible(mid)) {
+      result = mid;
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
   }
-  return left;
+  return result;
 }
 ```
 
@@ -151,34 +170,34 @@ Both use the universal form — only the **predicate** differs.
 | Finds | First element **>=** target | First element **>** target |
 | On duplicates | Lands on the **first** copy | Lands **after** the last copy |
 
-The `=` sign in the predicate is the only difference. It decides whether equal values are "the answer" (go left to find earlier ones) or "not the answer yet" (go right to skip past them).
+The `=` sign in the predicate is the only difference. It decides whether equal values are "the answer" (record it, search left) or "not the answer yet" (skip right).
 
 ### Walkthrough — Lower Bound
 
-`arr = [1, 3, 3, 3, 5, 7]`, target = 3
+`arr = [1, 3, 3, 3, 5, 7]`, target = 3, predicate: `arr[mid] >= 3`
 
 ```
-left=0, right=6
-  mid=3: arr[3]=3, 3 >= 3? Yes → right=3       [search left half]
-left=0, right=3
-  mid=1: arr[1]=3, 3 >= 3? Yes → right=1       [search left half]
-left=0, right=1
-  mid=0: arr[0]=1, 1 >= 3? No  → left=1        [skip, not the answer]
-left=1, right=1 → stop. Answer = 1 ✓
+left=0, right=5, result=6
+  mid=2: arr[2]=3, 3 >= 3? Yes → result=2, right=1   [record, search left]
+left=0, right=1, result=2
+  mid=0: arr[0]=1, 1 >= 3? No  → left=1              [skip]
+left=1, right=1, result=2
+  mid=1: arr[1]=3, 3 >= 3? Yes → result=1, right=0   [record, search left]
+left=1, right=0 → stop. Answer = 1 ✓
 ```
 
 ### Walkthrough — Upper Bound
 
-`arr = [1, 3, 3, 3, 5, 7]`, target = 3
+`arr = [1, 3, 3, 3, 5, 7]`, target = 3, predicate: `arr[mid] > 3`
 
 ```
-left=0, right=6
-  mid=3: arr[3]=3, 3 > 3? No  → left=4         [skip, not the answer]
-left=4, right=6
-  mid=5: arr[5]=7, 7 > 3? Yes → right=5        [search left half]
-left=4, right=5
-  mid=4: arr[4]=5, 5 > 3? Yes → right=4        [search left half]
-left=4, right=4 → stop. Answer = 4 ✓
+left=0, right=5, result=6
+  mid=2: arr[2]=3, 3 > 3? No  → left=3               [skip]
+left=3, right=5, result=6
+  mid=4: arr[4]=5, 5 > 3? Yes → result=4, right=3    [record, search left]
+left=3, right=3, result=4
+  mid=3: arr[3]=3, 3 > 3? No  → left=4               [skip]
+left=4, right=3 → stop. Answer = 4 ✓
 ```
 
 Visualization:
@@ -197,28 +216,38 @@ All 3s are in range `[1, 4)` → 3 elements (`upperBound - lowerBound = 3`).
 
 ```typescript
 function lowerBound(arr: number[], target: number): number {
-  let left = 0, right = arr.length;
-  while (left < right) {
+  let left = 0, right = arr.length - 1;
+  let result = arr.length;
+  while (left <= right) {
     const mid = Math.floor((left + right) / 2);
-    if (arr[mid] >= target) right = mid;
-    else left = mid + 1;
+    if (arr[mid] >= target) {
+      result = mid;
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
   }
-  return left;
+  return result;
 }
 
 function upperBound(arr: number[], target: number): number {
-  let left = 0, right = arr.length;
-  while (left < right) {
+  let left = 0, right = arr.length - 1;
+  let result = arr.length;
+  while (left <= right) {
     const mid = Math.floor((left + right) / 2);
-    if (arr[mid] > target) right = mid;
-    else left = mid + 1;
+    if (arr[mid] > target) {
+      result = mid;
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
   }
-  return left;
+  return result;
 }
 ```
 
 ---
 
-## Note: The `<=` Form Exists Too
+## Note: The `<` Form Exists Too
 
-You may see `while (left <= right)` with `right = nums.length - 1` in other resources. It's a valid alternative when you only need exact match (it returns immediately on finding the target), but it doesn't generalize to insertion points or "binary search on answer" cleanly. Pick one form and stick with it — the universal `<` form above handles every case.
+You may see `while (left < right)` with `right = nums.length` in other resources. It's a valid alternative — instead of tracking `result` separately, the pointers converge ON the answer and you return `left` directly. The trade-off: more concise (no result variable) but the exclusive `right = nums.length` initial bound feels less intuitive. Pick one form and stick with it — the universal `<=` form above handles every case.
