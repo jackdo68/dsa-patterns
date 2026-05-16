@@ -87,7 +87,7 @@
 32. [**Rotate List**](/notes/reordering-partitioning-rotate-list.md) - O(n), O(1) - Reorder list
 
 ### BINARY SEARCH (4)
-33. [**Monotonic Functions**](/notes/binary-search-lowerbound-vs-upperbound.md) - O(log n), O(1) - Classic binary search
+33. [**Monotonic Functions**](/notes/binary-search-variations-explained.md) - O(log n), O(1) - Classic binary search
 34. [**Rotated Sorted Array**](/notes/find-min-max-search-in-rotated-sorted-array.md) - O(log n), O(1) - Find min/max
 35. [**K Closest Elements**](/notes/find-k-closest-elements.md) - O(log n + k), O(1) - Binary search + expand
 36. [**Median of 2 Sorted**](/notes/median-of-2-sorted-arrays.md) - O(log(min(m,n))), O(1) - Binary search on smaller
@@ -450,17 +450,7 @@ function intervalDP(arr) {
 
 ### 7. Binary Search
 
-**Choosing the form — `<=` vs `<`:**
-
-| Question | Form | Why |
-|----------|------|-----|
-| "Is X in the array?" | `while (left <= right)` with `right = n - 1` | Inclusive bounds; loop ends when search space is empty |
-| "Where should X go / first index where condition holds?" | `while (left < right)` with `right = n` | Exclusive right; loop ends when pointers converge ON the answer |
-
-- `<=` form: every iteration checks a real element. Skip `mid` after checking (`left = mid + 1`, `right = mid - 1`).
-- `<` form: `right = n` means "one past the last possible answer" — lets the answer be `n` itself (insertion at end). Don't skip `mid` on the answer side (`right = mid`, never `mid - 1`).
-
-**Trap:** mixing them. `right = mid - 1` with `<` skips the answer. `right = mid` with `<=` infinite loops when `left === right === mid`.
+See [Binary Search Variations Explained](/notes/binary-search-variations-explained.md) for when to use `while (left <= right)` vs `while (left < right)`, common traps, and lower vs upper bound walkthroughs.
 
 **Classic — Exact Match.** Use when: searching for a specific value in sorted array
 ```javascript
@@ -516,7 +506,6 @@ function lowerBound(nums, target) {
 }
 ```
 
-See [Binary Search - Lower vs Upper Bound](/notes/binary-search-lowerbound-vs-upperbound.md) for detailed comparison and walkthroughs.
 
 ### 8. Union Find
 ```javascript

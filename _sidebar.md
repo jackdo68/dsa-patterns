@@ -136,7 +136,7 @@
   * [Bitwise](notes/bitwise.md)
 
 * Concepts & Wikis
-  * [Binary Search - Lower vs Upper Bound](notes/binary-search-lowerbound-vs-upperbound.md)
+  * [Binary Search Variations Explained](notes/binary-search-variations-explained.md)
   * [Tree Traversal Wiki](notes/tree-traversal-wiki.md)
   * [Topological Sort Wiki](notes/topological-sort-wiki.md)
   * [Dynamic Programming Wiki](notes/dynamic-programming-wiki.md)
