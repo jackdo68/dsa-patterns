@@ -14,40 +14,55 @@ Interview Frequency: Medium
 
 ### Ideas
 
-This is **post-order** — we need info from both children before deciding if current node is the LCA.
+**Instinct: "find the lowest node that 'owns' both targets" → post-order DFS with bubble-up info.**
 
-**The logic:**
-1. If current node is `null`, `p`, or `q` → return it (base case)
-2. Recurse left and right to find `p` and `q`
-3. If both sides return non-null → current node is the LCA (p and q are in different subtrees)
-4. If only one side returns non-null → pass it up (both targets are in that subtree)
+At each node, we want to know two things about its subtree:
+- Have we seen `p` anywhere below (or at) this node?
+- Have we seen `q` anywhere below (or at) this node?
 
-```
-        3          Finding LCA of 5 and 1
-       / \
-      5   1        left returns 5, right returns 1
-     / \           both non-null → 3 is the LCA
-    6   2
-```
+If both answers are "yes" at some node, that node is a common ancestor. The **lowest** such node is the LCA. So we do a post-order DFS: children answer first, then the current node combines those answers with itself.
 
 ```
-        3          Finding LCA of 5 and 6
-       / \
-      5   1        left returns 5 (found 5, and 6 is below it)
-     / \           right returns null
-    6   2          only left non-null → pass 5 up (5 is the LCA)
+        3          DFS bubbles up { foundP, foundQ } at each node.
+       / \         For LCA of 6 and 2:
+      5   1
+     / \             At 6: { foundP: true,  foundQ: false }
+    6   2            At 2: { foundP: false, foundQ: true  }
+                     At 5: combine children + self → { true, true } ← first node with both → LCA = 5
+                     At 1: { false, false }
+                     At 3: combine → { true, true } but lca already set, skip
 ```
 
-**Why it works:** the LCA is the first node where `p` and `q` "split" into different subtrees. Below that point, they're in the same subtree. Above that point, one side would return null.
+**Why this finds the LOWEST:** post-order processes children before the current node. The first time both become true is at the deepest possible ancestor. Parents above will also have `foundP && foundQ`, but we lock in the answer with a `lca === null` guard so they can't overwrite it.
 
 ### Solution
 
 ```typescript
-function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: TreeNode | null): TreeNode | null {
-	  if (!root || root === p || root === q) return root;
-    const isLeft = lowestCommonAncestor(root.left, p, q);
-    const isRight = lowestCommonAncestor(root.right, p, q);
-    if (isLeft && isRight) return root;
-    return isLeft || isRight;
-};
+function lowestCommonAncestor(
+  root: TreeNode | null,
+  p: TreeNode,
+  q: TreeNode,
+): TreeNode | null {
+  let lca: TreeNode | null = null;
+
+  function dfs(node: TreeNode | null): { foundP: boolean; foundQ: boolean } {
+    if (!node) return { foundP: false, foundQ: false };
+
+    const left = dfs(node.left);
+    const right = dfs(node.right);
+
+    const foundP = left.foundP || right.foundP || node === p;
+    const foundQ = left.foundQ || right.foundQ || node === q;
+
+    if (foundP && foundQ && lca === null) {
+      lca = node;
+    }
+    return { foundP, foundQ };
+  }
+
+  dfs(root);
+  return lca;
+}
 ```
+
+**Complexity:** O(n) time (every node visited once), O(h) space for the recursion stack.

@@ -19,51 +19,55 @@ Interview Frequency: Low
 
 ### Ideas
 
-This is a **sliding window** problem. The answer is always a contiguous window of size `k` in the sorted array (because the array is sorted, the k closest elements are adjacent). The **starting point** of the window can be found using **lower bound binary search**.
+**Instinct 1: "k closest in a sorted array → contiguous window."** Since the array is sorted, the k closest elements to `x` must be adjacent. You don't pick k separate elements — you pick a *window* of size k. So the problem collapses to: **"where does the best window start?"**
 
-**"Should I slide the window right?"**
+**Instinct 2: "find an optimal position with monotonic preference → binary search."** Valid starting positions are `0` to `n - k`. As you slide the window right, at some point you stop improving and start getting worse. That's a monotonic boundary, which means binary search.
 
-At each `mid`, the current window is `arr[mid]` to `arr[mid + k - 1]`. To decide whether to slide right, compare what you'd **lose** (left edge `arr[mid]`) vs what you'd **gain** (next element `arr[mid + k]`):
+**Instinct 3: "decide direction by comparing boundary tradeoffs."** At any starting position `i`, the window covers `arr[i..i+k-1]`. To check if sliding right is better, compare:
+- **What you lose:** `arr[i]` (drops off the left)
+- **What you gain:** `arr[i + k]` (joins on the right)
 
-- If `arr[mid]` is farther from `x` than `arr[mid + k]` → worth sliding right (`left = mid + 1`)
-- Otherwise → not worth it, keep or move left (`right = mid`)
+If the lost element is farther from `x` → sliding right helps (the gained one is closer). If the gained element is farther (or tied with the loss) → don't slide; the current position is at least as good.
 
-Step by step with `arr = [1, 2, 3, 4, 5]`, `k = 3`, `x = 3`:
+**The predicate:** *"sliding right would NOT improve things"* = `arr[mid + k] - x >= x - arr[mid]`. When true, `mid` is a candidate starting position — record it and search left for an earlier one.
+
+**Note on the signed comparison.** We write `x - arr[mid]` and `arr[mid + k] - x` (not `Math.abs`). This works because the array is sorted: if `x` is to the right of the window, both expressions naturally reflect that, and the predicate still picks the right direction.
+
+**Walkthrough** with `arr = [1, 2, 3, 4, 5]`, `k = 3`, `x = 3`:
 
 ```
-left=0, right=2
+left=0, right=2, result=2
 
-mid=1: lose arr[1]=2 (dist 1), gain arr[4]=5 (dist 2). Lose < Gain → not worth. right=1
-mid=0: lose arr[0]=1 (dist 2), gain arr[3]=4 (dist 1). Lose > Gain → worth it. left=1
+mid=1: lose arr[1]=2 (dist 1), gain arr[4]=5 (dist 2)
+       5-3 >= 3-2? 2 >= 1? Yes → record. result=1, right=0
+mid=0: lose arr[0]=1 (dist 2), gain arr[3]=4 (dist 1)
+       4-3 >= 3-1? 1 >= 2? No → skip. left=1
 
-left === right = 1 → window is arr[1..3] = [2, 3, 4]
+left=1 > right=0 → stop. result=1
+Window: arr[1..3] = [2, 3, 4] ✓
 ```
-
-This is the lower bound pattern (8c) where the condition is: "the element we'd gain is at least as far as the one we'd lose" → stop sliding.
 
 ### Solution
 
 ```typescript
 function findClosestElements(arr: number[], k: number, x: number): number[] {
-  // If array length equals k, return the whole array
   if (arr.length === k) return arr;
 
-  // Find the insertion point using binary search
   let left = 0;
-  let right = arr.length - k;
+  let right = arr.length - k - 1;   // last position where arr[mid + k] is in bounds
+  let result = arr.length - k;       // default: slide all the way right
 
-  while (left < right) {
-    const mid = Math.floor((right + left) / 2);
-
-    // Compare the distance between x and arr[mid] with x and arr[mid + k]
-    if (x - arr[mid] > arr[mid + k] - x) {
-      left = mid + 1; // Move window right when left element is farther
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    // predicate: sliding right would NOT improve — mid is a candidate
+    if (arr[mid + k] - x >= x - arr[mid]) {
+      result = mid;
+      right = mid - 1;
     } else {
-      right = mid; // Move window left or keep position when right element is farther
+      left = mid + 1;
     }
   }
 
-  // Return the subarray of k elements starting from left
-  return arr.slice(left, left + k);
+  return arr.slice(result, result + k);
 }
 ```
