@@ -10,28 +10,27 @@ Interview Frequency: High
 
 [LeetCode 102 - Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)
 
-*Given the `root` of a binary tree, return the level order traversal of its nodes' values. (i.e., from left to right, level by level).*
+_Given the `root` of a binary tree, return the level order traversal of its nodes' values. (i.e., from left to right, level by level)._
 
 ### Solution
 
 ```typescript
 function levelOrder(root: TreeNode | null): number[][] {
-  if (root === null) return [];
-  const stack = [root]; // for storing child nodes
-  const result = [];
-
-  while (stack.length) {
-    const n = stack.length;
-    const level = [];
-    for (let i = 0; i < n; i++) {
-      const node = stack.shift()!;
-      level.push(node.val);
-      if (node.left) stack.push(node.left);
-      if (node.right) stack.push(node.right);
+  const res: number[][] = [];
+  if (root === null) return res;
+  let processingQueue: TreeNode[] = [root];
+  let levelQueue = [];
+  while (processingQueue.length) {
+    const vals: number[] = [];
+    for (const node of processingQueue) {
+      vals.push(node.val);
+      if (node.left) levelQueue.push(node.left);
+      if (node.right) levelQueue.push(node.right);
     }
-    result.push(level);
+    res.push(vals);
+    processingQueue = levelQueue;
+    levelQueue = [];
   }
-
-  return result;
+  return res;
 }
 ```
