@@ -18,40 +18,44 @@ Interview Frequency: High
 
 ### Ideas
 
-This is **topological sort** with **cycle detection**. If there's a cycle, it's impossible to complete all courses (circular dependency).
+**Instinct 1: "ordering with dependencies" → topological sort.** Whenever a problem says *"do X before Y"* across many items, you're looking at a directed graph of dependencies. The valid ordering is a topological sort. If a cycle exists, no valid ordering is possible.
 
-**Two sets to track state:**
-- `visited` — course is fully processed (all prerequisites done)
-- `cycle` — course is currently being explored (in the current DFS path)
+**Instinct 2: "do prerequisites first" → post-order DFS.** To list a course, all its prerequisites must appear before it. Post-order DFS naturally guarantees this: we only add a node to the result **after** recursing into (and finishing) every node it depends on.
 
-**How cycle detection works:**
+**Instinct 3: "cycle detection during DFS" → track the current path, not just visited.** A standard `visited` set isn't enough — it can't tell *"already finished"* apart from *"currently being explored."* We need two states:
 
-```
-Course A → B → C → A  (cycle!)
+- `visited` — *"fully processed; safe to reuse"* (already added to result)
+- `cycle` — *"currently on the active DFS path from this root"*
 
-Exploring A: cycle = {A}
-  Exploring B: cycle = {A, B}
-    Exploring C: cycle = {A, B, C}
-      Exploring A: A is in cycle set → CYCLE DETECTED!
-```
+If DFS reaches a node already in `cycle`, we've looped back onto our own path → back-edge → cycle. If we reach a node in `visited`, it's already done; skip it (no cycle, no rework).
 
-If we revisit a node that's already in the `cycle` set, we've found a back-edge → cycle exists.
+The key move: **add to `cycle` when entering, remove from `cycle` when leaving** — `cycle` only contains nodes on the active recursion stack.
 
-**Why this gives topological order:**
-
-We add a course to the result **after** all its prerequisites are processed (post-order). This ensures prerequisites come before the course that needs them.
+**Cycle example:**
 
 ```
-Prerequisites: [1,0], [2,1]  (0 → 1 → 2)
+A → B → C → A
 
-DFS from 2:
-  → needs 1 → needs 0
-  → 0 has no prereqs → add 0 to result
-  → 1's prereqs done → add 1 to result
-  → 2's prereqs done → add 2 to result
+Enter A: cycle = {A}
+  Enter B: cycle = {A, B}
+    Enter C: cycle = {A, B, C}
+      Try A: A ∈ cycle → CYCLE DETECTED
+```
+
+**Topological order example:**
+
+```
+Prerequisites: 0 → 1 → 2  (take 0 before 1, 1 before 2)
+
+DFS from 2: needs 1 → needs 0
+  0 has no prereqs → finish 0, add to result
+  1's prereqs done  → finish 1, add to result
+  2's prereqs done  → finish 2, add to result
 
 Result: [0, 1, 2] ✓
 ```
+
+**Why we iterate all courses at the end:** the graph may have multiple disconnected components or unreachable nodes. Starting DFS from every course ensures we process all of them, while `visited` prevents redoing work.
 
 ### Solution
 
