@@ -44,11 +44,9 @@ Three things every backtracking function does:
 
 ---
 
-### Pairing Choices with Recursive Calls
+### Why `apply` and `undo` Go Inside the For-Loop
 
-**The core rule:** every recursive call must correspond to exactly one choice — applied before recursing, undone before returning. There are two valid styles to express this; both work.
-
-**Style A — apply inside the for-loop (the standard template):**
+**The core rule:** every recursive call must correspond to exactly one choice — applied before recursing, undone before returning. The `apply` and `undo` must wrap the recursive call **inside** the loop:
 
 ```typescript
 function dfs(state) {
@@ -62,27 +60,7 @@ function dfs(state) {
 }
 ```
 
-Each iteration: apply one choice → recurse → undo. The make/undo *wraps* the recursive call inside the loop.
-
-**Style B — apply at the function entry (parameter-driven, equivalent):**
-
-```typescript
-function dfs(c, state) {
-  apply(c, state);
-  if (isComplete(state)) {
-    record(state);
-  } else {
-    for (const next of choices) {
-      if (isValid(next, state)) dfs(next, state);
-    }
-  }
-  undo(c, state);
-}
-```
-
-The choice is passed as a parameter; each call applies its own choice at the top, recurses, undoes before returning. Identical results to Style A, just rearranged.
-
-**Both styles preserve the invariant:** one call ↔ one choice ↔ one apply/undo pair.
+Each iteration: apply one choice → recurse → undo. The `undo` after the recursion restores the state, so the next iteration starts from the same point and tries a different choice. **That's how the branching happens.**
 
 ---
 
@@ -101,11 +79,7 @@ function dfs(state) {
 
 This commits to a single choice **before** branching, so every recursive call sees the same mutated state. The branches don't actually diverge — they all explore the same path.
 
-**The mental rule:** if your apply runs once per function call but multiple recursive calls happen inside, the branches aren't branching. You need apply-per-branch, either via:
-- apply *inside* the loop (Style A) — the apply runs once per iteration
-- apply at the *top* with a per-call parameter (Style B) — the apply runs once per call, but each recursive call passes a different parameter
-
-**Side effect rule:** wherever you put the apply, you MUST put a matching undo at the corresponding exit point — otherwise state leaks into the next sibling.
+**Mental rule:** the apply must happen *as many times as the for-loop iterates*. If your apply runs once per function call but multiple recursive calls happen inside, the branches aren't branching.
 
 ```
 At state S, the choices are A, B, C.
@@ -114,7 +88,7 @@ We want three independent recursive subtrees:
   - dfs explores S + B
   - dfs explores S + C
 
-In Style A's loop:
+Inside the loop:
   apply A → state = S+A → recurse → undo A → state = S
   apply B → state = S+B → recurse → undo B → state = S
   apply C → state = S+C → recurse → undo C → state = S
