@@ -10,9 +10,9 @@ Interview Frequency: High
 
 [LeetCode 56 - Merge Intervals](https://leetcode.com/problems/merge-intervals/)
 
-*Given an array of `intervals` where `intervals[i] = [starti, endi]`, merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.*
+_Given an array of `intervals` where `intervals[i] = [starti, endi]`, merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input._
 
-*Example 1:*
+_Example 1:_
 
 ```
 Input: intervals = [[1,3],[2,6],[8,10],[15,18]]
@@ -33,6 +33,7 @@ curr:    [2----6]   curr:        [8--10]
 ```
 
 **Approach:**
+
 1. **Sort by start time** — ensures we process intervals in order
 2. **Iterate and merge** — compare each interval with the previous one
 3. **Overlap** → extend prev's end to `max(prev[1], curr[1])`
@@ -57,20 +58,18 @@ result = [[1,6], [8,10], [15,18]]
 
 ```typescript
 function merge(intervals: number[][]): number[][] {
+  const res: number[][] = [];
   intervals.sort((a, b) => a[0] - b[0]);
-
-  let prev = intervals[0];
-  const result = [prev];
-
+  let temp = intervals[0];
   for (const curr of intervals) {
-    if (curr[0] <= prev[1]) {
-      prev[1] = Math.max(prev[1], curr[1]);
+    if (curr[0] <= temp[1]) {
+      temp[1] = Math.max(temp[1], curr[1]);
     } else {
-      result.push(curr);
-      prev = curr;
+      res.push(temp);
+      temp = curr;
     }
   }
-
-  return result;
+  res.push(temp);
+  return res;
 }
 ```
