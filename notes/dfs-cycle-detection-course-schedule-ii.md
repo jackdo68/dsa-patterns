@@ -57,6 +57,32 @@ Result: [0, 1, 2] ✓
 
 **Why we iterate all courses at the end:** the graph may have multiple disconnected components or unreachable nodes. Starting DFS from every course ensures we process all of them, while `visited` prevents redoing work.
 
+### How the Solution Implements This
+
+**Step 1: Build a `prereqList` map.** For each course, store the list of courses it directly depends on. This lets us look up "what does course A need?" in O(1).
+
+```
+prerequisites = [[1, 0], [2, 1]]
+prereqList: { 1 → [0], 2 → [1] }
+```
+
+**Step 2: For each course, DFS into its prerequisites.** To finish course A, we recurse into every prerequisite of A first. Each recursion does the same: finish its prereqs before itself. Eventually, we hit a course with no prerequisites — that's the base of the chain, safe to add to the result first.
+
+```
+Want to take A:
+  → recurse into A's prereqs
+    → recurse into each prereq's prereqs
+      → ... until a course with no prereqs is reached
+      → add that course to result
+    → all of A's prereqs are done → add A to result
+```
+
+**Step 3: Mark and unmark on the active path.** When DFS *enters* a course, add it to `cycle`. When DFS *finishes* the course (all its prereqs done), remove it from `cycle` and add it to `visited`. If at any point we try to recurse into a course already in `cycle`, we've found a back-edge → impossible.
+
+**Step 4: Loop over all courses.** Not every course is reachable from every other — some may be isolated. Driving DFS from each course (skipping `visited` ones) ensures we cover the whole graph.
+
+The result is built bottom-up: deepest prerequisites first, then everything that depends on them, in dependency-respecting order.
+
 ### Solution
 
 ```typescript

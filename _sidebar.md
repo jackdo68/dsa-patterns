@@ -92,6 +92,7 @@
   * [Task Scheduling](notes/task-scheduling.md)
 
 * Backtracking
+  * [Backtracking Wiki](notes/backtracking-wiki.md)
   * [Subset](notes/subset.md)
   * [Permutations Unique](notes/permutations-unique.md)
   * [Pruning - Combination Sum](notes/pruning-combination-sum.md)
@@ -137,6 +138,7 @@
 
 * Concepts & Wikis
   * [Binary Search Variations Explained](notes/binary-search-variations-explained.md)
+  * [Backtracking Wiki](notes/backtracking-wiki.md)
   * [Tree Traversal Wiki](notes/tree-traversal-wiki.md)
   * [Topological Sort Wiki](notes/topological-sort-wiki.md)
   * [Dynamic Programming Wiki](notes/dynamic-programming-wiki.md)
