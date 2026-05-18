@@ -44,54 +44,77 @@ Three things every backtracking function does:
 
 ---
 
-### Why `push` and `pop` Are Inside the For-Loop
+### Pairing Choices with Recursive Calls
 
-This is the most common mistake. The make/undo pair MUST wrap the recursive call **inside** the for-loop, not outside.
+**The core rule:** every recursive call must correspond to exactly one choice — applied before recursing, undone before returning. There are two valid styles to express this; both work.
 
-**Wrong:**
+**Style A — apply inside the for-loop (the standard template):**
+
 ```typescript
 function dfs(state) {
   if (isComplete(state)) { record(state); return; }
-  apply(currentChoice, state);          // ❌ applied once for the whole loop
   for (const c of choices) {
-    if (!used(c)) dfs(state);
+    if (!isValid(c, state)) continue;
+    apply(c, state);
+    dfs(state);
+    undo(c, state);
   }
-  undo(currentChoice, state);
 }
 ```
 
-**Right:**
+Each iteration: apply one choice → recurse → undo. The make/undo *wraps* the recursive call inside the loop.
+
+**Style B — apply at the function entry (parameter-driven, equivalent):**
+
 ```typescript
-function dfs(state) {
-  if (isComplete(state)) { record(state); return; }
-  for (const c of choices) {
-    if (!used(c)) {
-      apply(c, state);                  // ✓ applied per choice
-      dfs(state);
-      undo(c, state);
+function dfs(c, state) {
+  apply(c, state);
+  if (isComplete(state)) {
+    record(state);
+  } else {
+    for (const next of choices) {
+      if (isValid(next, state)) dfs(next, state);
     }
   }
+  undo(c, state);
 }
 ```
 
-**Why?** Because each branch of the recursion explores a *different* choice from the same starting state. If you apply the choice outside the loop, every recursive call starts from the same mutated state — there's nothing to differentiate the branches.
+The choice is passed as a parameter; each call applies its own choice at the top, recurses, undoes before returning. Identical results to Style A, just rearranged.
 
-The state must be:
-- **Mutated** before recursing (so the child sees the choice applied)
-- **Restored** after recursing (so the next iteration of the loop sees the original state again)
+**Both styles preserve the invariant:** one call ↔ one choice ↔ one apply/undo pair.
 
-If you forget to undo, the state leaks between siblings. If you apply outside the loop, all siblings share the same single choice. The make/undo *wrapping* the recursive call is what makes the tree of decisions branch correctly.
+---
 
-**Another way to see it:**
+**The wrong version — choice not tied to a branch:**
+
+```typescript
+function dfs(state) {
+  if (isComplete(state)) { record(state); return; }
+  apply(someFixedChoice, state);      // ❌ one choice for ALL branches
+  for (const c of choices) {
+    if (!used(c)) dfs(state);          // every branch sees the same state
+  }
+  undo(someFixedChoice, state);
+}
+```
+
+This commits to a single choice **before** branching, so every recursive call sees the same mutated state. The branches don't actually diverge — they all explore the same path.
+
+**The mental rule:** if your apply runs once per function call but multiple recursive calls happen inside, the branches aren't branching. You need apply-per-branch, either via:
+- apply *inside* the loop (Style A) — the apply runs once per iteration
+- apply at the *top* with a per-call parameter (Style B) — the apply runs once per call, but each recursive call passes a different parameter
+
+**Side effect rule:** wherever you put the apply, you MUST put a matching undo at the corresponding exit point — otherwise state leaks into the next sibling.
 
 ```
 At state S, the choices are A, B, C.
-We want three independent recursions:
-  - dfs(S + A)
-  - dfs(S + B)
-  - dfs(S + C)
+We want three independent recursive subtrees:
+  - dfs explores S + A
+  - dfs explores S + B
+  - dfs explores S + C
 
-For-loop body:
+In Style A's loop:
   apply A → state = S+A → recurse → undo A → state = S
   apply B → state = S+B → recurse → undo B → state = S
   apply C → state = S+C → recurse → undo C → state = S
