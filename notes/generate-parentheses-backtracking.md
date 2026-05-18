@@ -1,5 +1,11 @@
 # Generate Parentheses
 
+Topic: backtracking, string, recursion
+
+Difficulty: Medium
+
+Interview Frequency: High
+
 Tags: backtracking, string, recursion, medium
 
 ### Question
