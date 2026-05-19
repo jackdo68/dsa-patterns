@@ -1,5 +1,11 @@
 # Meeting Rooms II
 
+Topic: interval, heap, greedy, sorting
+
+Difficulty: Medium
+
+Interview Frequency: High
+
 Tags: interval, heap, greedy, sorting, medium
 
 ### Question
