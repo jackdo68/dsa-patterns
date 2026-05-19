@@ -136,6 +136,14 @@
   * [Single Number (XOR)](notes/single-number-xor.md)
   * [Bitwise](notes/bitwise.md)
 
+* Applied Patterns (Real-World Scenarios)
+  * [Rate Limiter](notes/rate-limiter.md)
+  * [Retry with Exponential Backoff](notes/retry-with-backoff.md)
+  * [Context Manager (Bounded Buffer)](notes/context-manager.md)
+  * [Agent Loop (Tool-Calling)](notes/agent-loop.md)
+  * [Job Processor (Bounded Concurrency)](notes/job-processor.md)
+  * [Stream Processor](notes/stream-processor.md)
+
 * Concepts & Wikis
   * [Binary Search Variations Explained](notes/binary-search-variations-explained.md)
   * [Backtracking Wiki](notes/backtracking-wiki.md)
