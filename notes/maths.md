@@ -22,6 +22,46 @@ Modulo (`%`) gives you the **remainder** after division. When you divide and hav
 (a - b) % n = ((a % n) - (b % n)) % n
 ```
 
+### Greatest Common Divisor (GCD)
+
+The **greatest common divisor** of two integers is the largest positive integer that divides both. For example `gcd(18, 12) = 6`.
+
+**Euclidean algorithm** — the formula to remember:
+
+```typescript
+gcd(a, 0) = a
+gcd(a, b) = gcd(b, a % b)   // when b > 0
+```
+
+**Why it works:** any number `d` that divides both `a` and `b` also divides their remainder `a % b` (because `a = q·b + r`, so if `d | a` and `d | b`, then `d | r`). So the set of common divisors of `(a, b)` is identical to the set of common divisors of `(b, a % b)`. Replacing the pair with the smaller pair preserves the answer, and `b` strictly shrinks each step until it hits `0` — at which point the surviving number is the GCD.
+
+**Triggers — reach for GCD when you see:**
+
+- "Reduce a fraction" → divide both numerator and denominator by `gcd`
+- "Insert / find common factor between two numbers"
+- "How many evenly-spaced X fit in Y"
+- "LCM" — since `lcm(a, b) = (a * b) / gcd(a, b)`
+- Anything involving divisibility, ratios, or simplification
+
+**Implementation:**
+
+```typescript
+// iterative — preferred (O(1) space)
+function gcd(a: number, b: number): number {
+  while (b !== 0) {
+    [a, b] = [b, a % b];
+  }
+  return a;
+}
+
+// recursive — equivalent (O(log min(a,b)) stack)
+function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
+}
+```
+
+**Complexity:** `O(log min(a, b))` — the Euclidean algorithm halves the larger value roughly every two steps (provably so via Fibonacci-style worst case).
+
 ### Logarithm
 
 Log represents *"To what power must we raise a base to get a number?”* In other words, log is the inverse of the exponentiation.
