@@ -99,6 +99,7 @@
   * [Generate Parentheses](notes/generate-parentheses-backtracking.md)
   * [Word Search](notes/word-search-grid-backtracking.md)
   * [Palindrome Partitioning](notes/palindrome-partitioning.md)
+  * [Maximum Compatibility Score Sum](notes/backtracking-maximum-compatibility-score-sum.md)
 
 * Greedy
   * [Jump Game](notes/jump-game.md)
