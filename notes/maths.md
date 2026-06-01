@@ -12,6 +12,88 @@ Example:
 - 5 = tens place (10¹)
 - 3 = hundreds place (10²)
 
+**Binary (base 2)** works the same way, but each position is a power of 2 instead of 10:
+
+**`1101` (binary)**
+
+- 1 = 1s place (2⁰) → 1
+- 0 = 2s place (2¹) → 0
+- 1 = 4s place (2²) → 4
+- 1 = 8s place (2³) → 8
+
+Total: 1 + 0 + 4 + 8 = **13** in decimal.
+
+#### Decimal → Binary
+
+**Intuition:** repeatedly divide by 2. Each remainder is the next binary digit, **from least significant to most**. The quotient becomes the next number to divide. Stop when the quotient hits 0. Reverse the collected remainders.
+
+Trace `13`:
+
+| step | n | n % 2 (digit) | n / 2 |
+| :---: | :---: | :---: | :---: |
+| 1 | 13 | 1 | 6 |
+| 2 | 6 | 0 | 3 |
+| 3 | 3 | 1 | 1 |
+| 4 | 1 | 1 | 0 |
+
+Digits collected: `1, 0, 1, 1` (LSB → MSB). Reverse: `1101`. ✓
+
+**Why it works:** the remainder `n % 2` is literally the value of the 1s-place bit. Dividing by 2 right-shifts the number, exposing the next bit as the new 1s-place. Each iteration peels off one bit from the bottom.
+
+```typescript
+// Built-in (preferred)
+const binary = n.toString(2);     // "1101"
+
+// Manual implementation — useful for non-power-of-2 bases or building intuition
+function toBinary(n: number): string {
+  if (n === 0) return "0";
+  const bits: string[] = [];
+  while (n > 0) {
+    bits.push((n % 2).toString());
+    n = Math.floor(n / 2);
+  }
+  return bits.reverse().join("");
+}
+```
+
+#### Binary → Decimal
+
+**Intuition:** walk the binary digits **left to right** and accumulate `result = result * 2 + digit`. This is the same recipe as parsing a decimal string into an integer, just with base 2 instead of base 10.
+
+Trace `1101`:
+
+| step | digit | result before | result after |
+| :---: | :---: | :---: | :---: |
+| 1 | 1 | 0 | 0×2 + 1 = 1 |
+| 2 | 1 | 1 | 1×2 + 1 = 3 |
+| 3 | 0 | 3 | 3×2 + 0 = 6 |
+| 4 | 1 | 6 | 6×2 + 1 = **13** ✓ |
+
+**Why it works:** at each step you shift the accumulated value left by one bit (multiply by 2), then add the new bit. After processing the rightmost digit, the accumulator equals the sum `bᵢ · 2ⁱ` for all positions `i`. No explicit powers needed — the shifts do the work.
+
+```typescript
+// Built-in (preferred)
+const n = parseInt("1101", 2);    // 13
+
+// Manual implementation
+function fromBinary(s: string): number {
+  let result = 0;
+  for (const ch of s) {
+    result = result * 2 + (ch === "1" ? 1 : 0);
+  }
+  return result;
+}
+```
+
+#### Generalization to any base
+
+The same recipes work for any base `b`:
+
+- **Decimal → base b:** divide by `b`, collect remainders, reverse.
+- **Base b → decimal:** walk digits left-to-right, `result = result * b + digit`.
+
+This is how problems like [Excel Sheet Column Title / Number](https://leetcode.com/problems/excel-sheet-column-title/) (base 26, bijective) reduce to standard base conversion with an offset.
+
 ### Modular
 
 Modulo (`%`) gives you the **remainder** after division. When you divide and have a remainder left over, that remainder is the modulo. Think of this as a “wrap around”, this becomes every useful in some algorithm to stop the numbers become so large, because the result is always smaller than the divisor. Some key characteristics
