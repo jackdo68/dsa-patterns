@@ -73,6 +73,60 @@ Each leaf is one complete assignment. The branching factor shrinks (`3 × 2 × 1
 
 **Space: O(m² + m)** — score matrix + `used` array + recursion depth.
 
+### How This Differs from Other Permutation Problems
+
+The mechanics look identical to [Permutations Unique](permutations-unique.md) — same `used[]` array, same Choose/Explore/Un-choose loop — but three things are genuinely different. Spotting them is the trick to recognizing the assignment-problem family.
+
+**1. Two parallel inputs instead of one.**
+
+Most backtracking problems in this wiki operate on a single input set: [Subset](subset.md), [Permutations Unique](permutations-unique.md), [Combination Sum](pruning-combination-sum.md), [Generate Parentheses](generate-parentheses-backtracking.md), [Word Search](word-search-grid-backtracking.md), [Palindrome Partitioning](palindrome-partitioning.md). Each builds an answer from one source.
+
+This problem has **two**: `students` and `mentors` that must be paired. That forces the **sequential-vs-searched asymmetry** described above — one side advances by recursion depth, the other is searched via `used[]`. This asymmetry doesn't exist in single-sequence permutations because there's only one side to walk.
+
+**2. The output is a scalar, not a collection.**
+
+| Problem | Return value |
+| :--- | :--- |
+| Subset | `number[][]` (all subsets) |
+| Permutations Unique | `number[][]` (all permutations) |
+| Combination Sum | `number[][]` (all combinations) |
+| Generate Parentheses | `string[]` (all strings) |
+| **Max Compatibility** | **`number` (single max score)** |
+
+Other problems **enumerate** valid configurations and collect them. This one **optimizes** — every leaf gets scored, and only the best is kept. The DFS isn't producing the answer, it's *evaluating candidates*.
+
+**3. Score accumulates along the path.**
+
+In Permutations Unique, each step adds an element to `path`. The path *is* the answer. In Max Compatibility, each step adds a per-pair score from the precomputed matrix to a running total. The path is only the *vehicle* for computing a score that's then compared against `maxScore`:
+
+```
+leaf_score = score[0][π(0)] + score[1][π(1)] + ... + score[m-1][π(m-1)]
+```
+
+That's why the signature is `dfs(studentIdx, currentScore)` instead of `dfs(path)`. The running accumulator replaces the path as the load-bearing parameter.
+
+**Side-by-side with Permutations Unique:**
+
+| Aspect | Permutations Unique | Max Compatibility |
+| :--- | :--- | :--- |
+| Input | One array `nums` | Two arrays `students`, `mentors` |
+| What we enumerate | All distinct orderings of `nums` | All bijections from students to mentors |
+| Bookkeeping | freq map (count of each number left) | `used[]` (which mentors taken) |
+| At leaf | `res.push([...path])` | `maxScore = max(maxScore, currentScore)` |
+| Return | `number[][]` (all permutations) | `number` (single best score) |
+
+The shape is identical — what changes is **why** you reach the leaf and **what** you do when you get there.
+
+**The diagnostic for recognizing this family.** Whenever you see a backtracking-looking problem, ask:
+
+1. **One input or two?** → Two means matching/assignment angle.
+2. **Enumerate or optimize?** → Optimize means running accumulator + single scalar answer.
+3. **Per-step contribution?** → If each step adds to a score, carry it through the recursion.
+
+For Max Compatibility: **two, optimize, yes**. That triple is the fingerprint of "assignment-style backtracking" and distinguishes it from every other backtracking problem in this wiki.
+
+**Where this problem sits in the bigger picture.** Max Compatibility is a **permutation problem scored to become an optimization problem**. The DFS enumerates configurations like permutations, but the goal is a single number like DP. For larger `m` (say, `m > 12`), brute backtracking blows up and the canonical solution is **bitmask DP** — same problem, memoized on the set of used mentors. So this problem is the small-`m` bridge between the [Backtracking Wiki](backtracking-wiki.md) and the [Dynamic Programming Wiki](dynamic-programming-wiki.md).
+
 ### Solution
 
 ```typescript

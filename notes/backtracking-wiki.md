@@ -124,6 +124,7 @@ Different backtracking problems share the template but vary in **what counts as 
 | [Word Search](word-search-grid-backtracking.md) | Grid path | Move to one of 4 neighbors | Mark cells visited during recursion, unmark on undo | Grid is the state — mutate the grid itself |
 | [Palindrome Partitioning](palindrome-partitioning.md) | String split | Cut after any position forming a palindrome prefix | Try every possible split point from current position | Combines string slicing with backtracking |
 | [Path Sum II](path-sum-ii.md) | Tree paths | Move to left or right child | Tree DFS with path tracking | Tree structure dictates choices |
+| [Max Compatibility Score Sum](backtracking-maximum-compatibility-score-sum.md) | Assignment / matching | Pick any unused mentor for current student | Two sequences: one sequential (depth), one searched (`used[]`); accumulate score | Output is a scalar (max), not a collection |
 
 ---
 
@@ -221,6 +222,29 @@ Use when: the state IS the grid/tree, and you explore by movement. Mark visited 
 
 ---
 
+**"Match X to Y one-to-one, maximize/minimize a sum"** → **Assignment pattern (two sequences + running accumulator)**
+
+```typescript
+function dfs(i: number, currentScore: number) {
+  if (i === m) { best = Math.max(best, currentScore); return; }
+  for (let j = 0; j < m; j++) {
+    if (used[j]) continue;
+    used[j] = true;
+    dfs(i + 1, currentScore + score[i][j]);
+    used[j] = false;
+  }
+}
+```
+
+Use when: two parallel inputs need to be paired one-to-one, and the goal is a single optimum rather than a list of pairings. Key features that distinguish this from regular Permutations:
+- **Two inputs** instead of one — one side iterates by recursion depth (no state), the other is searched (`used[]`).
+- **Scalar output** (max/min) instead of a collection — leaf updates `best` instead of pushing a path.
+- **Score accumulates** along the path via a parameter — the path itself isn't the answer.
+
+Three-question diagnostic: *one input or two? enumerate or optimize? per-step score contribution?* "Two / optimize / yes" is the fingerprint of an assignment problem. Brute backtracking works for small `m` (~≤ 10); larger `m` needs bitmask DP on the set of used items.
+
+---
+
 ### Common Pitfalls
 
 1. **Forgetting to copy on record** — `res.push(path)` instead of `res.push([...path])` → all results end up pointing to the same (mutated, eventually empty) array.
@@ -244,3 +268,4 @@ Use when: the state IS the grid/tree, and you explore by movement. Mark visited 
 - [Word Search](word-search-grid-backtracking.md) — grid backtracking
 - [Palindrome Partitioning](palindrome-partitioning.md) — string-cut backtracking
 - [Path Sum II](path-sum-ii.md) — tree-path backtracking
+- [Max Compatibility Score Sum](backtracking-maximum-compatibility-score-sum.md) — assignment-style backtracking (two sequences, optimize a scalar)
