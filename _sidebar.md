@@ -48,6 +48,7 @@
   * [Min Stack](notes/min-stack.md)
   * [Daily Temperatures](notes/daily-temperatures.md)
   * [Monotonic Stack - Remove k digits](notes/monotonic-stack-remove-k-digits.md)
+  * [Monotonic Stack - 132 Pattern](notes/monotonic-stack-132-pattern.md)
   * [Monotonic Queue - Sliding Window Max](notes/monotonic-queue-stack-sliding-window-maximum.md)
   * [Monotonic Deque - Disk Space Analysis](notes/monotonic-deque-disk-space-analysis.md)
   * [Expression Evaluation - Calculator](notes/expression-evaluation-basic-calculator.md)
