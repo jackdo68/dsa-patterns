@@ -129,6 +129,9 @@
   * [LRU Cache](notes/lru-cache.md)
   * [Fenwick Tree - Binary Index Tree](notes/fenwick-tree-binary-index-tree.md)
 
+* Design
+  * [Exam Room](notes/design-exam-room.md)
+
 * Sorting
   * [Merge Sort](notes/merge-sort.md)
   * [Sort List](notes/sort-list.md)
