@@ -109,6 +109,7 @@
   * [Best Time to Buy and Sell Stock](notes/best-time-to-buy-and-sell-stock.md)
   * [Best Time to Buy and Sell Stock II](notes/best-time-to-buy-and-sell-stock-ii.md)
   * [Candy](notes/candy.md)
+  * [Apply Operations to Make All Elements Zero](notes/greedy-apply-operations-make-array-zero.md)
 
 * Dynamic Programming
   * [Climbing Stairs (1D DP)](notes/climbing-stairs-1d-dp.md)
