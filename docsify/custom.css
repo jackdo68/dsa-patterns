@@ -28,6 +28,27 @@ body {
 .sidebar {
   background-color: var(--base02) !important;
   border-right: 1px solid var(--base01);
+  overflow-y: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--base01) var(--base02); /* Firefox */
+}
+
+/* Always-visible sidebar scrollbar (overrides macOS overlay hiding) */
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: var(--base02);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--base01);
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--base00);
 }
 
 .sidebar ul li a {

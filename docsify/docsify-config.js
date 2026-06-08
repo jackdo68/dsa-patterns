@@ -127,6 +127,19 @@ window.$docsify = {
     crossChapter: true
   },
   plugins: [
+    // Scroll the active sidebar link into view on every page change
+    function(hook) {
+      hook.doneEach(function() {
+        // Defer until Docsify has applied the .active class to the sidebar
+        setTimeout(function() {
+          const actives = document.querySelectorAll('.sidebar li.active');
+          const active = actives[actives.length - 1]; // deepest (leaf) match
+          if (active) {
+            active.scrollIntoView({ block: 'center', inline: 'nearest' });
+          }
+        }, 0);
+      });
+    },
     // Random button plugin
     function(hook) {
       hook.ready(function() {
