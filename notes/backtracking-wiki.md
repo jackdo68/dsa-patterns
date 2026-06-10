@@ -117,14 +117,14 @@ Different backtracking problems share the template but vary in **what counts as 
 
 | Problem | Type | Choice at each step | Key mechanic | Note |
 |---------|------|---------------------|--------------|------|
-| [Subsets](subset.md) | Power set | Include or exclude current element | Binary decision tree of depth n | Order doesn't matter; every state is a valid result |
-| [Permutations](permutations-unique.md) | Ordering | Pick any unused element next | `used[]` boolean array to mark in-progress picks | Order matters; only complete-length states are results |
-| [Combination Sum](pruning-combination-sum.md) | Combinations with reuse | Pick any candidate `>= start` index | Pass `start` to prevent reordering; reuse same index | Unbounded — same number can repeat |
-| [Generate Parentheses](generate-parentheses-backtracking.md) | Constrained sequence | Append `(` or `)` | Track open/close counts; constraint prunes branches early | Pruning is the whole game |
-| [Word Search](word-search-grid-backtracking.md) | Grid path | Move to one of 4 neighbors | Mark cells visited during recursion, unmark on undo | Grid is the state — mutate the grid itself |
-| [Palindrome Partitioning](palindrome-partitioning.md) | String split | Cut after any position forming a palindrome prefix | Try every possible split point from current position | Combines string slicing with backtracking |
-| [Path Sum II](path-sum-ii.md) | Tree paths | Move to left or right child | Tree DFS with path tracking | Tree structure dictates choices |
-| [Max Compatibility Score Sum](backtracking-maximum-compatibility-score-sum.md) | Assignment / matching | Pick any unused mentor for current student | Two sequences: one sequential (depth), one searched (`used[]`); accumulate score | Output is a scalar (max), not a collection |
+| [Subsets](notes/subset.md) | Power set | Include or exclude current element | Binary decision tree of depth n | Order doesn't matter; every state is a valid result |
+| [Permutations](notes/permutations-unique.md) | Ordering | Pick any unused element next | `used[]` boolean array to mark in-progress picks | Order matters; only complete-length states are results |
+| [Combination Sum](notes/pruning-combination-sum.md) | Combinations with reuse | Pick any candidate `>= start` index | Pass `start` to prevent reordering; reuse same index | Unbounded — same number can repeat |
+| [Generate Parentheses](notes/generate-parentheses-backtracking.md) | Constrained sequence | Append `(` or `)` | Track open/close counts; constraint prunes branches early | Pruning is the whole game |
+| [Word Search](notes/word-search-grid-backtracking.md) | Grid path | Move to one of 4 neighbors | Mark cells visited during recursion, unmark on undo | Grid is the state — mutate the grid itself |
+| [Palindrome Partitioning](notes/palindrome-partitioning.md) | String split | Cut after any position forming a palindrome prefix | Try every possible split point from current position | Combines string slicing with backtracking |
+| [Path Sum II](notes/path-sum-ii.md) | Tree paths | Move to left or right child | Tree DFS with path tracking | Tree structure dictates choices |
+| [Max Compatibility Score Sum](notes/backtracking-maximum-compatibility-score-sum.md) | Assignment / matching | Pick any unused mentor for current student | Two sequences: one sequential (depth), one searched (`used[]`); accumulate score | Output is a scalar (max), not a collection |
 
 ---
 
@@ -261,11 +261,11 @@ Three-question diagnostic: *one input or two? enumerate or optimize? per-step sc
 
 ### See Also
 
-- [Subset](subset.md) — power set, include/exclude binary tree
-- [Permutations Unique](permutations-unique.md) — used-array with duplicate skipping
-- [Pruning - Combination Sum](pruning-combination-sum.md) — start-index pattern, unbounded
-- [Generate Parentheses](generate-parentheses-backtracking.md) — constraint-driven pruning
-- [Word Search](word-search-grid-backtracking.md) — grid backtracking
-- [Palindrome Partitioning](palindrome-partitioning.md) — string-cut backtracking
-- [Path Sum II](path-sum-ii.md) — tree-path backtracking
-- [Max Compatibility Score Sum](backtracking-maximum-compatibility-score-sum.md) — assignment-style backtracking (two sequences, optimize a scalar)
+- [Subset](notes/subset.md) — power set, include/exclude binary tree
+- [Permutations Unique](notes/permutations-unique.md) — used-array with duplicate skipping
+- [Pruning - Combination Sum](notes/pruning-combination-sum.md) — start-index pattern, unbounded
+- [Generate Parentheses](notes/generate-parentheses-backtracking.md) — constraint-driven pruning
+- [Word Search](notes/word-search-grid-backtracking.md) — grid backtracking
+- [Palindrome Partitioning](notes/palindrome-partitioning.md) — string-cut backtracking
+- [Path Sum II](notes/path-sum-ii.md) — tree-path backtracking
+- [Max Compatibility Score Sum](notes/backtracking-maximum-compatibility-score-sum.md) — assignment-style backtracking (two sequences, optimize a scalar)
