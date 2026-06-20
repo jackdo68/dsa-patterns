@@ -1,0 +1,96 @@
+---
+// Renders Topic / Difficulty / Interview-Frequency as colored pills.
+// Replaces the Docsify regex-over-HTML plugin with a real component fed
+// from frontmatter. Colors mirror docsify/docsify-config.js.
+interface Props {
+	topic?: string;
+	difficulty?: 'Easy' | 'Medium' | 'Hard';
+	frequency?: string;
+}
+const { topic, difficulty, frequency } = Astro.props;
+
+const topicColors: Record<string, string> = {
+	array: '#dc322f',
+	matrix: '#c4716c',
+	string: '#cb4b16',
+	'linked list': '#b58900',
+	tree: '#859900',
+	graph: '#2aa198',
+	'dynamic programming': '#268bd2',
+	dp: '#268bd2',
+	greedy: '#6c71c4',
+	backtracking: '#d33682',
+	sorting: '#dc322f',
+	'binary search': '#cb4b16',
+	stack: '#b58900',
+	queue: '#859900',
+	heap: '#2aa198',
+	'hash map': '#268bd2',
+	'two pointers': '#dc322f',
+	'sliding window': '#cb4b16',
+	dfs: '#859900',
+	bfs: '#2aa198',
+	trie: '#859900',
+	'union find': '#2aa198',
+	design: '#839496',
+};
+const difficultyColors: Record<string, string> = {
+	Easy: '#859900',
+	Medium: '#b58900',
+	Hard: '#dc322f',
+};
+const frequencyColors: Record<string, string> = {
+	'very low': '#586e75',
+	low: '#839496',
+	medium: '#b58900',
+	high: '#cb4b16',
+	'very high': '#dc322f',
+};
+
+const topicList = topic ? topic.split(',').map((t) => t.trim()) : [];
+const pill = (text: string, color: string) =>
+	`<span class="dsa-badge" style="background-color:${color}">${text}</span>`;
+---
+
+{
+	(topic || difficulty || frequency) && (
+		<div class="dsa-badges">
+			{topicList.map((t) => (
+				<span class="dsa-badge" style={`background-color:${topicColors[t.toLowerCase()] ?? '#839496'}`}>
+					{t}
+				</span>
+			))}
+			{difficulty && (
+				<span class="dsa-badge" style={`background-color:${difficultyColors[difficulty]}`}>
+					{difficulty}
+				</span>
+			)}
+			{frequency && (
+				<span
+					class="dsa-badge"
+					style={`background-color:${frequencyColors[frequency.toLowerCase()] ?? '#839496'}`}
+				>
+					{frequency}
+				</span>
+			)}
+		</div>
+	)
+}
+
+<style>
+	.dsa-badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: 0.4rem 0 0.2rem;
+	}
+	.dsa-badge {
+		display: inline-block;
+		color: #fdf6e3;
+		padding: 4px 12px;
+		border-radius: 12px;
+		font-size: 0.8rem;
+		font-weight: 600;
+		line-height: 1.4;
+	}
+</style>

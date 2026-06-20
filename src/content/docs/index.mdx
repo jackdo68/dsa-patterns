@@ -1,0 +1,36 @@
+---
+title: DSA Patterns
+description: A pattern-based approach to mastering Data Structures & Algorithms for technical interviews.
+template: splash
+hero:
+  tagline: A pattern-based study system for technical interviews — 92 algorithm patterns across 15 categories, all in TypeScript.
+  actions:
+    - text: Start with Two Sum
+      link: /dsa-patterns/two-sum/
+      icon: right-arrow
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+<CardGrid>
+	<LinkCard
+		title="Arrays & Strings"
+		href="/dsa-patterns/two-sum/"
+		description="Two pointers, sliding window, prefix sum, Kadane's."
+	/>
+	<LinkCard
+		title="Trees & Graphs"
+		href="/dsa-patterns/dfs-preorder-traversal-same-tree/"
+		description="DFS / BFS traversals, islands, shortest paths, topological sort."
+	/>
+	<LinkCard
+		title="Dynamic Programming"
+		href="/dsa-patterns/climbing-stairs-1d-dp/"
+		description="Knapsack, LCS, LIS, grid DP, interval DP."
+	/>
+	<LinkCard
+		title="Advanced Structures"
+		href="/dsa-patterns/lru-cache/"
+		description="Trie, LRU Cache, Fenwick Tree."
+	/>
+</CardGrid>

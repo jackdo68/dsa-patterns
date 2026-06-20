@@ -1,11 +1,9 @@
-# Rate Limiter
-
-Topic: sliding window, queue, system design
-
-Difficulty: Medium
-
-Interview Frequency: Medium
-
+---
+title: "Rate Limiter"
+topic: "sliding window, queue, system design"
+difficulty: "Medium"
+frequency: "Medium"
+---
 ### Question
 
 Design a `RateLimiter` class that allows at most `maxRequests` requests per `windowMs` milliseconds. Each call to `allowRequest()` returns `true` if the request is permitted, `false` if the limit has been reached.
@@ -102,6 +100,6 @@ class RateLimiter {
 
 ### Related Patterns
 
-- [Fixed-size sliding window (Find All Anagrams)](fixed-size-find-all-anagrams-in-a-string.md) — same "window over a sequence" pattern, applied to substring matching
-- [Variable-size sliding window (Longest Substring)](variable-size-longest-substring-without-repeatin.md) — when the window size depends on content, not a fixed bound
-- [Monotonic Deque](monotonic-deque-disk-space-analysis.md) — useful when you also need min/max queries over the window
+- [Fixed-size sliding window (Find All Anagrams)](/dsa-patterns/fixed-size-find-all-anagrams-in-a-string/) — same "window over a sequence" pattern, applied to substring matching
+- [Variable-size sliding window (Longest Substring)](/dsa-patterns/variable-size-longest-substring-without-repeatin/) — when the window size depends on content, not a fixed bound
+- [Monotonic Deque](/dsa-patterns/monotonic-deque-disk-space-analysis/) — useful when you also need min/max queries over the window

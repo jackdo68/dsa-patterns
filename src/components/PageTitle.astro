@@ -1,0 +1,17 @@
+---
+// Override of Starlight's PageTitle: renders the <h1> exactly as Starlight does,
+// then drops the DSA metadata badges right beneath it (read from frontmatter).
+import Badges from './Badges.astro';
+
+const { entry } = Astro.locals.starlightRoute;
+const { title } = entry.data;
+// Custom fields added via docsSchema extend in content.config.ts
+const { topic, difficulty, frequency } = entry.data as {
+	topic?: string;
+	difficulty?: 'Easy' | 'Medium' | 'Hard';
+	frequency?: string;
+};
+---
+
+<h1 id="_top">{title}</h1>
+<Badges topic={topic} difficulty={difficulty} frequency={frequency} />
