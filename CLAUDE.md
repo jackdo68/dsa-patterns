@@ -1,22 +1,28 @@
 # DSA Patterns Codebase
 
-A pattern-based Data Structures & Algorithms study system for technical interviews. Contains **92 algorithm patterns** across 15 categories, all implemented in **TypeScript**.
+A pattern-based Data Structures & Algorithms study system for technical interviews. Over 100 pattern and concept notes across 15 categories, all implemented in **TypeScript**. The site is built with **Astro + Starlight** and deployed to GitHub Pages.
 
 ## Structure
 
 ```
 /
-├── guides/                       # Study guides (start here)
-│   ├── quick-reference.md            # Cheat sheet: triggers, all patterns, templates
-│   └── pattern-guide.md              # Pattern families, combinations, when NOT to use
-├── notes/                        # 92 pattern markdown files (main content)
-├── docsify/                      # Docsify configuration files
-│   ├── docsify-config.js             # Site config with tag colors
-│   ├── custom.css                    # Custom styling
-│   └── favicon.svg                   # Site favicon
-├── _sidebar.md                   # Navigation hierarchy
-└── index.html                    # Docsify entry point
+├── astro.config.mjs              # Astro/Starlight config (title, base, mermaid, sidebar)
+├── src/
+│   ├── content/docs/             # ALL site content (.md/.mdx) — main content lives here
+│   │   └── index.mdx                 # Splash homepage
+│   ├── content.config.ts         # Starlight schema, extended with topic/difficulty/frequency
+│   ├── sidebar.js                # Sidebar nav hierarchy (imported by astro.config.mjs)
+│   ├── components/
+│   │   ├── Badges.astro              # Renders Topic/Difficulty/Frequency pills
+│   │   ├── PageTitle.astro           # Override: title + badges under it
+│   │   └── Head.astro                # Mermaid click-to-zoom lightbox
+│   └── styles/theme.css          # Theme (fonts, colors, home-cards)
+├── public/favicon.svg            # Binary-tree site favicon
+├── .github/workflows/deploy.yml  # GitHub Pages deploy (Astro build via withastro/action)
+└── playground/                   # Scratchpad for working solutions (not part of the site)
 ```
+
+Base path is `/dsa-patterns` (served at `https://jackdo68.github.io/dsa-patterns`).
 
 ## Pattern Categories
 
@@ -38,15 +44,18 @@ A pattern-based Data Structures & Algorithms study system for technical intervie
 
 ## File Conventions
 
-**Pattern files** in `notes/`:
+**Pattern files** in `src/content/docs/`:
 - Naming: `technique-name-problem.md` (e.g., `dfs-number-of-islands.md`, `0-1-knapsack-target-sum.md`)
-- All lowercase with hyphens
+- All lowercase with hyphens. The filename is the page slug (e.g. `/dsa-patterns/dfs-number-of-islands/`).
 
-**Markdown structure**:
-```markdown
-# Pattern Title
-
-Tags: array, two-pointer, medium
+**Markdown structure** — metadata lives in YAML frontmatter (rendered as colored badges under the title by `PageTitle.astro`):
+````markdown
+---
+title: "Pattern Title"
+topic: "array, hash map"
+difficulty: "Easy"      # Easy | Medium | Hard
+frequency: "High"
+---
 
 ### Question
 [Problem statement]
@@ -55,33 +64,37 @@ Tags: array, two-pointer, medium
 [Approach explanation]
 
 ### Implementation
-```jsx
+```typescript
 // TypeScript solution
 ```
-```
+````
+
+**Internal links** use site routes, not file paths: `[Two Sum](/dsa-patterns/two-sum/)`.
 
 ## Running Locally
 
 ```bash
 npm install
-npm start  # Serves on http://localhost:3000
+npm run dev      # Dev server on http://localhost:4321/dsa-patterns
+npm run build    # Static build into dist/
+npm run preview  # Preview the production build
 ```
 
-Uses Docsify for documentation site with search and tag filtering.
+Starlight provides search (Pagefind), code highlighting (Expressive Code), and prev/next pagination out of the box. Mermaid diagrams are supported (`astro-mermaid`) with a click-to-zoom lightbox.
 
 ## Key Files for Quick Reference
 
-- `guides/quick-reference.md` - All 92 patterns with time/space complexity, triggers, templates
-- `guides/pattern-guide.md` - Pattern families, combinations, when NOT to use
-- `_sidebar.md` - Full navigation structure
-- `docsify/docsify-config.js` - Tag color definitions (25 tags)
+- `src/content/docs/quick-reference.md` - All patterns with time/space complexity, triggers, templates
+- `src/content/docs/pattern-guide.md` - Pattern families, combinations, when NOT to use
+- `src/sidebar.js` - Full navigation structure (edit to reorder/rename nav)
+- `src/components/Badges.astro` - Topic/difficulty/frequency color definitions
 
 ## When Adding New Patterns
 
-1. Create markdown file in `notes/` following naming convention
-2. Use the standard template (Question → Ideas → Implementation)
-3. Add entry to `_sidebar.md` under appropriate category
-4. Include Tags line with relevant keywords
+1. Create a markdown file in `src/content/docs/` following the naming convention
+2. Add frontmatter (`title`, and optionally `topic` / `difficulty` / `frequency`)
+3. Use the standard template (Question → Ideas → Implementation)
+4. Add an entry to the appropriate category in `src/sidebar.js` (`{ label, slug }`)
 5. Add time/space complexity in the solution
 
 ## Ideas Section Writing Convention

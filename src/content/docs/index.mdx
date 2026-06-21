@@ -10,27 +10,29 @@ hero:
       icon: right-arrow
 ---
 
-import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+import { Card, CardGrid } from '@astrojs/starlight/components';
 
+<div class="home-cards">
 <CardGrid>
-	<LinkCard
-		title="Arrays & Strings"
-		href="/dsa-patterns/two-sum/"
-		description="Two pointers, sliding window, prefix sum, Kadane's."
-	/>
-	<LinkCard
-		title="Trees & Graphs"
-		href="/dsa-patterns/dfs-preorder-traversal-same-tree/"
-		description="DFS / BFS traversals, islands, shortest paths, topological sort."
-	/>
-	<LinkCard
-		title="Dynamic Programming"
-		href="/dsa-patterns/climbing-stairs-1d-dp/"
-		description="Knapsack, LCS, LIS, grid DP, interval DP."
-	/>
-	<LinkCard
-		title="Advanced Structures"
-		href="/dsa-patterns/lru-cache/"
-		description="Trie, LRU Cache, Fenwick Tree."
-	/>
+	<Card title="Arrays & Strings" icon="seti:json">
+		Two pointers, sliding window, prefix sum, Kadane's.
+
+		[Start with Two Sum →](/dsa-patterns/two-sum/)
+	</Card>
+	<Card title="Trees & Graphs" icon="seti:graphql">
+		DFS / BFS traversals, islands, shortest paths, topological sort.
+
+		[Start with Same Tree →](/dsa-patterns/dfs-preorder-traversal-same-tree/)
+	</Card>
+	<Card title="Dynamic Programming" icon="seti:powershell">
+		Knapsack, LCS, LIS, grid DP, interval DP.
+
+		[Start with Climbing Stairs →](/dsa-patterns/climbing-stairs-1d-dp/)
+	</Card>
+	<Card title="Advanced Structures" icon="seti:db">
+		Trie, LRU Cache, Fenwick Tree.
+
+		[Start with LRU Cache →](/dsa-patterns/lru-cache/)
+	</Card>
 </CardGrid>
+</div>
