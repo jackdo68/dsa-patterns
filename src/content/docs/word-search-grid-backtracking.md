@@ -50,30 +50,30 @@ Use **DFS backtracking** from each cell:
 
 **Approach 1: In-place marking (Optimal)**
 
-```tsx
-function exist(board: string[][], word: string): boolean {
-    const rows = board.length;
-    const cols = board[0].length;
-    const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+```csharp
+public bool Exist(char[][] board, string word) {
+    int rows = board.Length;
+    int cols = board[0].Length;
+    int[][] directions = { new[] { 0, 1 }, new[] { 0, -1 }, new[] { 1, 0 }, new[] { -1, 0 } };
 
-    function backtrack(row: number, col: number, index: number): boolean {
+    bool Backtrack(int row, int col, int index) {
         // Found the word
-        if (index === word.length) return true;
+        if (index == word.Length) return true;
 
         // Out of bounds or wrong character
         if (row < 0 || row >= rows ||
             col < 0 || col >= cols ||
-            board[row][col] !== word[index]) {
+            board[row][col] != word[index]) {
             return false;
         }
 
         // Mark as visited by modifying the cell
-        const temp = board[row][col];
+        char temp = board[row][col];
         board[row][col] = '#';
 
         // Explore all 4 directions
-        for (const [dr, dc] of directions) {
-            if (backtrack(row + dr, col + dc, index + 1)) {
+        foreach (var dir in directions) {
+            if (Backtrack(row + dir[0], col + dir[1], index + 1)) {
                 return true;
             }
         }
@@ -84,9 +84,9 @@ function exist(board: string[][], word: string): boolean {
     }
 
     // Try starting from each cell
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < cols; j++) {
-            if (backtrack(i, j, 0)) return true;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (Backtrack(i, j, 0)) return true;
         }
     }
 
@@ -96,39 +96,37 @@ function exist(board: string[][], word: string): boolean {
 
 **Approach 2: Using Set for visited**
 
-```tsx
-function exist(board: string[][], word: string): boolean {
-    const rows = board.length;
-    const cols = board[0].length;
-    const visited = new Set<string>();
+```csharp
+public bool Exist(char[][] board, string word) {
+    int rows = board.Length;
+    int cols = board[0].Length;
+    var visited = new HashSet<(int, int)>();
 
-    function backtrack(row: number, col: number, index: number): boolean {
-        if (index === word.length) return true;
-
-        const key = `${row},${col}`;
+    bool Backtrack(int row, int col, int index) {
+        if (index == word.Length) return true;
 
         if (row < 0 || row >= rows ||
             col < 0 || col >= cols ||
-            visited.has(key) ||
-            board[row][col] !== word[index]) {
+            visited.Contains((row, col)) ||
+            board[row][col] != word[index]) {
             return false;
         }
 
-        visited.add(key);
+        visited.Add((row, col));
 
-        const found = backtrack(row + 1, col, index + 1) ||
-                      backtrack(row - 1, col, index + 1) ||
-                      backtrack(row, col + 1, index + 1) ||
-                      backtrack(row, col - 1, index + 1);
+        bool found = Backtrack(row + 1, col, index + 1) ||
+                     Backtrack(row - 1, col, index + 1) ||
+                     Backtrack(row, col + 1, index + 1) ||
+                     Backtrack(row, col - 1, index + 1);
 
-        visited.delete(key);  // Backtrack
+        visited.Remove((row, col));  // Backtrack
 
         return found;
     }
 
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < cols; j++) {
-            if (backtrack(i, j, 0)) return true;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (Backtrack(i, j, 0)) return true;
         }
     }
 
@@ -144,71 +142,72 @@ function exist(board: string[][], word: string): boolean {
 
 **1. Early termination with character count:**
 
-```tsx
-function exist(board: string[][], word: string): boolean {
+```csharp
+public bool Exist(char[][] board, string word) {
     // Count characters in board
-    const boardCount = new Map<string, number>();
-    for (const row of board) {
-        for (const char of row) {
-            boardCount.set(char, (boardCount.get(char) || 0) + 1);
+    var boardCount = new Dictionary<char, int>();
+    foreach (var row in board) {
+        foreach (char c in row) {
+            boardCount[c] = boardCount.GetValueOrDefault(c, 0) + 1;
         }
     }
 
     // Count characters in word
-    const wordCount = new Map<string, number>();
-    for (const char of word) {
-        wordCount.set(char, (wordCount.get(char) || 0) + 1);
+    var wordCount = new Dictionary<char, int>();
+    foreach (char c in word) {
+        wordCount[c] = wordCount.GetValueOrDefault(c, 0) + 1;
     }
 
     // Check if board has enough of each character
-    for (const [char, count] of wordCount) {
-        if ((boardCount.get(char) || 0) < count) {
+    foreach (var (c, count) in wordCount) {
+        if (boardCount.GetValueOrDefault(c, 0) < count) {
             return false;
         }
     }
 
-    // Reverse word if last char is less frequent (start from rarer char)
-    const firstCount = boardCount.get(word[0]) || 0;
-    const lastCount = boardCount.get(word[word.length - 1]) || 0;
+    // Reverse word if last char is less frequent (start from the rarer char)
+    int firstCount = boardCount.GetValueOrDefault(word[0], 0);
+    int lastCount = boardCount.GetValueOrDefault(word[^1], 0);
     if (firstCount > lastCount) {
-        word = word.split('').reverse().join('');
+        word = new string(word.Reverse().ToArray());
     }
 
     // ... rest of backtracking
+    return false;
 }
 ```
 
 ### Pattern: Grid Backtracking
 
-```tsx
-function gridBacktrack(grid, target) {
-    const rows = grid.length, cols = grid[0].length;
-    const directions = [[0,1], [0,-1], [1,0], [-1,0]];
+```csharp
+bool GridBacktrack(char[][] grid, string target) {
+    int rows = grid.Length, cols = grid[0].Length;
+    int[][] directions = { new[] {0,1}, new[] {0,-1}, new[] {1,0}, new[] {-1,0} };
 
-    function dfs(row, col, index) {
+    bool Dfs(int row, int col, int index) {
         // Base: found target
-        if (index === target.length) return true;
+        if (index == target.Length) return true;
 
         // Bounds check, visited check, match check
         if (outOfBounds || visited || !matches) return false;
 
         // Mark visited
-        mark(row, col);
+        Mark(row, col);
 
         // Try all directions
-        for (const [dr, dc] of directions) {
-            if (dfs(row + dr, col + dc, index + 1)) return true;
+        foreach (var dir in directions) {
+            if (Dfs(row + dir[0], col + dir[1], index + 1)) return true;
         }
 
         // Backtrack
-        unmark(row, col);
+        Unmark(row, col);
         return false;
     }
 
     // Try each starting cell
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < cols; j++) {
-            if (dfs(i, j, 0)) return true;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (Dfs(i, j, 0)) return true;
         }
     }
     return false;

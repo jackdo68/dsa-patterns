@@ -14,11 +14,11 @@ frequency: "Medium"
 
 ### Solution
 
-```typescript
-function maxDepth(root: TreeNode | null): number {
-    if (root === null) return 0;
-    const maxLeft = maxDepth(root.left);
-    const maxRight = maxDepth(root.right);
-    return Math.max(maxLeft, maxRight) + 1
-};
+```csharp
+public int MaxDepth(TreeNode? root) {
+    if (root is null) return 0;
+    int maxLeft = MaxDepth(root.left);
+    int maxRight = MaxDepth(root.right);
+    return Math.Max(maxLeft, maxRight) + 1;
+}
 ```

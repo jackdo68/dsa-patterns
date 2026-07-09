@@ -50,40 +50,40 @@ Output: [[15,13,2,5],
 
 **Approach 1: Transpose + Reverse (Clearest)**
 
-```tsx
-function rotate(matrix: number[][]): void {
-    const n = matrix.length;
+```csharp
+public void Rotate(int[][] matrix) {
+    int n = matrix.Length;
 
     // Step 1: Transpose (swap matrix[i][j] with matrix[j][i])
-    for (let i = 0; i < n; i++) {
-        for (let j = i + 1; j < n; j++) {
-            [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            (matrix[i][j], matrix[j][i]) = (matrix[j][i], matrix[i][j]);
         }
     }
 
     // Step 2: Reverse each row
-    for (let i = 0; i < n; i++) {
-        matrix[i].reverse();
+    for (int i = 0; i < n; i++) {
+        Array.Reverse(matrix[i]);
     }
 }
 ```
 
 **Approach 2: Four-way Swap (Layer by Layer)**
 
-```tsx
-function rotate(matrix: number[][]): void {
-    const n = matrix.length;
+```csharp
+public void Rotate(int[][] matrix) {
+    int n = matrix.Length;
 
     // Process each layer from outside to inside
-    for (let layer = 0; layer < Math.floor(n / 2); layer++) {
-        const first = layer;
-        const last = n - 1 - layer;
+    for (int layer = 0; layer < n / 2; layer++) {
+        int first = layer;
+        int last = n - 1 - layer;
 
-        for (let i = first; i < last; i++) {
-            const offset = i - first;
+        for (int i = first; i < last; i++) {
+            int offset = i - first;
 
             // Save top
-            const top = matrix[first][i];
+            int top = matrix[first][i];
 
             // Left -> Top
             matrix[first][i] = matrix[last - offset][first];
@@ -131,47 +131,46 @@ Position mapping (90° clockwise):
 
 ### All Rotation Variants
 
-```tsx
+```csharp
 // 90° clockwise: transpose then reverse rows
-function rotate90CW(matrix: number[][]): void {
-    transpose(matrix);
-    reverseRows(matrix);
+void Rotate90CW(int[][] matrix) {
+    Transpose(matrix);
+    ReverseRows(matrix);
 }
 
 // 90° counter-clockwise: transpose then reverse columns
-function rotate90CCW(matrix: number[][]): void {
-    transpose(matrix);
-    reverseCols(matrix);
+void Rotate90CCW(int[][] matrix) {
+    Transpose(matrix);
+    ReverseCols(matrix);
 }
 
 // 180°: reverse rows then reverse columns (or rotate 90° twice)
-function rotate180(matrix: number[][]): void {
-    reverseRows(matrix);
-    reverseCols(matrix);
+void Rotate180(int[][] matrix) {
+    ReverseRows(matrix);
+    ReverseCols(matrix);
 }
 
 // Helper functions
-function transpose(matrix: number[][]): void {
-    const n = matrix.length;
-    for (let i = 0; i < n; i++) {
-        for (let j = i + 1; j < n; j++) {
-            [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];
+void Transpose(int[][] matrix) {
+    int n = matrix.Length;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            (matrix[i][j], matrix[j][i]) = (matrix[j][i], matrix[i][j]);
         }
     }
 }
 
-function reverseRows(matrix: number[][]): void {
-    for (const row of matrix) {
-        row.reverse();
+void ReverseRows(int[][] matrix) {
+    foreach (var row in matrix) {
+        Array.Reverse(row);
     }
 }
 
-function reverseCols(matrix: number[][]): void {
-    const n = matrix.length;
-    for (let j = 0; j < n; j++) {
-        for (let i = 0; i < Math.floor(n / 2); i++) {
-            [matrix[i][j], matrix[n - 1 - i][j]] =
-            [matrix[n - 1 - i][j], matrix[i][j]];
+void ReverseCols(int[][] matrix) {
+    int n = matrix.Length;
+    for (int j = 0; j < n; j++) {
+        for (int i = 0; i < n / 2; i++) {
+            (matrix[i][j], matrix[n - 1 - i][j]) = (matrix[n - 1 - i][j], matrix[i][j]);
         }
     }
 }

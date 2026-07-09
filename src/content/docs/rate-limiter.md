@@ -8,17 +8,17 @@ frequency: "Medium"
 
 Design a `RateLimiter` class that allows at most `maxRequests` requests per `windowMs` milliseconds. Each call to `allowRequest()` returns `true` if the request is permitted, `false` if the limit has been reached.
 
-```typescript
+```csharp
 class RateLimiter {
-  constructor(maxRequests: number, windowMs: number);
-  allowRequest(): boolean;
+    public RateLimiter(int maxRequests, int windowMs);
+    public bool AllowRequest();
 }
 
 // Example:
-// const limiter = new RateLimiter(5, 60_000); // 5 requests per minute
-// limiter.allowRequest(); // true
+// var limiter = new RateLimiter(5, 60_000); // 5 requests per minute
+// limiter.AllowRequest(); // true
 // ... after 5 calls within 60s ...
-// limiter.allowRequest(); // false
+// limiter.AllowRequest(); // false
 ```
 
 ### Ideas
@@ -53,32 +53,32 @@ Notice the eviction at `t=1150ms` drops the timestamp `100` because it's outside
 
 ### Solution
 
-```typescript
-class RateLimiter {
-  private maxRequests: number;
-  private windowMs: number;
-  private timestamps: number[] = [];
+```csharp
+public class RateLimiter {
+    private readonly int maxRequests;
+    private readonly long windowMs;
+    private readonly Queue<long> timestamps = new();
 
-  constructor(maxRequests: number, windowMs: number) {
-    this.maxRequests = maxRequests;
-    this.windowMs = windowMs;
-  }
-
-  allowRequest(): boolean {
-    const now = Date.now();
-    const cutoff = now - this.windowMs;
-
-    // Evict timestamps outside the window
-    while (this.timestamps.length > 0 && this.timestamps[0] < cutoff) {
-      this.timestamps.shift();
+    public RateLimiter(int maxRequests, long windowMs) {
+        this.maxRequests = maxRequests;
+        this.windowMs = windowMs;
     }
 
-    if (this.timestamps.length < this.maxRequests) {
-      this.timestamps.push(now);
-      return true;
+    public bool AllowRequest() {
+        long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        long cutoff = now - windowMs;
+
+        // Evict timestamps outside the window
+        while (timestamps.Count > 0 && timestamps.Peek() < cutoff) {
+            timestamps.Dequeue();
+        }
+
+        if (timestamps.Count < maxRequests) {
+            timestamps.Enqueue(now);
+            return true;
+        }
+        return false;
     }
-    return false;
-  }
 }
 ```
 

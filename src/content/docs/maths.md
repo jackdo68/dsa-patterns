@@ -41,19 +41,20 @@ Digits collected: `1, 0, 1, 1` (LSB → MSB). Reverse: `1101`. ✓
 
 **Why it works:** the remainder `n % 2` is literally the value of the 1s-place bit. Dividing by 2 right-shifts the number, exposing the next bit as the new 1s-place. Each iteration peels off one bit from the bottom.
 
-```typescript
+```csharp
 // Built-in (preferred)
-const binary = n.toString(2);     // "1101"
+string binary = Convert.ToString(n, 2);   // "1101"
 
 // Manual implementation — useful for non-power-of-2 bases or building intuition
-function toBinary(n: number): string {
-  if (n === 0) return "0";
-  const bits: string[] = [];
-  while (n > 0) {
-    bits.push((n % 2).toString());
-    n = Math.floor(n / 2);
-  }
-  return bits.reverse().join("");
+public string ToBinary(int n) {
+    if (n == 0) return "0";
+    var bits = new List<char>();
+    while (n > 0) {
+        bits.Add((char)('0' + n % 2));
+        n /= 2;
+    }
+    bits.Reverse();
+    return new string(bits.ToArray());
 }
 ```
 
@@ -72,17 +73,17 @@ Trace `1101`:
 
 **Why it works:** at each step you shift the accumulated value left by one bit (multiply by 2), then add the new bit. After processing the rightmost digit, the accumulator equals the sum `bᵢ · 2ⁱ` for all positions `i`. No explicit powers needed — the shifts do the work.
 
-```typescript
+```csharp
 // Built-in (preferred)
-const n = parseInt("1101", 2);    // 13
+int n = Convert.ToInt32("1101", 2);    // 13
 
 // Manual implementation
-function fromBinary(s: string): number {
-  let result = 0;
-  for (const ch of s) {
-    result = result * 2 + (ch === "1" ? 1 : 0);
-  }
-  return result;
+public int FromBinary(string s) {
+    int result = 0;
+    foreach (char ch in s) {
+        result = result * 2 + (ch == '1' ? 1 : 0);
+    }
+    return result;
 }
 ```
 
@@ -99,7 +100,7 @@ This is how problems like [Excel Sheet Column Title / Number](https://leetcode.c
 
 Modulo (`%`) gives you the **remainder** after division. When you divide and have a remainder left over, that remainder is the modulo. Think of this as a “wrap around”, this becomes every useful in some algorithm to stop the numbers become so large, because the result is always smaller than the divisor. Some key characteristics
 
-```typescript
+```
 (a + b) % n = ((a % n) + (b % n)) % n
 (a × b) % n = ((a % n) × (b % n)) % n
 (a - b) % n = ((a % n) - (b % n)) % n
@@ -111,7 +112,7 @@ The **greatest common divisor** of two integers is the largest positive integer 
 
 **Euclidean algorithm** — the formula to remember:
 
-```typescript
+```
 gcd(a, 0) = a
 gcd(a, b) = gcd(b, a % b)   // when b > 0
 ```
@@ -128,18 +129,18 @@ gcd(a, b) = gcd(b, a % b)   // when b > 0
 
 **Implementation:**
 
-```typescript
+```csharp
 // iterative — preferred (O(1) space)
-function gcd(a: number, b: number): number {
-  while (b !== 0) {
-    [a, b] = [b, a % b];
-  }
-  return a;
+public int Gcd(int a, int b) {
+    while (b != 0) {
+        (a, b) = (b, a % b);
+    }
+    return a;
 }
 
 // recursive — equivalent (O(log min(a,b)) stack)
-function gcd(a: number, b: number): number {
-  return b === 0 ? a : gcd(b, a % b);
+public int GcdRecursive(int a, int b) {
+    return b == 0 ? a : GcdRecursive(b, a % b);
 }
 ```
 
@@ -152,7 +153,7 @@ Log represents *"To what power must we raise a base to get a number?”* In othe
 - Many algorithms **split problems in half** (divide and conquer)
 - Binary search, merge sort, binary trees all use this principle
 
-```typescript
+```
 If 2^x = n, then log₂(n) = x
 ```
 
@@ -173,7 +174,7 @@ So a set of `n` elements will have 2 ^ n subsets. See [Subset pattern](/dsa-patt
 
 Some examples of this decision making are binary tree `O(logn)`. And the opposite of time complexity backtracking with `O(2^n)`
 
-```typescript
+```
                    {}
                  /    \
                {1}     {}

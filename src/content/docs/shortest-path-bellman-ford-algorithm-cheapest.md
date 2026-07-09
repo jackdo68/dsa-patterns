@@ -19,30 +19,26 @@ frequency: "Very Low"
 
 ### Solution
 
-```typescript
-  function findCheapestPrice(
-    n: number,
-    flights: number[][],
-    src: number,
-    dst: number,
-    k: number
-  ): number {
-    // initialize the distance to all the nodes to Infinity
-    let dp = Array.from({ length: n }, () => Infinity);
+```csharp
+public int FindCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+    // initialize the distance to all nodes to Infinity
+    int[] dp = new int[n];
+    Array.Fill(dp, int.MaxValue);
     dp[src] = 0;
 
-    for (let i = 0; i <= k; i++) {
-      const temp = [...dp];
-      for (const [source, target, price] of flights) {
-        if (dp[source] !== Infinity) {
-          // compare with the temp[target] here because in
-          // this single loop we may already update the distance to target once
-          temp[target] = Math.min(temp[target], dp[source] + price);
+    for (int i = 0; i <= k; i++) {
+        int[] temp = (int[])dp.Clone();
+        foreach (var flight in flights) {
+            int source = flight[0], target = flight[1], price = flight[2];
+            if (dp[source] != int.MaxValue) {
+                // compare against temp[target] because within this single pass
+                // we may have already updated the distance to target once
+                temp[target] = Math.Min(temp[target], dp[source] + price);
+            }
         }
-      }
-      dp = temp;
+        dp = temp;
     }
 
-    return dp[dst] === Infinity ? -1 : dp[dst];
-  }
+    return dp[dst] == int.MaxValue ? -1 : dp[dst];
+}
 ```

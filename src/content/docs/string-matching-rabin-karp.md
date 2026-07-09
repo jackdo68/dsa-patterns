@@ -24,64 +24,63 @@ The Rabin-Karp algorithm is a string searching algorithm that finds a pattern wi
 
 ### Solution
 
-```typescript
-function rabinKarp(text: string, pattern: string): number[] {
-  const matches: number[] = [];
+```csharp
+public IList<int> RabinKarp(string text, string pattern) {
+    var matches = new List<int>();
 
-  if (pattern.length === 0 || pattern.length > text.length) {
-    return matches;
-  }
+    if (pattern.Length == 0 || pattern.Length > text.Length) {
+        return matches;
+    }
 
-  const base = 256; // Number of characters in ASCII
-  const prime = 101; // A prime number for modulo operation
+    const int base_ = 256; // Number of characters in ASCII
+    const int prime = 101; // A prime number for modulo operation
 
-  let patternHash = 0;
-  let textHash = 0;
-  let h = 1;
+    int patternHash = 0;
+    int textHash = 0;
+    int h = 1;
 
-  const m = pattern.length;
-  const n = text.length;
+    int m = pattern.Length;
+    int n = text.Length;
 
-  // Calculate h = base^(m-1) % prime
-  // This is used for removing the leading digit when sliding window
-  for (let i = 0; i < m - 1; i++) {
-    h = (h * base) % prime;
-  }
+    // Calculate h = base^(m-1) % prime
+    // Used for removing the leading digit when sliding the window
+    for (int i = 0; i < m - 1; i++) {
+        h = (h * base_) % prime;
+    }
 
-  // Calculate initial hash values for pattern and first window of text
-  for (let i = 0; i < m; i++) {
-    patternHash = (base * patternHash + pattern.charCodeAt(i)) % prime;
-    textHash = (base * textHash + text.charCodeAt(i)) % prime;
-  }
+    // Calculate initial hash values for pattern and first window of text
+    for (int i = 0; i < m; i++) {
+        patternHash = (base_ * patternHash + pattern[i]) % prime;
+        textHash = (base_ * textHash + text[i]) % prime;
+    }
 
-  // Slide the pattern over text one character at a time
-  for (let i = 0; i <= n - m; i++) {
-    // If hash values match, check characters one by one
-    if (patternHash === textHash) {
-      let match = true;
-      for (let j = 0; j < m; j++) {
-        if (text[i + j] !== pattern[j]) {
-          match = false;
-          break;
+    // Slide the pattern over text one character at a time
+    for (int i = 0; i <= n - m; i++) {
+        // If hash values match, check characters one by one
+        if (patternHash == textHash) {
+            bool match = true;
+            for (int j = 0; j < m; j++) {
+                if (text[i + j] != pattern[j]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                matches.Add(i);
+            }
         }
-      }
-      if (match) {
-        matches.push(i);
-      }
+
+        // Calculate hash for next window: remove leading digit, add trailing digit
+        if (i < n - m) {
+            textHash = (base_ * (textHash - text[i] * h) + text[i + m]) % prime;
+
+            // Handle negative hash values
+            if (textHash < 0) {
+                textHash += prime;
+            }
+        }
     }
 
-    // Calculate hash for next window
-    // Remove leading digit, add trailing digit
-    if (i < n - m) {
-      textHash = (base * (textHash - text.charCodeAt(i) * h) + text.charCodeAt(i + m)) % prime;
-
-      // Handle negative hash values
-      if (textHash < 0) {
-        textHash += prime;
-      }
-    }
-  }
-
-  return matches;
+    return matches;
 }
 ```

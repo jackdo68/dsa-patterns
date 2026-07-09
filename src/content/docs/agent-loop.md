@@ -8,16 +8,17 @@ frequency: "Low"
 
 You're building a simple agent. The agent calls a model with a list of messages. The model's response may contain a `toolCall` (e.g. `{ name: 'search', args: { query: '...' } }`). If it does, execute the tool, append the result to the message history, and call the model again. Repeat until the model returns a final response with no tool call, or you hit `maxIterations`.
 
-```typescript
-type ModelResponse = { content: string; toolCall?: { name: string; args: Record<string, any> } };
-type Tool = (args: Record<string, any>) => Promise<unknown>;
+```csharp
+record ToolCall(string Name, Dictionary<string, object> Args);
+record ModelResponse(string Content, ToolCall? ToolCall = null);
+delegate Task<object?> Tool(Dictionary<string, object> args);
+interface IModelClient { Task<ModelResponse> Chat(List<object> messages); }
 
-async function runAgent(
-  prompt: string,
-  modelClient: { chat(messages: any[]): Promise<ModelResponse> },
-  tools: Record<string, Tool>,
-  options?: { maxIterations?: number }
-): Promise<{ content: string; iterations: number }>;
+Task<(string Content, int Iterations)> RunAgent(
+    string prompt,
+    IModelClient modelClient,
+    Dictionary<string, Tool> tools,
+    int maxIterations = 10);
 ```
 
 ### Ideas
@@ -58,55 +59,54 @@ iter 1: model.chat(messages)
 
 ### Solution
 
-```typescript
-type ModelResponse = { content: string; toolCall?: { name: string; args: Record<string, any> } };
-type Tool = (args: Record<string, any>) => Promise<unknown>;
+```csharp
+record ToolCall(string Name, Dictionary<string, object> Args);
+record ModelResponse(string Content, ToolCall? ToolCall = null);
+delegate Task<object?> Tool(Dictionary<string, object> args);
+interface IModelClient { Task<ModelResponse> Chat(List<object> messages); }
 
-async function runAgent(
-  prompt: string,
-  modelClient: { chat(messages: any[]): Promise<ModelResponse> },
-  tools: Record<string, Tool>,
-  options: { maxIterations?: number } = {}
-): Promise<{ content: string; iterations: number }> {
-  const { maxIterations = 10 } = options;
-  const messages: any[] = [{ role: 'user', content: prompt }];
+public async Task<(string Content, int Iterations)> RunAgent(
+    string prompt,
+    IModelClient modelClient,
+    Dictionary<string, Tool> tools,
+    int maxIterations = 10) {
+    var messages = new List<object> { new { role = "user", content = prompt } };
 
-  for (let i = 0; i < maxIterations; i++) {
-    const response = await modelClient.chat(messages);
+    for (int i = 0; i < maxIterations; i++) {
+        ModelResponse response = await modelClient.Chat(messages);
 
-    // Terminal state: no tool call → final answer
-    if (!response.toolCall) {
-      return { content: response.content, iterations: i + 1 };
+        // Terminal state: no tool call → final answer
+        if (response.ToolCall is null) {
+            return (response.Content, i + 1);
+        }
+
+        // Record the assistant's tool request
+        messages.Add(new {
+            role = "assistant",
+            content = response.Content,
+            toolCall = response.ToolCall,
+        });
+
+        // Execute the tool (or capture error to feed back)
+        if (!tools.TryGetValue(response.ToolCall.Name, out var tool)) {
+            throw new Exception($"Unknown tool: {response.ToolCall.Name}");
+        }
+
+        object? result;
+        try {
+            result = await tool(response.ToolCall.Args);
+        } catch (Exception error) {
+            result = new { error = error.Message };  // feed error back to model
+        }
+
+        messages.Add(new {
+            role = "tool",
+            name = response.ToolCall.Name,
+            content = JsonSerializer.Serialize(result),
+        });
     }
 
-    // Record the assistant's tool request
-    messages.push({
-      role: 'assistant',
-      content: response.content,
-      toolCall: response.toolCall,
-    });
-
-    // Execute the tool (or capture error to feed back)
-    const tool = tools[response.toolCall.name];
-    if (!tool) {
-      throw new Error(`Unknown tool: ${response.toolCall.name}`);
-    }
-
-    let result: unknown;
-    try {
-      result = await tool(response.toolCall.args);
-    } catch (error: any) {
-      result = { error: error.message };  // feed error back to model
-    }
-
-    messages.push({
-      role: 'tool',
-      name: response.toolCall.name,
-      content: JSON.stringify(result),
-    });
-  }
-
-  throw new Error(`Agent exceeded max iterations (${maxIterations})`);
+    throw new Exception($"Agent exceeded max iterations ({maxIterations})");
 }
 ```
 

@@ -17,29 +17,30 @@ Alternatively, use DFS with a modified preorder (root → right → left). Track
 
 ### Solution
 
-```typescript
-function rightSideView(root: TreeNode | null): number[] {
-  if (!root) return [];
+```csharp
+public IList<int> RightSideView(TreeNode? root) {
+    if (root is null) return new List<int>();
 
-  const result: number[] = [];
-  const queue: TreeNode[] = [root];
+    var result = new List<int>();
+    var queue = new Queue<TreeNode>();
+    queue.Enqueue(root);
 
-  while (queue.length > 0) {
-    const levelSize = queue.length;
+    while (queue.Count > 0) {
+        int levelSize = queue.Count;
 
-    for (let i = 0; i < levelSize; i++) {
-      const node = queue.shift()!;
+        for (int i = 0; i < levelSize; i++) {
+            var node = queue.Dequeue();
 
-      // Last node in current level
-      if (i === levelSize - 1) {
-        result.push(node.val);
-      }
+            // Last node in current level
+            if (i == levelSize - 1) {
+                result.Add(node.val);
+            }
 
-      if (node.left) queue.push(node.left);
-      if (node.right) queue.push(node.right);
+            if (node.left is not null) queue.Enqueue(node.left);
+            if (node.right is not null) queue.Enqueue(node.right);
+        }
     }
-  }
 
-  return result;
+    return result;
 }
 ```

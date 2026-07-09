@@ -16,36 +16,36 @@ Use two pointers with an `n`-step gap. Advance `right` by `n` steps, then move b
 
 ### Solution
 
-```typescript
+```csharp
 /**
  * Definition for singly-linked list.
- * class ListNode {
- *     val: number
- *     next: ListNode | null
- *     constructor(val?: number, next?: ListNode | null) {
- *         this.val = (val===undefined ? 0 : val)
- *         this.next = (next===undefined ? null : next)
+ * public class ListNode {
+ *     public int val;
+ *     public ListNode next;
+ *     public ListNode(int val = 0, ListNode next = null) {
+ *         this.val = val;
+ *         this.next = next;
  *     }
  * }
  */
 
-function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
-  if (!head) return null;
-  let left = head;
-  let right = head;
-  // forward right
-  for (let i = 0; i < n; i++) {
-    right = right.next!;
-  }
-  if (!right) return head.next;
-  while (right.next) {
-    right = right.next;
-    left = left.next!;
-  }
-  const removed = left.next!;
-  left.next = removed.next;
-  removed.next = null;
+public ListNode? RemoveNthFromEnd(ListNode? head, int n) {
+    if (head is null) return null;
+    ListNode? left = head;
+    ListNode? right = head;
+    // advance right by n steps
+    for (int i = 0; i < n; i++) {
+        right = right!.next;
+    }
+    if (right is null) return head.next;
+    while (right.next is not null) {
+        right = right.next;
+        left = left!.next;
+    }
+    ListNode removed = left!.next!;
+    left.next = removed.next;
+    removed.next = null;
 
-  return head;
+    return head;
 }
 ```

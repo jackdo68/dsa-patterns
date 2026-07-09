@@ -18,28 +18,28 @@ frequency: "High"
 
 ### Solution
 
-```typescript
-function isValid(s: string): boolean {
-  if (s.length === 1) return false;
-  const map = new Map([
-    [")", "("],
-    ["]", "["],
-    ["}", "{"]
-  ]);
-  const stack: string[] = [];
-  for (const char of s) {
-    // It's a closing bracket
-    if (map.has(char)) {
-      if (stack.length === 0 || stack[stack.length - 1] !== map.get(char)) {
-        return false;
-      }
-      stack.pop();
-    } else {
-      // It's an opening bracket
-      stack.push(char);
+```csharp
+public bool IsValid(string s) {
+    if (s.Length == 1) return false;
+    var map = new Dictionary<char, char> {
+        [')'] = '(',
+        [']'] = '[',
+        ['}'] = '{'
+    };
+    var stack = new Stack<char>();
+    foreach (char c in s) {
+        // It's a closing bracket
+        if (map.ContainsKey(c)) {
+            if (stack.Count == 0 || stack.Peek() != map[c]) {
+                return false;
+            }
+            stack.Pop();
+        } else {
+            // It's an opening bracket
+            stack.Push(c);
+        }
     }
-  }
 
-  return stack.length === 0;
+    return stack.Count == 0;
 }
 ```

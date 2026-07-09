@@ -10,29 +10,30 @@ frequency: "Very Low"
 
 ### Solution
 
-```typescript
-class BinaryIndexTree {
-    private tree: number[];
-    private size: number;
-    constructor(size: number) {
-      this.tree = Array.from({ length: size + 1 }, () => 0); // the array is 1-indexed
-      this.size = size;
+```csharp
+public class BinaryIndexTree {
+    private readonly int[] tree;
+    private readonly int size;
+
+    public BinaryIndexTree(int size) {
+        tree = new int[size + 1]; // the array is 1-indexed
+        this.size = size;
     }
 
-    public update(index: number, value: number): void {
-      for (let i = index + 1; i <= this.size; i += i & -i) {
-        this.tree[i] += value;
-      }
+    public void Update(int index, int value) {
+        for (int i = index + 1; i <= size; i += i & -i) {
+            tree[i] += value;
+        }
     }
 
-    public prefixSum(index: number): number {
-      let sum = 0;
+    public int PrefixSum(int index) {
+        int sum = 0;
 
-      for (let i = index + 1; i > 0; i -= i & -i) {
-        sum += this.tree[i];
-      }
+        for (int i = index + 1; i > 0; i -= i & -i) {
+            sum += tree[i];
+        }
 
-      return sum;
+        return sum;
     }
-  }
+}
 ```

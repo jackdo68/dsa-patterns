@@ -42,17 +42,17 @@ At each house `i`, you have two choices:
 
 **Approach 1: Bottom-up DP**
 
-```tsx
-function rob(nums: number[]): number {
-    const n = nums.length;
-    if (n === 1) return nums[0];
+```csharp
+public int Rob(int[] nums) {
+    int n = nums.Length;
+    if (n == 1) return nums[0];
 
-    const dp: number[] = new Array(n);
+    int[] dp = new int[n];
     dp[0] = nums[0];
-    dp[1] = Math.max(nums[0], nums[1]);
+    dp[1] = Math.Max(nums[0], nums[1]);
 
-    for (let i = 2; i < n; i++) {
-        dp[i] = Math.max(
+    for (int i = 2; i < n; i++) {
+        dp[i] = Math.Max(
             dp[i - 1],           // Skip current house
             dp[i - 2] + nums[i]  // Rob current house
         );
@@ -64,16 +64,16 @@ function rob(nums: number[]): number {
 
 **Approach 2: Space-optimized O(1)**
 
-```tsx
-function rob(nums: number[]): number {
-    const n = nums.length;
-    if (n === 1) return nums[0];
+```csharp
+public int Rob(int[] nums) {
+    int n = nums.Length;
+    if (n == 1) return nums[0];
 
-    let prev2 = nums[0];                      // dp[i-2]
-    let prev1 = Math.max(nums[0], nums[1]);   // dp[i-1]
+    int prev2 = nums[0];                      // dp[i-2]
+    int prev1 = Math.Max(nums[0], nums[1]);   // dp[i-1]
 
-    for (let i = 2; i < n; i++) {
-        const current = Math.max(prev1, prev2 + nums[i]);
+    for (int i = 2; i < n; i++) {
+        int current = Math.Max(prev1, prev2 + nums[i]);
         prev2 = prev1;
         prev1 = current;
     }
@@ -92,18 +92,18 @@ Houses are arranged in a circle (first and last are adjacent).
 
 **Key insight:** Either rob houses `[0, n-2]` OR houses `[1, n-1]`, but not both.
 
-```tsx
-function robCircular(nums: number[]): number {
-    const n = nums.length;
-    if (n === 1) return nums[0];
+```csharp
+public int Rob(int[] nums) {
+    int n = nums.Length;
+    if (n == 1) return nums[0];
 
     // Helper: rob houses from start to end (inclusive)
-    function robRange(start: number, end: number): number {
-        let prev2 = 0;
-        let prev1 = 0;
+    int RobRange(int start, int end) {
+        int prev2 = 0;
+        int prev1 = 0;
 
-        for (let i = start; i <= end; i++) {
-            const current = Math.max(prev1, prev2 + nums[i]);
+        for (int i = start; i <= end; i++) {
+            int current = Math.Max(prev1, prev2 + nums[i]);
             prev2 = prev1;
             prev1 = current;
         }
@@ -111,9 +111,9 @@ function robCircular(nums: number[]): number {
         return prev1;
     }
 
-    return Math.max(
-        robRange(0, n - 2),  // Exclude last house
-        robRange(1, n - 1)   // Exclude first house
+    return Math.Max(
+        RobRange(0, n - 2),  // Exclude last house
+        RobRange(1, n - 1)   // Exclude first house
     );
 }
 ```
@@ -122,26 +122,26 @@ function robCircular(nums: number[]): number {
 
 Houses form a binary tree. Can't rob directly connected nodes (parent-child).
 
-```tsx
-function robTree(root: TreeNode | null): number {
-    // Returns [robThis, skipThis]
-    function dfs(node: TreeNode | null): [number, number] {
-        if (!node) return [0, 0];
+```csharp
+public int Rob(TreeNode? root) {
+    // Returns (robThis, skipThis)
+    (int rob, int skip) Dfs(TreeNode? node) {
+        if (node is null) return (0, 0);
 
-        const left = dfs(node.left);
-        const right = dfs(node.right);
+        var left = Dfs(node.left);
+        var right = Dfs(node.right);
 
         // Rob this node: can't rob children
-        const robThis = node.val + left[1] + right[1];
+        int robThis = node.val + left.skip + right.skip;
 
         // Skip this node: take best of each child
-        const skipThis = Math.max(left[0], left[1]) + Math.max(right[0], right[1]);
+        int skipThis = Math.Max(left.rob, left.skip) + Math.Max(right.rob, right.skip);
 
-        return [robThis, skipThis];
+        return (robThis, skipThis);
     }
 
-    const [rob, skip] = dfs(root);
-    return Math.max(rob, skip);
+    var (rob, skip) = Dfs(root);
+    return Math.Max(rob, skip);
 }
 ```
 

@@ -37,32 +37,36 @@ A linear ordering of vertices in a directed acyclic graph (DAG) where for every 
 
 ### Solution
 
-```typescript
-function canFinish(numCourses: number, prerequisites: number[][]): boolean {
-  const preReqMap = new Map<number, number[]>()
-  const inDegree = new Array(numCourses).fill(0)
+```csharp
+public bool CanFinish(int numCourses, int[][] prerequisites) {
+    var preReqMap = new Dictionary<int, List<int>>();
+    int[] inDegree = new int[numCourses];
 
-  for (const [main, pre] of prerequisites) {
-    inDegree[main] = inDegree[main] + 1
-    preReqMap.set(pre, [...(preReqMap.get(pre) ||[]), main])
-  }
-
-  const stack:number[] = [];
-  for (let i = 0; i < numCourses; i++) {
-    if (inDegree[i] === 0) stack.push(i)
-  }
-
-  let completed = 0;
-  while (stack.length) {
-    const course = stack.shift()!
-    completed++
-    if (completed === numCourses) return true;
-    for (const child of preReqMap.get(course) || []) {
-     inDegree[child] = inDegree[child] - 1 
-     if (inDegree[child] === 0) stack.push(child)
+    foreach (var edge in prerequisites) {
+        int main = edge[0], pre = edge[1];
+        inDegree[main]++;
+        if (!preReqMap.ContainsKey(pre)) preReqMap[pre] = new List<int>();
+        preReqMap[pre].Add(main);
     }
-  }
-  return completed === numCourses
+
+    var queue = new Queue<int>();
+    for (int i = 0; i < numCourses; i++) {
+        if (inDegree[i] == 0) queue.Enqueue(i);
+    }
+
+    int completed = 0;
+    while (queue.Count > 0) {
+        int course = queue.Dequeue();
+        completed++;
+        if (completed == numCourses) return true;
+        if (preReqMap.TryGetValue(course, out var children)) {
+            foreach (int child in children) {
+                inDegree[child]--;
+                if (inDegree[child] == 0) queue.Enqueue(child);
+            }
+        }
+    }
+    return completed == numCourses;
 }
 ```
 

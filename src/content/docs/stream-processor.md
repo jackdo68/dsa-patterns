@@ -8,19 +8,19 @@ frequency: "Low"
 
 A streaming API returns a response as a sequence of chunks. Each chunk is a partial string. Implement a `StreamProcessor` that collects chunks, emits complete sentences as they form (delimiters: `.`, `!`, `?`), and flushes any leftover text when the stream ends.
 
-```typescript
+```csharp
 class StreamProcessor {
-  constructor(onSentence: (sentence: string) => void);
-  processChunk(chunk: string): void;
-  flush(): void;
+    public StreamProcessor(Action<string> onSentence);
+    public void ProcessChunk(string chunk);
+    public void Flush();
 }
 
 // Example:
-// const p = new StreamProcessor(s => console.log(s));
-// p.processChunk("Hello world. This is ");   // logs: "Hello world."
-// p.processChunk("a test. How are ");        // logs: "This is a test."
-// p.processChunk("you?");                    // logs: "How are you?"
-// p.flush();                                  // nothing — buffer empty
+// var p = new StreamProcessor(s => Console.WriteLine(s));
+// p.ProcessChunk("Hello world. This is ");   // logs: "Hello world."
+// p.ProcessChunk("a test. How are ");        // logs: "This is a test."
+// p.ProcessChunk("you?");                    // logs: "How are you?"
+// p.Flush();                                  // nothing — buffer empty
 ```
 
 ### Ideas
@@ -64,39 +64,36 @@ flush()
 
 ### Solution
 
-```typescript
-class StreamProcessor {
-  private buffer = '';
-  private onSentence: (sentence: string) => void;
+```csharp
+public class StreamProcessor {
+    private string buffer = "";
+    private readonly Action<string> onSentence;
 
-  constructor(onSentence: (sentence: string) => void) {
-    this.onSentence = onSentence;
-  }
-
-  processChunk(chunk: string): void {
-    if (!chunk) return;
-    this.buffer += chunk;
-
-    const enders = /[.!?]/g;
-    let match: RegExpExecArray | null;
-    let lastIndex = 0;
-
-    while ((match = enders.exec(this.buffer)) !== null) {
-      const end = match.index + 1;        // include the delimiter
-      const sentence = this.buffer.slice(lastIndex, end).trim();
-      if (sentence) this.onSentence(sentence);
-      lastIndex = end;
+    public StreamProcessor(Action<string> onSentence) {
+        this.onSentence = onSentence;
     }
 
-    // Retain the tail (anything after the last delimiter)
-    this.buffer = this.buffer.slice(lastIndex);
-  }
+    public void ProcessChunk(string chunk) {
+        if (string.IsNullOrEmpty(chunk)) return;
+        buffer += chunk;
 
-  flush(): void {
-    const remaining = this.buffer.trim();
-    if (remaining) this.onSentence(remaining);
-    this.buffer = '';
-  }
+        int lastIndex = 0;
+        foreach (Match match in Regex.Matches(buffer, "[.!?]")) {
+            int end = match.Index + 1;        // include the delimiter
+            string sentence = buffer.Substring(lastIndex, end - lastIndex).Trim();
+            if (sentence.Length > 0) onSentence(sentence);
+            lastIndex = end;
+        }
+
+        // Retain the tail (anything after the last delimiter)
+        buffer = buffer.Substring(lastIndex);
+    }
+
+    public void Flush() {
+        string remaining = buffer.Trim();
+        if (remaining.Length > 0) onSentence(remaining);
+        buffer = "";
+    }
 }
 ```
 

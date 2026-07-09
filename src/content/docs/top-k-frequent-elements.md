@@ -41,24 +41,25 @@ This works because instead of sorting elements by frequency (O(n log n)), we dir
 
 ### Solution
 
-```typescript
-function topKFrequent(nums: number[], k: number): number[] {
-  const freqMap = new Map<number, number>();
-  for (const num of nums) {
-    freqMap.set(num, (freqMap.get(num) || 0) + 1);
-  }
+```csharp
+public int[] TopKFrequent(int[] nums, int k) {
+    var freqMap = new Dictionary<int, int>();
+    foreach (int num in nums) {
+        freqMap[num] = freqMap.GetValueOrDefault(num, 0) + 1;
+    }
 
-  // Bucket sort: index = frequency, value = list of numbers with that frequency
-  const buckets: number[][] = Array.from({ length: nums.length + 1 }, () => []);
-  for (const [num, freq] of freqMap) {
-    buckets[freq].push(num);
-  }
+    // Bucket sort: index = frequency, value = list of numbers with that frequency
+    var buckets = new List<int>[nums.Length + 1];
+    for (int i = 0; i < buckets.Length; i++) buckets[i] = new List<int>();
+    foreach (var (num, freq) in freqMap) {
+        buckets[freq].Add(num);
+    }
 
-  const result: number[] = [];
-  for (let i = buckets.length - 1; i >= 0 && result.length < k; i--) {
-    result.push(...buckets[i]);
-  }
+    var result = new List<int>();
+    for (int i = buckets.Length - 1; i >= 0 && result.Count < k; i--) {
+        result.AddRange(buckets[i]);
+    }
 
-  return result.slice(0, k);
+    return result.Take(k).ToArray();
 }
 ```

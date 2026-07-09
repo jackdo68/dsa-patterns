@@ -33,18 +33,18 @@ Answer: `6` from subarray `[4, -1, 2, 1]`.
 
 ### Solution
 
-```typescript
-function maxSubArray(nums: number[]): number {
-    let currSum = 0;
-    let maxSum = -Infinity;
+```csharp
+public int MaxSubArray(int[] nums) {
+    int currSum = 0;
+    int maxSum = int.MinValue;
 
-    for (const num of nums) {
-      // either the current number or the sum of
-      // curent number and maxSum until previous number
-      currSum = Math.max(num, currSum + num); 
-      maxSum = Math.max(maxSum, currSum);
+    foreach (int num in nums) {
+        // either the current number alone (restart), or
+        // extend the running subarray with this number
+        currSum = Math.Max(num, currSum + num);
+        maxSum = Math.Max(maxSum, currSum);
     }
 
     return maxSum;
-};
+}
 ```

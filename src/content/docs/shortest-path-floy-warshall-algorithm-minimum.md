@@ -23,63 +23,57 @@ frequency: "Very Low"
 
 ### Solution
 
-```typescript
-function minimumCost(
-  source: string,
-  target: string,
-  original: string[],
-  changed: string[],
-  cost: number[]
-): number {
-  // array of adjacency list
-  const charsArr = Array.from(
-    new Set([...source.split(""), ...target.split(""), ...original, ...changed]).values()
-  );
+```csharp
+public long MinimumCost(string source, string target, char[] original, char[] changed, int[] cost) {
+    const long INF = long.MaxValue;
 
-  const adjList: Record<string, Record<string, number>> = {};
-  for (const c1 of charsArr) {
-    const map: Record<string, number> = {};
-    // initialize the path to the rest of the node to Infinity
-    for (const c2 of charsArr) map[c2] = Infinity;
-    // the path to itself is 0
-    map[c1] = 0;
-    adjList[c1] = map;
-  }
+    // collect every distinct character that appears anywhere
+    var charsSet = new HashSet<char>();
+    foreach (char c in source) charsSet.Add(c);
+    foreach (char c in target) charsSet.Add(c);
+    foreach (char c in original) charsSet.Add(c);
+    foreach (char c in changed) charsSet.Add(c);
+    var charsArr = charsSet.ToList();
 
-  for (let i = 0; i < original.length; i++) {
-    const src = original[i];
-    const dst = changed[i];
-    const c = cost[i];
-    adjList[src][dst] = Math.min(adjList[src][dst], c);
-  }
-
-  // Tripple loop as the Floy Warshall algorithm that leverage DP and the path via a intermidiate node
-  // k is the intermidiate between 2 nodes
-  for (const k of charsArr) {
-    // i is the source
-    for (const i of charsArr) {
-      // j is the destination
-      for (const j of charsArr) {
-        // if there is a path from i to middle point k and from k to middle point j
-        if (adjList[i][k] !== Infinity && adjList[k][j] !== Infinity) {
-          // if the sum of 2 paths smaller than the current path, we update the current path
-          if (adjList[i][k] + adjList[k][j] < adjList[i][j]) {
-            adjList[i][j] = adjList[i][k] + adjList[k][j];
-          }
-        }
-      }
+    // adjacency: adjList[a][b] = cheapest known cost to convert a -> b
+    var adjList = new Dictionary<char, Dictionary<char, long>>();
+    foreach (char c1 in charsArr) {
+        var map = new Dictionary<char, long>();
+        foreach (char c2 in charsArr) map[c2] = INF; // paths start at Infinity
+        map[c1] = 0;                                 // path to itself is 0
+        adjList[c1] = map;
     }
-  }
 
-  let result = 0;
-  for (let i = 0; i < source.length; i++) {
-    const src = source[i];
-    const dst = target[i];
-    if (src === dst) continue;
-    const convertCost = adjList[src][dst];
-    if (convertCost === Infinity) return -1;
-    result += convertCost;
-  }
-  return result;
+    for (int i = 0; i < original.Length; i++) {
+        char src = original[i];
+        char dst = changed[i];
+        adjList[src][dst] = Math.Min(adjList[src][dst], cost[i]);
+    }
+
+    // Floyd-Warshall triple loop: k is the intermediate node between i and j
+    foreach (char k in charsArr) {
+        foreach (char i in charsArr) {
+            foreach (char j in charsArr) {
+                // if there is a path i -> k and k -> j
+                if (adjList[i][k] != INF && adjList[k][j] != INF) {
+                    // relax i -> j through k
+                    if (adjList[i][k] + adjList[k][j] < adjList[i][j]) {
+                        adjList[i][j] = adjList[i][k] + adjList[k][j];
+                    }
+                }
+            }
+        }
+    }
+
+    long result = 0;
+    for (int i = 0; i < source.Length; i++) {
+        char src = source[i];
+        char dst = target[i];
+        if (src == dst) continue;
+        long convertCost = adjList[src][dst];
+        if (convertCost == INF) return -1;
+        result += convertCost;
+    }
+    return result;
 }
 ```

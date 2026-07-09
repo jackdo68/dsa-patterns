@@ -2,108 +2,102 @@
 title: "Common Methods"
 topic: "fundamentals"
 ---
-### charCodeAt
+### char → int (code point)
 
-Returns the Unicode code point of the character at a given index.
+Cast a `char` to `int` to get its Unicode code point (C#'s equivalent of `charCodeAt`).
 
-```typescript
-string.charCodeAt(index)
+```csharp
+(int)str[index]
 ```
 
 **Examples:**
-```typescript
-'A'.charCodeAt(0)   // 65
-'Z'.charCodeAt(0)   // 90
-'a'.charCodeAt(0)   // 97
-'z'.charCodeAt(0)   // 122
-'0'.charCodeAt(0)   // 48
-'9'.charCodeAt(0)   // 57
+```csharp
+(int)'A'   // 65
+(int)'Z'   // 90
+(int)'a'   // 97
+(int)'z'   // 122
+(int)'0'   // 48
+(int)'9'   // 57
 ```
 
 **Common use case - convert char digit to number:**
-```typescript
-const digit = s[i].charCodeAt(0) - '0'.charCodeAt(0);
-// '5'.charCodeAt(0) - '0'.charCodeAt(0) = 53 - 48 = 5
+```csharp
+int digit = s[i] - '0';
+// '5' - '0' = 53 - 48 = 5   (char arithmetic promotes to int)
 ```
 
-### String.fromCharCode
+### int → char
 
-Converts a Unicode code point back to a character. The inverse of `charCodeAt`.
+Cast an `int` code point back to a `char`. The inverse of the above (C#'s `String.fromCharCode`).
 
-```typescript
-String.fromCharCode(code)
+```csharp
+(char)code
 ```
 
 **Examples:**
-```typescript
-String.fromCharCode(65)   // 'A'
-String.fromCharCode(97)   // 'a'
-String.fromCharCode(48)   // '0'
+```csharp
+(char)65   // 'A'
+(char)97   // 'a'
+(char)48   // '0'
 ```
 
 **Common use case - iterate through a-z:**
-```typescript
-for (let c = 'a'.charCodeAt(0); c <= 'z'.charCodeAt(0); c++) {
-  const char = String.fromCharCode(c);
-  // do something with char
+```csharp
+for (char c = 'a'; c <= 'z'; c++) {
+    // do something with c   (chars compare and increment directly)
 }
 ```
 
-### substring
+### Substring
 
-Extracts a portion of a string between two indices.
+Extracts a portion of a string. **Note:** unlike JS, C#'s second argument is a **length**, not an end index.
 
-```typescript
-string.substring(startIndex, endIndex)
+```csharp
+str.Substring(startIndex, length)
 ```
 
 - `startIndex` - inclusive (included in result)
-- `endIndex` - exclusive (not included in result)
+- `length` - number of characters to take
 
 **Examples:**
-```typescript
-"hello".substring(0, 2)   // "he"
-"hello".substring(1, 4)   // "ell"
-"hello".substring(2)      // "llo" (to end if no second arg)
+```csharp
+"hello".Substring(0, 2)   // "he"
+"hello".Substring(1, 3)   // "ell"
+"hello".Substring(2)      // "llo" (to end if no length given)
 ```
 
 **Common use case - extract after expanding pointers:**
-```typescript
-// After while loop overshoots by one on each side
-return s.substring(left + 1, right);
+```csharp
+// After while loop overshoots by one on each side (end index = right)
+return s.Substring(left + 1, right - left - 1);
 ```
 
-### splice
+### List: RemoveRange / InsertRange
 
-Modifies an array in place — can remove, replace, or insert elements. Returns the removed elements.
+`List<T>` modifies in place — remove, replace, or insert elements (C#'s equivalent of `splice`).
 
-```typescript
-array.splice(startIndex, deleteCount, ...itemsToInsert)
+```csharp
+list.RemoveRange(startIndex, count);        // remove
+list.InsertRange(startIndex, items);        // insert
 ```
-
-- `startIndex` - index to start modifying
-- `deleteCount` - number of elements to remove (0 to remove nothing)
-- `itemsToInsert` - optional elements to add at that position
 
 **Examples:**
-```typescript
-const arr = [1, 2, 3, 4, 5];
+```csharp
+var arr = new List<int> { 1, 2, 3, 4, 5 };
 
 // Remove 2 elements starting at index 1
-arr.splice(1, 2);           // returns [2, 3], arr = [1, 4, 5]
+arr.RemoveRange(1, 2);                 // arr = [1, 4, 5]
 
-// Insert without removing (deleteCount = 0)
-arr.splice(1, 0, 10, 20);   // returns [], arr = [1, 10, 20, 4, 5]
+// Insert without removing
+arr.InsertRange(1, new[] { 10, 20 });  // arr = [1, 10, 20, 4, 5]
 
-// Replace 1 element at index 2
-arr.splice(2, 1, 99);       // returns [20], arr = [1, 10, 99, 4, 5]
-
-// Remove from the end (negative index)
-arr.splice(-2, 2);          // returns [4, 5], arr = [1, 10, 99]
+// Replace 1 element at index 2 (remove then insert)
+arr.RemoveAt(2);
+arr.Insert(2, 99);                     // arr = [1, 10, 99, 4, 5]
 ```
 
 **Common use case - remove remaining k elements from end:**
-```typescript
+```csharp
 // In remove-k-digits, if k > 0 after scanning
-stack.splice(stack.length - k, k);
+stack.RemoveRange(stack.Count - k, k);
 ```

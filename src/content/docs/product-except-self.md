@@ -36,23 +36,23 @@ This achieves O(n) time and O(1) extra space (excluding the output array).
 
 ### Solution
 
-```typescript
-function productExceptSelf(nums: number[]): number[] {
-    const length = nums.length;
-    const result = new Array(length);
-    // cal the suffix product
+```csharp
+public int[] ProductExceptSelf(int[] nums) {
+    int length = nums.Length;
+    int[] result = new int[length];
 
+    // prefix product: product of everything left of i
     result[0] = 1;
-    for (let i = 1; i < length; i++) {
-      result[i] = result[i - 1] * nums[i - 1];
+    for (int i = 1; i < length; i++) {
+        result[i] = result[i - 1] * nums[i - 1];
     }
 
-    // call the postfix product
-    let suffixProd = 1;
-    for (let i = length - 1; i >= 0; i--) {
-      result[i] = result[i] * suffixProd;
-      suffixProd = suffixProd * nums[i];
+    // suffix product: multiply in everything right of i
+    int suffixProd = 1;
+    for (int i = length - 1; i >= 0; i--) {
+        result[i] = result[i] * suffixProd;
+        suffixProd = suffixProd * nums[i];
     }
     return result;
-};
+}
 ```

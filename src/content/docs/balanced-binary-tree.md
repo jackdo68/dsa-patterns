@@ -24,22 +24,22 @@ This gives O(n) time with early termination — once imbalance is detected, no f
 
 ### Solution
 
-```typescript
-function isBalanced(root: TreeNode | null): boolean {
-  function height(node: TreeNode | null): number {
-    if (!node) return 0;
+```csharp
+public bool IsBalanced(TreeNode? root) {
+    int Height(TreeNode? node) {
+        if (node is null) return 0;
 
-    const left = height(node.left);
-    if (left === -1) return -1;
+        int left = Height(node.left);
+        if (left == -1) return -1;
 
-    const right = height(node.right);
-    if (right === -1) return -1;
+        int right = Height(node.right);
+        if (right == -1) return -1;
 
-    if (Math.abs(left - right) > 1) return -1;
+        if (Math.Abs(left - right) > 1) return -1;
 
-    return 1 + Math.max(left, right);
-  }
+        return 1 + Math.Max(left, right);
+    }
 
-  return height(root) !== -1;
+    return Height(root) != -1;
 }
 ```

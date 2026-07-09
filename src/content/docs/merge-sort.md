@@ -22,35 +22,35 @@ The recursion tree has O(log n) levels, and each level does O(n) work merging, g
 
 ### Solution
 
-```typescript
-function sortArray(nums: number[]): number[] {
-  if (nums.length <= 1) return nums;
+```csharp
+public int[] SortArray(int[] nums) {
+    if (nums.Length <= 1) return nums;
 
-  const mid = Math.floor(nums.length / 2);
-  const left = sortArray(nums.slice(0, mid));
-  const right = sortArray(nums.slice(mid));
+    int mid = nums.Length / 2;
+    int[] left = SortArray(nums[..mid]);   // range operator slices the array
+    int[] right = SortArray(nums[mid..]);
 
-  return merge(left, right);
+    return Merge(left, right);
 }
 
-function merge(left: number[], right: number[]): number[] {
-  const result: number[] = [];
-  let i = 0;
-  let j = 0;
+private int[] Merge(int[] left, int[] right) {
+    var result = new List<int>();
+    int i = 0;
+    int j = 0;
 
-  while (i < left.length && j < right.length) {
-    if (left[i] <= right[j]) {
-      result.push(left[i]);
-      i++;
-    } else {
-      result.push(right[j]);
-      j++;
+    while (i < left.Length && j < right.Length) {
+        if (left[i] <= right[j]) {
+            result.Add(left[i]);
+            i++;
+        } else {
+            result.Add(right[j]);
+            j++;
+        }
     }
-  }
 
-  while (i < left.length) result.push(left[i++]);
-  while (j < right.length) result.push(right[j++]);
+    while (i < left.Length) result.Add(left[i++]);
+    while (j < right.Length) result.Add(right[j++]);
 
-  return result;
+    return result.ToArray();
 }
 ```

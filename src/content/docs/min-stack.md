@@ -42,30 +42,30 @@ The `minStack` is like a snapshot history — each entry says "given everything 
 
 ### Solution
 
-```typescript
-class MinStack {
-  private stack: number[] = [];
-  private minStack: number[] = [];
+```csharp
+public class MinStack {
+    private readonly Stack<int> stack = new();
+    private readonly Stack<int> minStack = new();
 
-  push(val: number): void {
-    this.stack.push(val);
-    const currentMin = this.minStack.length === 0
-      ? val
-      : Math.min(val, this.minStack[this.minStack.length - 1]);
-    this.minStack.push(currentMin);
-  }
+    public void Push(int val) {
+        stack.Push(val);
+        int currentMin = minStack.Count == 0
+            ? val
+            : Math.Min(val, minStack.Peek());
+        minStack.Push(currentMin);
+    }
 
-  pop(): void {
-    this.stack.pop();
-    this.minStack.pop();
-  }
+    public void Pop() {
+        stack.Pop();
+        minStack.Pop();
+    }
 
-  top(): number {
-    return this.stack[this.stack.length - 1];
-  }
+    public int Top() {
+        return stack.Peek();
+    }
 
-  getMin(): number {
-    return this.minStack[this.minStack.length - 1];
-  }
+    public int GetMin() {
+        return minStack.Peek();
+    }
 }
 ```

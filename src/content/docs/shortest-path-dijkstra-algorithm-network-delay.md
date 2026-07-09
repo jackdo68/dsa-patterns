@@ -34,40 +34,45 @@ frequency: "Medium"
 
 *We will send a signal from a given node `k`. Return the **minimum** time it takes for all the `n` nodes to receive the signal. If it is impossible for all the `n` nodes to receive the signal, return `-1`.*
 
-```typescript
-function networkDelayTime(times: number[][], n: number, k: number): number {
-  const adjList = new Map<number, number[][]>();
-  for (const [source, target, time] of times) {
-    adjList.set(source, [...(adjList.get(source) || []), [target, time]]);
-  }
-  if (!adjList.has(k)) return -1;
-
-  const distances = new Map<number, number>();
-  for (let i = 1; i <= n; i++) {
-    distances.set(i, i === k ? 0 : Infinity);
-  }
-
-  const heap = new MinHeap();
-  heap.push([k, 0]);
-
-  while (heap.size()) {
-    const [node, currentTime] = heap.pop();
-    if (currentTime > distances.get(node)!) continue;
-
-    for (const [neighbor, travelTime] of adjList.get(node) || []) {
-      const newTime = currentTime + travelTime;
-      if (newTime < distances.get(neighbor)!) {
-        distances.set(neighbor, newTime);
-        heap.push([neighbor, newTime]);
-      }
+```csharp
+public int NetworkDelayTime(int[][] times, int n, int k) {
+    var adjList = new Dictionary<int, List<int[]>>();
+    foreach (var edge in times) {
+        int source = edge[0], target = edge[1], time = edge[2];
+        if (!adjList.ContainsKey(source)) adjList[source] = new List<int[]>();
+        adjList[source].Add(new[] { target, time });
     }
-  }
+    if (!adjList.ContainsKey(k)) return -1;
 
-  let maxTime = 0;
-  for (const time of distances.values()) {
-    if (time === Infinity) return -1;
-    maxTime = Math.max(time, maxTime);
-  }
-  return maxTime;
+    var distances = new Dictionary<int, int>();
+    for (int i = 1; i <= n; i++) {
+        distances[i] = i == k ? 0 : int.MaxValue;
+    }
+
+    // .NET's built-in min-heap: element = node, priority = distance
+    var heap = new PriorityQueue<int, int>();
+    heap.Enqueue(k, 0);
+
+    while (heap.TryDequeue(out int node, out int currentTime)) {
+        if (currentTime > distances[node]) continue;
+
+        if (adjList.TryGetValue(node, out var neighbors)) {
+            foreach (var edge in neighbors) {
+                int neighbor = edge[0], travelTime = edge[1];
+                int newTime = currentTime + travelTime;
+                if (newTime < distances[neighbor]) {
+                    distances[neighbor] = newTime;
+                    heap.Enqueue(neighbor, newTime);
+                }
+            }
+        }
+    }
+
+    int maxTime = 0;
+    foreach (int time in distances.Values) {
+        if (time == int.MaxValue) return -1;
+        maxTime = Math.Max(time, maxTime);
+    }
+    return maxTime;
 }
 ```

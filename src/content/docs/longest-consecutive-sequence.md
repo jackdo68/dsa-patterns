@@ -33,26 +33,26 @@ Step by step with `nums = [100, 4, 200, 1, 3, 2]`:
 
 ### Solution
 
-```typescript
-function longestConsecutive(nums: number[]): number {
-  const numSet = new Set(nums);
-  let longest = 0;
+```csharp
+public int LongestConsecutive(int[] nums) {
+    var numSet = new HashSet<int>(nums);
+    int longest = 0;
 
-  for (const num of numSet) {
-    // Only start counting from the beginning of a sequence
-    if (!numSet.has(num - 1)) {
-      let currentNum = num;
-      let currentStreak = 1;
+    foreach (int num in numSet) {
+        // Only start counting from the beginning of a sequence
+        if (!numSet.Contains(num - 1)) {
+            int currentNum = num;
+            int currentStreak = 1;
 
-      while (numSet.has(currentNum + 1)) {
-        currentNum++;
-        currentStreak++;
-      }
+            while (numSet.Contains(currentNum + 1)) {
+                currentNum++;
+                currentStreak++;
+            }
 
-      longest = Math.max(longest, currentStreak);
+            longest = Math.Max(longest, currentStreak);
+        }
     }
-  }
 
-  return longest;
+    return longest;
 }
 ```

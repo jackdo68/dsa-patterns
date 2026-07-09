@@ -95,51 +95,50 @@ By going backward, when we check `dp[i - num]` it still reflects the state *befo
 
 ### Solution
 
-```typescript
-function canPartition(nums: number[]): boolean {
-  const sum = nums.reduce((a, b) => a + b, 0);
+```csharp
+public bool CanPartition(int[] nums) {
+    int sum = nums.Sum();
 
-  // If sum is odd, we can't partition equally
-  if (sum % 2 !== 0) return false;
+    // If sum is odd, we can't partition equally
+    if (sum % 2 != 0) return false;
 
-  const target = sum / 2;
+    int target = sum / 2;
 
-  // dp[i] represents if we can get sum i from the array
-  const dp = new Array(target + 1).fill(false);
-  dp[0] = true; // Empty subset sums to 0
+    // dp[i] represents whether we can make sum i from the array
+    bool[] dp = new bool[target + 1];
+    dp[0] = true; // Empty subset sums to 0
 
-  for (const num of nums) {
-    for (let i = target; i >= num; i--) {
-      dp[i] = dp[i] || dp[i - num];
+    foreach (int num in nums) {
+        for (int i = target; i >= num; i--) {
+            dp[i] = dp[i] || dp[i - num];
+        }
     }
-  }
 
-  return dp[target];
+    return dp[target];
 }
 ```
 
 ### Solution (Top-down)
 
-```typescript
-function canPartition(nums: number[]): boolean {
-  const total = nums.reduce((a, b) => a + b, 0);
-  if (total % 2 !== 0) return false;
+```csharp
+public bool CanPartition(int[] nums) {
+    int total = nums.Sum();
+    if (total % 2 != 0) return false;
 
-  const target = total / 2;
-  const memo = new Map<string, boolean>();
+    int target = total / 2;
+    var memo = new Dictionary<(int, int), bool>();
 
-  function dfs(i: number, remaining: number): boolean {
-    if (remaining === 0) return true;
-    if (i === nums.length || remaining < 0) return false;
+    bool Dfs(int i, int remaining) {
+        if (remaining == 0) return true;
+        if (i == nums.Length || remaining < 0) return false;
 
-    const key = `${i},${remaining}`;
-    if (memo.has(key)) return memo.get(key)!;
+        if (memo.TryGetValue((i, remaining), out bool cached)) return cached;
 
-    const result = dfs(i + 1, remaining - nums[i]) || dfs(i + 1, remaining);
-    memo.set(key, result);
-    return result;
-  }
+        bool result = Dfs(i + 1, remaining - nums[i]) || Dfs(i + 1, remaining);
+        memo[(i, remaining)] = result;
+        return result;
+    }
 
-  return dfs(0, target);
+    return Dfs(0, target);
 }
 ```

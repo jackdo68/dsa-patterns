@@ -20,42 +20,39 @@ frequency: "High"
 
 ### Solution
 
-```typescript
-function findAnagrams(s: string, p: string): number[] {
-  function isAnagram(m1: Map<string, number>, m2: Map<string, number>): boolean {
-    for (const k of [...m1.keys()]) {
-      if (!m2.has(k)) return false;
-      if (m1.get(k) !== m2.get(k)) return false;
+```csharp
+public IList<int> FindAnagrams(string s, string p) {
+    bool IsAnagram(Dictionary<char, int> m1, Dictionary<char, int> m2) {
+        foreach (var k in m1.Keys) {
+            if (!m2.TryGetValue(k, out int v) || v != m1[k]) return false;
+        }
+        return true;
     }
-    return true;
-  }
-  const res: number[] = [];
-  if (s.length < p.length) return res;
+    var res = new List<int>();
+    if (s.Length < p.Length) return res;
 
-  const pMap = new Map();
-  for (const c of p) {
-    if (!pMap.has(c)) pMap.set(c, 0);
-    pMap.set(c, pMap.get(c) + 1);
-  }
-
-  const sMap = new Map();
-  let left = 0;
-  let right = 0;
-  while (right < s.length) {
-    const c = s[right];
-    if (!sMap.has(c)) sMap.set(c, 0);
-    sMap.set(c, sMap.get(c) + 1);
-
-    if (right - left + 1 > p.length) {
-      sMap.set(s[left], sMap.get(s[left]) - 1);
-      if (sMap.get(s[left]) === 0) sMap.delete(s[left]);
-      left++;
+    var pMap = new Dictionary<char, int>();
+    foreach (char c in p) {
+        pMap[c] = pMap.GetValueOrDefault(c, 0) + 1;
     }
 
-    if (right - left + 1 === p.length && isAnagram(sMap, pMap)) res.push(left);
+    var sMap = new Dictionary<char, int>();
+    int left = 0;
+    int right = 0;
+    while (right < s.Length) {
+        char c = s[right];
+        sMap[c] = sMap.GetValueOrDefault(c, 0) + 1;
 
-    right++;
-  }
-  return res;
+        if (right - left + 1 > p.Length) {
+            sMap[s[left]]--;
+            if (sMap[s[left]] == 0) sMap.Remove(s[left]);
+            left++;
+        }
+
+        if (right - left + 1 == p.Length && IsAnagram(sMap, pMap)) res.Add(left);
+
+        right++;
+    }
+    return res;
 }
 ```

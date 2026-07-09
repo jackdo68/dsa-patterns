@@ -25,27 +25,27 @@ For each center, expand outward while characters match. Track the longest palind
 
 ### Solution
 
-```typescript
-function longestPalindrome(s: string): string {
-  const n = s.length;
+```csharp
+public string LongestPalindrome(string s) {
+    int n = s.Length;
 
-  function expand(l: number, r: number): string {
-    while (l >= 0 && r < n && s[l] === s[r]) {
-      l--;
-      r++;
+    string Expand(int l, int r) {
+        while (l >= 0 && r < n && s[l] == s[r]) {
+            l--;
+            r++;
+        }
+        // characters from l+1 up to r-1 form the palindrome
+        return s.Substring(l + 1, r - l - 1);
     }
-    // start index is inclusive, end index is exclusive
-    return s.substring(l + 1, r);
-  }
 
-  let result = s.substring(0, 1); // first char
-  let temp = "";
-  for (let i = 0; i < n; i++) {
-    temp = expand(i, i);
-    if (temp.length > result.length) result = temp;
-    temp = expand(i, i + 1);
-    if (temp.length > result.length) result = temp;
-  }
-  return result;
+    string result = s.Substring(0, 1); // first char
+    string temp;
+    for (int i = 0; i < n; i++) {
+        temp = Expand(i, i);
+        if (temp.Length > result.Length) result = temp;
+        temp = Expand(i, i + 1);
+        if (temp.Length > result.Length) result = temp;
+    }
+    return result;
 }
 ```

@@ -10,7 +10,7 @@ frequency: "Medium"
 
 *There is a survey of `n` questions where each answer is either `0` or `1`. The survey was given to `m` students and `m` mentors. Each student is assigned to **one** mentor, and each mentor gets **one** student. The compatibility score of a student-mentor pair is the number of matching answers. Return the maximum total compatibility score across all pairings.*
 
-```typescript
+```
 Input: students = [[1,1,0],[1,0,1],[0,0,1]], mentors = [[1,0,0],[0,0,1],[1,1,0]]
 Output: 8
 // student 0 → mentor 2 (score 3)
@@ -127,41 +127,42 @@ For Max Compatibility: **two, optimize, yes**. That triple is the fingerprint of
 
 ### Solution
 
-```typescript
-function maxCompatibilitySum(students: number[][], mentors: number[][]): number {
-  const m = students.length;
-  const n = students[0].length;
+```csharp
+public int MaxCompatibilitySum(int[][] students, int[][] mentors) {
+    int m = students.Length;
+    int n = students[0].Length;
 
-  // 1. Precompute the m × m score matrix
-  const score: number[][] = Array.from({ length: m }, () => new Array(m).fill(0));
-  for (let i = 0; i < m; i++) {
-    for (let j = 0; j < m; j++) {
-      let count = 0;
-      for (let k = 0; k < n; k++) {
-        if (students[i][k] === mentors[j][k]) count++;
-      }
-      score[i][j] = count;
+    // 1. Precompute the m × m score matrix
+    int[][] score = new int[m][];
+    for (int i = 0; i < m; i++) {
+        score[i] = new int[m];
+        for (int j = 0; j < m; j++) {
+            int count = 0;
+            for (int k = 0; k < n; k++) {
+                if (students[i][k] == mentors[j][k]) count++;
+            }
+            score[i][j] = count;
+        }
     }
-  }
 
-  // 2. Backtracking over mentor assignments
-  let maxScore = 0;
-  const used = new Array(m).fill(false);
+    // 2. Backtracking over mentor assignments
+    int maxScore = 0;
+    bool[] used = new bool[m];
 
-  function dfs(studentIdx: number, currentScore: number): void {
-    if (studentIdx === m) {
-      maxScore = Math.max(maxScore, currentScore);
-      return;
+    void Dfs(int studentIdx, int currentScore) {
+        if (studentIdx == m) {
+            maxScore = Math.Max(maxScore, currentScore);
+            return;
+        }
+        for (int j = 0; j < m; j++) {
+            if (used[j]) continue;
+            used[j] = true;
+            Dfs(studentIdx + 1, currentScore + score[studentIdx][j]);
+            used[j] = false;
+        }
     }
-    for (let j = 0; j < m; j++) {
-      if (used[j]) continue;
-      used[j] = true;
-      dfs(studentIdx + 1, currentScore + score[studentIdx][j]);
-      used[j] = false;
-    }
-  }
 
-  dfs(0, 0);
-  return maxScore;
+    Dfs(0, 0);
+    return maxScore;
 }
 ```

@@ -20,23 +20,24 @@ You are given an array of `k` linked-lists `lists`, each linked-list is sorte
 
 ### Solution
 
-```typescript
-function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
-  const pointer = new ListNode(); // pointer
-  let current = pointer;
-  const heap = new _MinHeap();
+```csharp
+public ListNode? MergeKLists(ListNode[] lists) {
+    var dummy = new ListNode();
+    var current = dummy;
+    // .NET's built-in min-heap: element = node, priority = node.val
+    var heap = new PriorityQueue<ListNode, int>();
 
-  for (const list of lists) {
-    if (list !== null) heap.push(list);
-  }
+    foreach (var list in lists) {
+        if (list is not null) heap.Enqueue(list, list.val);
+    }
 
-  while (heap.size()) {
-    const node = heap.pop();
-    current.next = node;
-    current = current.next;
-    if (node.next) heap.push(node.next);
-  }
+    while (heap.Count > 0) {
+        var node = heap.Dequeue();
+        current.next = node;
+        current = current.next;
+        if (node.next is not null) heap.Enqueue(node.next, node.next.val);
+    }
 
-  return pointer.next;
+    return dummy.next;
 }
 ```

@@ -30,30 +30,27 @@ Think of words as nodes in a graph. Two words are connected if they differ by ex
 
 ### Solution
 
-```typescript
-function ladderLength(beginWord: string, endWord: string, wordList: string[]): number {
-  let chars = "";
-  for (let i = "a".charCodeAt(0); i <= "z".charCodeAt(0); i++) {
-    chars += String.fromCharCode(i); // "abcd...."
-  }
-  const n = beginWord.length;
-  const visited = new Set<string>([beginWord]);
-  const stack: [string, number][] = [[beginWord, 1]];
-  const set = new Set<string>(wordList);
-  while (stack.length) {
-    const [word, level] = stack.shift()!;
-    for (let i = 0; i < n; i++) {
-      for (const c of chars) {
-        if (c === word[i]) continue;
-        const augmentedWord = word.slice(0, i) + c + word.slice(i + 1);
-        if (set.has(augmentedWord) && augmentedWord === endWord) return level + 1;
-        if (!visited.has(augmentedWord) && set.has(augmentedWord)) {
-          visited.add(augmentedWord);
-          stack.push([augmentedWord, level + 1]);
+```csharp
+public int LadderLength(string beginWord, string endWord, IList<string> wordList) {
+    int n = beginWord.Length;
+    var visited = new HashSet<string> { beginWord };
+    var queue = new Queue<(string word, int level)>();
+    queue.Enqueue((beginWord, 1));
+    var set = new HashSet<string>(wordList);
+    while (queue.Count > 0) {
+        var (word, level) = queue.Dequeue();
+        for (int i = 0; i < n; i++) {
+            for (char c = 'a'; c <= 'z'; c++) {
+                if (c == word[i]) continue;
+                string augmentedWord = word.Substring(0, i) + c + word.Substring(i + 1);
+                if (set.Contains(augmentedWord) && augmentedWord == endWord) return level + 1;
+                if (!visited.Contains(augmentedWord) && set.Contains(augmentedWord)) {
+                    visited.Add(augmentedWord);
+                    queue.Enqueue((augmentedWord, level + 1));
+                }
+            }
         }
-      }
     }
-  }
-  return 0;
+    return 0;
 }
 ```

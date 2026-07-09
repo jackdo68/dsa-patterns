@@ -36,60 +36,60 @@ This ensures we only generate **valid** combinations, not all 2^(2n) possibiliti
 
 **Approach 1: Backtracking (Clean)**
 
-```tsx
-function generateParenthesis(n: number): string[] {
-    const result: string[] = [];
+```csharp
+public IList<string> GenerateParenthesis(int n) {
+    var result = new List<string>();
 
-    function backtrack(current: string, open: number, close: number): void {
+    void Backtrack(string current, int open, int close) {
         // Base case: used all parentheses
-        if (current.length === 2 * n) {
-            result.push(current);
+        if (current.Length == 2 * n) {
+            result.Add(current);
             return;
         }
 
         // Can add open paren if we haven't used all n
         if (open < n) {
-            backtrack(current + '(', open + 1, close);
+            Backtrack(current + '(', open + 1, close);
         }
 
         // Can add close paren if we have more opens than closes
         if (close < open) {
-            backtrack(current + ')', open, close + 1);
+            Backtrack(current + ')', open, close + 1);
         }
     }
 
-    backtrack('', 0, 0);
+    Backtrack("", 0, 0);
     return result;
 }
 ```
 
 **Approach 2: Using array for efficiency**
 
-```tsx
-function generateParenthesis(n: number): string[] {
-    const result: string[] = [];
-    const path: string[] = [];
+```csharp
+public IList<string> GenerateParenthesis(int n) {
+    var result = new List<string>();
+    var path = new List<char>();
 
-    function backtrack(open: number, close: number): void {
-        if (path.length === 2 * n) {
-            result.push(path.join(''));
+    void Backtrack(int open, int close) {
+        if (path.Count == 2 * n) {
+            result.Add(new string(path.ToArray()));
             return;
         }
 
         if (open < n) {
-            path.push('(');
-            backtrack(open + 1, close);
-            path.pop();
+            path.Add('(');
+            Backtrack(open + 1, close);
+            path.RemoveAt(path.Count - 1);
         }
 
         if (close < open) {
-            path.push(')');
-            backtrack(open, close + 1);
-            path.pop();
+            path.Add(')');
+            Backtrack(open, close + 1);
+            path.RemoveAt(path.Count - 1);
         }
     }
 
-    backtrack(0, 0);
+    Backtrack(0, 0);
     return result;
 }
 ```
@@ -118,20 +118,20 @@ For `n = 2`:
 
 This pattern applies to problems where you generate sequences with validity constraints:
 
-```tsx
-function constrainedBacktrack(choices, constraints, path, result) {
-    if (isComplete(path)) {
-        result.push(path.copy());
+```csharp
+void ConstrainedBacktrack(choices, constraints, path, result) {
+    if (IsComplete(path)) {
+        result.Add(path.Copy());
         return;
     }
 
-    for (choice of choices) {
-        if (isValid(choice, constraints)) {
-            path.add(choice);
-            updateConstraints(constraints);
-            constrainedBacktrack(choices, constraints, path, result);
-            path.remove();
-            revertConstraints(constraints);
+    foreach (var choice in choices) {
+        if (IsValid(choice, constraints)) {
+            path.Add(choice);
+            UpdateConstraints(constraints);
+            ConstrainedBacktrack(choices, constraints, path, result);
+            path.Remove();
+            RevertConstraints(constraints);
         }
     }
 }
@@ -150,34 +150,35 @@ function constrainedBacktrack(choices, constraints, path, result) {
 
 Generate valid combinations with `()`, `[]`, `{}`:
 
-```tsx
-function generateBrackets(n: number): string[] {
-    const result: string[] = [];
-    const brackets = ['()', '[]', '{}'];
-    const stack: string[] = [];
+```csharp
+public IList<string> GenerateBrackets(int n) {
+    var result = new List<string>();
+    string[] brackets = { "()", "[]", "{}" };
+    var stack = new Stack<char>();
 
-    function backtrack(path: string): void {
-        if (path.length === 2 * n) {
-            if (stack.length === 0) result.push(path);
+    void Backtrack(string path) {
+        if (path.Length == 2 * n) {
+            if (stack.Count == 0) result.Add(path);
             return;
         }
 
         // Try opening any bracket
-        for (const [open, close] of brackets.map(b => [b[0], b[1]])) {
-            stack.push(close);
-            backtrack(path + open);
-            stack.pop();
+        foreach (string b in brackets) {
+            char open = b[0], close = b[1];
+            stack.Push(close);
+            Backtrack(path + open);
+            stack.Pop();
         }
 
-        // Try closing if stack has matching bracket
-        if (stack.length > 0) {
-            const close = stack.pop()!;
-            backtrack(path + close);
-            stack.push(close);
+        // Try closing if the stack has a matching bracket
+        if (stack.Count > 0) {
+            char close = stack.Pop();
+            Backtrack(path + close);
+            stack.Push(close);
         }
     }
 
-    backtrack('');
+    Backtrack("");
     return result;
 }
 ```

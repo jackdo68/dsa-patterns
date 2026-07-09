@@ -33,38 +33,40 @@ Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
 
 Greedy approach
 
-```typescript
-function canJump(nums: number[]): boolean {
-    let lastGoodPosition = nums.length - 1;
-    for (let i = nums.length - 2; i >= 0; i--) {
+```csharp
+public bool CanJump(int[] nums) {
+    int lastGoodPosition = nums.Length - 1;
+    for (int i = nums.Length - 2; i >= 0; i--) {
         if (i + nums[i] >= lastGoodPosition) {
             lastGoodPosition = i;
         }
     }
-    return lastGoodPosition === 0;
+    return lastGoodPosition == 0;
 }
 ```
 
 Dynamic programming with memoization approach
 
-```typescript
-function canJump(nums: number[]): boolean {
-  const last = nums.length - 1;
-  const memo: boolean[] = new Array(nums.length).fill(undefined);
-  const jump = (index: number): boolean => {
-    // reach to the last pos
-    if (index === last) return true;
-    if (memo[index] !== undefined) return memo[index]; // Return cached result
-    if (nums[index] === 0) return (memo[index] = false);
-    // jump base on the value
-    const steps = nums[index];
-    for (let i = 1; i <= steps; i++) {
-      if (jump(index + i)) {
-        return (memo[index] = true);
-      }
+```csharp
+public bool CanJump(int[] nums) {
+    int last = nums.Length - 1;
+    bool?[] memo = new bool?[nums.Length]; // null = not computed yet
+
+    bool Jump(int index) {
+        // reach the last pos
+        if (index == last) return true;
+        if (memo[index] is bool cached) return cached; // return cached result
+        if (nums[index] == 0) return (memo[index] = false).Value;
+        // jump based on the value
+        int steps = nums[index];
+        for (int i = 1; i <= steps; i++) {
+            if (Jump(index + i)) {
+                return (memo[index] = true).Value;
+            }
+        }
+        return (memo[index] = false).Value;
     }
-    return (memo[index] = false);
-  };
-  return jump(0);
+
+    return Jump(0);
 }
 ```

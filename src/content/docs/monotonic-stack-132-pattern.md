@@ -10,7 +10,7 @@ frequency: "Medium"
 
 *Given an array of `n` integers `nums`, a **132 pattern** is a subsequence of three integers `nums[i]`, `nums[j]`, `nums[k]` such that `i < j < k` and `nums[i] < nums[k] < nums[j]`. Return `true` if there is a 132 pattern in `nums`, otherwise return `false`.*
 
-```typescript
+```
 Input: nums = [3, 1, 4, 2]
 Output: true
 // The 132 pattern is (1, 4, 2) at indices (1, 2, 3).
@@ -79,28 +79,28 @@ The structural lesson: **`min`/`max` over popped values is direction-sensitive**
 
 ### Solution
 
-```typescript
-function find132pattern(nums: number[]): boolean {
-  const n = nums.length;
-  const stack: number[] = []; // candidates for the "big" (j) of the pattern
-  /**
-   * Why not use a single (min, max) variable instead?
-   * Because the monotonic stack guarantees ordering for free:
-   *   when we pop a value, the popper (current) is at an EARLIER
-   *   index than the popped (which lives further right in the array).
-   *   So popper = big at smaller index, popped = mid at larger index.
-   *   That's exactly the (j, k) part of the 132 pattern, with no
-   *   bookkeeping needed.
-   */
-  let mid = -Infinity; // largest mid value confirmed so far
-  for (let i = n - 1; i >= 0; i--) {
-    if (nums[i] < mid) return true; // current is the "small" (i)
-    while (stack.length && stack[stack.length - 1] < nums[i]) {
-      const item = stack.pop()!;
-      mid = Math.max(mid, item); // promote popped to a confirmed mid
+```csharp
+public bool Find132pattern(int[] nums) {
+    int n = nums.Length;
+    var stack = new Stack<int>(); // candidates for the "big" (j) of the pattern
+    /*
+     * Why not use a single (min, max) variable instead?
+     * Because the monotonic stack guarantees ordering for free:
+     *   when we pop a value, the popper (current) is at an EARLIER
+     *   index than the popped (which lives further right in the array).
+     *   So popper = big at smaller index, popped = mid at larger index.
+     *   That's exactly the (j, k) part of the 132 pattern, with no
+     *   bookkeeping needed.
+     */
+    int mid = int.MinValue; // largest mid value confirmed so far
+    for (int i = n - 1; i >= 0; i--) {
+        if (nums[i] < mid) return true; // current is the "small" (i)
+        while (stack.Count > 0 && stack.Peek() < nums[i]) {
+            int item = stack.Pop();
+            mid = Math.Max(mid, item); // promote popped to a confirmed mid
+        }
+        stack.Push(nums[i]);
     }
-    stack.push(nums[i]);
-  }
-  return false;
+    return false;
 }
 ```

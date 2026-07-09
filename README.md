@@ -12,33 +12,12 @@ Over **100 algorithm patterns and concept notes** designed to help you:
 - **Practice** systematically at your own pace
 - **Master** technical interviews through pattern-based thinking
 
-## Repository Structure
 
-```
-/
-├── astro.config.mjs              # Site config (title, base path, mermaid, sidebar)
-├── src/
-│   ├── content/docs/             # All content (.md/.mdx) — patterns, guides, wikis
-│   │   └── index.mdx             # Homepage
-│   ├── content.config.ts         # Content schema (topic/difficulty/frequency)
-│   ├── sidebar.js                # Navigation hierarchy
-│   ├── components/               # Badges, page-title override, mermaid lightbox
-│   └── styles/theme.css          # Theme (fonts, colors)
-├── public/favicon.svg            # Site favicon
-├── .github/workflows/deploy.yml  # GitHub Pages deployment
-└── playground/                   # Scratchpad for working solutions
-```
-
-## Running Locally
+## Running Code Locally
 
 ```bash
-npm install
-npm run dev      # Dev server on http://localhost:4321/dsa-patterns
-npm run build    # Static build into dist/
-npm run preview  # Preview the production build
+dotnet run --project playground
 ```
-
-The site ships with full-text search (Pagefind), syntax-highlighted code (Expressive Code), prev/next pagination, and Mermaid diagrams — all out of the box.
 
 ## Quick Start
 

@@ -13,7 +13,7 @@ See [Maths](/dsa-patterns/maths/) for the theory behind permutations and factori
 - *Given a collection of numbers, `nums`, that might contain duplicates, return *all possible unique permutations **in any order**.**
 - *Example*
 
-```typescript
+```
 Input: nums = [1,1,2]
 Output:
 [[1,1,2],
@@ -46,32 +46,33 @@ Position 2: try remaining keys with count > 0
 
 ### Solution
 
-```typescript
-function permuteUnique(nums: number[]): number[][] {
-  const freq = new Map<number, number>();
-  for (const num of nums) {
-    freq.set(num, (freq.get(num) || 0) + 1);
-  }
-  const result: number[][] = [];
-
-  function dfs(path: number[]) {
-    if (path.length === nums.length) {
-      result.push([...path]);
-      return;
+```csharp
+public IList<IList<int>> PermuteUnique(int[] nums) {
+    var freq = new Dictionary<int, int>();
+    foreach (int num in nums) {
+        freq[num] = freq.GetValueOrDefault(num, 0) + 1;
     }
+    var result = new List<IList<int>>();
 
-    for (const num of freq.keys()) {
-      if (freq.get(num) === 0) continue;
+    void Dfs(List<int> path) {
+        if (path.Count == nums.Length) {
+            result.Add(new List<int>(path));
+            return;
+        }
 
-      freq.set(num, freq.get(num)! - 1);
-      path.push(num);
-      dfs(path);
-      //backtrack
-      freq.set(num, freq.get(num)! + 1);
-      path.pop();
+        // iterate a snapshot of keys since we mutate freq values while looping
+        foreach (int num in freq.Keys.ToList()) {
+            if (freq[num] == 0) continue;
+
+            freq[num]--;
+            path.Add(num);
+            Dfs(path);
+            // backtrack
+            freq[num]++;
+            path.RemoveAt(path.Count - 1);
+        }
     }
-  }
-  dfs([]);
-  return result;
+    Dfs(new List<int>());
+    return result;
 }
 ```

@@ -8,15 +8,13 @@ frequency: "Medium"
 
 Implement a `JobProcessor` that accepts jobs, queues them, and processes up to `concurrency` jobs in parallel. Each job has a lifecycle: `queued → processing → completed | failed`.
 
-```typescript
+```csharp
+enum JobStatus { Queued, Processing, Completed, Failed }
+
 class JobProcessor<I, O> {
-  constructor(processFunc: (input: I) => Promise<O>, concurrency: number);
-  submit(input: I): string;                              // returns jobId
-  getStatus(jobId: string): {
-    status: 'queued' | 'processing' | 'completed' | 'failed';
-    result?: O;
-    error?: string;
-  };
+    public JobProcessor(Func<I, Task<O>> processFunc, int concurrency);
+    public string Submit(I input);                          // returns jobId
+    public (JobStatus Status, O? Result, string? Error) GetStatus(string jobId);
 }
 ```
 
@@ -49,67 +47,66 @@ C finishes → jobs[C]={completed}, activeCount=0
 
 ### Solution
 
-```typescript
-type JobStatus = 'queued' | 'processing' | 'completed' | 'failed';
+```csharp
+enum JobStatus { Queued, Processing, Completed, Failed }
 
-interface Job<I, O> {
-  id: string;
-  input: I;
-  status: JobStatus;
-  result?: O;
-  error?: string;
+class Job<I, O> {
+    public string Id = "";
+    public I Input = default!;
+    public JobStatus Status;
+    public O? Result;
+    public string? Error;
 }
 
-class JobProcessor<I, O> {
-  private processFunc: (input: I) => Promise<O>;
-  private concurrency: number;
-  private jobs = new Map<string, Job<I, O>>();
-  private queue: string[] = [];
-  private activeCount = 0;
-  private jobCounter = 0;
+public class JobProcessor<I, O> {
+    private readonly Func<I, Task<O>> processFunc;
+    private readonly int concurrency;
+    private readonly Dictionary<string, Job<I, O>> jobs = new();
+    private readonly Queue<string> queue = new();
+    private int activeCount = 0;
+    private int jobCounter = 0;
 
-  constructor(processFunc: (input: I) => Promise<O>, concurrency = 3) {
-    if (concurrency < 1) throw new Error('Concurrency must be >= 1');
-    this.processFunc = processFunc;
-    this.concurrency = concurrency;
-  }
-
-  submit(input: I): string {
-    const id = String(++this.jobCounter);
-    this.jobs.set(id, { id, input, status: 'queued' });
-    this.queue.push(id);
-    this.dispatch();
-    return id;
-  }
-
-  getStatus(jobId: string): { status: JobStatus; result?: O; error?: string } {
-    const job = this.jobs.get(jobId);
-    if (!job) throw new Error(`Unknown job: ${jobId}`);
-    return { status: job.status, result: job.result, error: job.error };
-  }
-
-  private dispatch(): void {
-    while (this.activeCount < this.concurrency && this.queue.length > 0) {
-      const id = this.queue.shift()!;
-      const job = this.jobs.get(id)!;
-      job.status = 'processing';
-      this.activeCount++;
-
-      this.processFunc(job.input)
-        .then((result) => {
-          job.status = 'completed';
-          job.result = result;
-        })
-        .catch((error: any) => {
-          job.status = 'failed';
-          job.error = error?.message ?? String(error);
-        })
-        .finally(() => {
-          this.activeCount--;
-          this.dispatch();
-        });
+    public JobProcessor(Func<I, Task<O>> processFunc, int concurrency = 3) {
+        if (concurrency < 1) throw new ArgumentException("Concurrency must be >= 1");
+        this.processFunc = processFunc;
+        this.concurrency = concurrency;
     }
-  }
+
+    public string Submit(I input) {
+        string id = (++jobCounter).ToString();
+        jobs[id] = new Job<I, O> { Id = id, Input = input, Status = JobStatus.Queued };
+        queue.Enqueue(id);
+        Dispatch();
+        return id;
+    }
+
+    public (JobStatus Status, O? Result, string? Error) GetStatus(string jobId) {
+        if (!jobs.TryGetValue(jobId, out var job)) throw new Exception($"Unknown job: {jobId}");
+        return (job.Status, job.Result, job.Error);
+    }
+
+    private void Dispatch() {
+        while (activeCount < concurrency && queue.Count > 0) {
+            string id = queue.Dequeue();
+            var job = jobs[id];
+            job.Status = JobStatus.Processing;
+            activeCount++;
+            _ = RunJob(job); // fire-and-forget; RunJob re-dispatches when done
+        }
+    }
+
+    private async Task RunJob(Job<I, O> job) {
+        try {
+            job.Result = await processFunc(job.Input);
+            job.Status = JobStatus.Completed;
+        } catch (Exception error) {
+            job.Status = JobStatus.Failed;
+            job.Error = error.Message;
+        } finally {
+            activeCount--;
+            Dispatch();
+        }
+    }
 }
 ```
 

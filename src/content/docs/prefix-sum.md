@@ -26,16 +26,16 @@ This means any subarray sum reduces to a subtraction of two prefix values — O(
 
 ### Solution
 
-```typescript
-function prefixSum(arr: number[]): number[] {
-  const prefixSums: number[] = [];
-  let currentSum = 0;
+```csharp
+public int[] PrefixSum(int[] arr) {
+    var prefixSums = new List<int>();
+    int currentSum = 0;
 
-  for (let i = 0; i < arr.length; i++) {
-    currentSum += arr[i];
-    prefixSums.push(currentSum);
-  }
+    for (int i = 0; i < arr.Length; i++) {
+        currentSum += arr[i];
+        prefixSums.Add(currentSum);
+    }
 
-  return prefixSums;
+    return prefixSums.ToArray();
 }
 ```

@@ -12,23 +12,23 @@ _Given the `root` of a binary tree, return the level order traversal of its n
 
 ### Solution
 
-```typescript
-function levelOrder(root: TreeNode | null): number[][] {
-  const res: number[][] = [];
-  if (root === null) return res;
-  let processingQueue: TreeNode[] = [root];
-  let levelQueue = [];
-  while (processingQueue.length) {
-    const vals: number[] = [];
-    for (const node of processingQueue) {
-      vals.push(node.val);
-      if (node.left) levelQueue.push(node.left);
-      if (node.right) levelQueue.push(node.right);
+```csharp
+public IList<IList<int>> LevelOrder(TreeNode? root) {
+    var res = new List<IList<int>>();
+    if (root is null) return res;
+    var processingQueue = new List<TreeNode> { root };
+    var levelQueue = new List<TreeNode>();
+    while (processingQueue.Count > 0) {
+        var vals = new List<int>();
+        foreach (var node in processingQueue) {
+            vals.Add(node.val);
+            if (node.left is not null) levelQueue.Add(node.left);
+            if (node.right is not null) levelQueue.Add(node.right);
+        }
+        res.Add(vals);
+        processingQueue = levelQueue;
+        levelQueue = new List<TreeNode>();
     }
-    res.push(vals);
-    processingQueue = levelQueue;
-    levelQueue = [];
-  }
-  return res;
+    return res;
 }
 ```

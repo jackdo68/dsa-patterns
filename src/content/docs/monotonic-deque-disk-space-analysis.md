@@ -47,28 +47,28 @@ Time: O(n), Space: O(k)
 
 ### Solution
 
-```typescript
-function diskSpaceAnalysis(n: number, k: number, space: number[]): number {
-  const deque: number[] = [];
-  let result = -Infinity;
+```csharp
+public int DiskSpaceAnalysis(int n, int k, int[] space) {
+    var deque = new LinkedList<int>(); // stores indices, values increasing front→back
+    int result = int.MinValue;
 
-  for (let i = 0; i < n; i++) {
-    // remove elements outside the window
-    if (deque.length && deque[0] <= i - k) deque.shift();
+    for (int i = 0; i < n; i++) {
+        // remove elements outside the window
+        if (deque.Count > 0 && deque.First!.Value <= i - k) deque.RemoveFirst();
 
-    // maintain increasing order (min deque)
-    while (deque.length && space[deque[deque.length - 1]] >= space[i]) {
-      deque.pop();
+        // maintain increasing order (min deque)
+        while (deque.Count > 0 && space[deque.Last!.Value] >= space[i]) {
+            deque.RemoveLast();
+        }
+
+        deque.AddLast(i);
+
+        // window is fully formed
+        if (i >= k - 1) {
+            result = Math.Max(result, space[deque.First!.Value]);
+        }
     }
 
-    deque.push(i);
-
-    // window is fully formed
-    if (i >= k - 1) {
-      result = Math.max(result, space[deque[0]]);
-    }
-  }
-
-  return result;
+    return result;
 }
 ```

@@ -19,34 +19,33 @@ Output: [["a","a","b"],["aa","b"]]
 
 ### Solution
 
-```typescript
-function partition(s: string): string[][] {
-  function isPalindrome(str: string): boolean {
-    let i = 0;
-    let j = str.length - 1;
-    while (i < j) {
-      if (str[i] !== str[j]) return false;
-      i++;
-      j--;
+```csharp
+public IList<IList<string>> Partition(string s) {
+    bool IsPalindrome(string str) {
+        int i = 0;
+        int j = str.Length - 1;
+        while (i < j) {
+            if (str[i] != str[j]) return false;
+            i++;
+            j--;
+        }
+        return true;
     }
-    return true;
-  }
-  const part: string[] = [];
-  const result: string[][] = [];
-  function dfs(index: number) {
-    if (index === s.length) result.push([...part]);
-    for (let i = index + 1; i <= s.length; i++) {
-      const str = s.slice(index, i);
-      if (isPalindrome(str)) {
-        part.push(str);
-        dfs(i);
-        part.pop();
-      }
+    var part = new List<string>();
+    var result = new List<IList<string>>();
+    void Dfs(int index) {
+        if (index == s.Length) result.Add(new List<string>(part));
+        for (int i = index + 1; i <= s.Length; i++) {
+            string str = s.Substring(index, i - index);
+            if (IsPalindrome(str)) {
+                part.Add(str);
+                Dfs(i);
+                part.RemoveAt(part.Count - 1);
+            }
+        }
     }
-  }
-  dfs(0);
+    Dfs(0);
 
-  return result;
+    return result;
 }
-
 ```

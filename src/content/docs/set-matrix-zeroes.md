@@ -25,31 +25,31 @@ Use two arrays to mark which rows and columns need to be zeroed:
 
 ### Solution
 
-```typescript
-function setZeroes(matrix: number[][]): void {
-  const m = matrix.length;
-  const n = matrix[0].length;
+```csharp
+public void SetZeroes(int[][] matrix) {
+    int m = matrix.Length;
+    int n = matrix[0].Length;
 
-  const rows: boolean[] = new Array(m).fill(false);
-  const cols: boolean[] = new Array(n).fill(false);
+    bool[] rows = new bool[m];
+    bool[] cols = new bool[n];
 
-  // First pass: mark which rows and columns have zeros
-  for (let i = 0; i < m; i++) {
-    for (let j = 0; j < n; j++) {
-      if (matrix[i][j] === 0) {
-        rows[i] = true;
-        cols[j] = true;
-      }
+    // First pass: mark which rows and columns have zeros
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            if (matrix[i][j] == 0) {
+                rows[i] = true;
+                cols[j] = true;
+            }
+        }
     }
-  }
 
-  // Second pass: zero cells based on markers
-  for (let i = 0; i < m; i++) {
-    for (let j = 0; j < n; j++) {
-      if (rows[i] || cols[j]) {
-        matrix[i][j] = 0;
-      }
+    // Second pass: zero cells based on markers
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            if (rows[i] || cols[j]) {
+                matrix[i][j] = 0;
+            }
+        }
     }
-  }
 }
 ```

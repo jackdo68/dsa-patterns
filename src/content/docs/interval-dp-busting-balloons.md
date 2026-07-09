@@ -18,38 +18,35 @@ frequency: "Very Low"
 
 ### Solution
 
-```typescript
-function maxCoins(nums: number[]): number {
-  const n = nums.length;
-  // store the state for memoization
-  // initialize to 0
-  const dp: number[][] = Array.from({ length: n }, 
-  () => Array.from({ length: n }, () => 0));
+```csharp
+public int MaxCoins(int[] nums) {
+    int n = nums.Length;
+    // memoization table, initialized to 0
+    int[,] dp = new int[n, n];
 
-  // function to calculcate the max coin we can get if burst
-  // all balloons from l to r inclusively
-  function f(l: number, r: number): number {
-    // invalid range
-    if (l > r) return 0;
+    // max coins we can get by bursting all balloons from l to r inclusively
+    int F(int l, int r) {
+        // invalid range
+        if (l > r) return 0;
 
-    // already calculate
-    if (dp[l][r] !== 0) return dp[l][r];
+        // already calculated
+        if (dp[l, r] != 0) return dp[l, r];
 
-    // try each balloon that will be bursted last
-    for (let i = l; i <= r; i++) {
-      // burst all balloons from l to i-1
-      const leftResult = f(l, i - 1);
-      // burst all balloons from i+1 to r
-      const rightResult = f(i + 1, r);
-      // calculate multipliers if it's out of bound
-      const lastLeft = l === 0 ? 1 : nums[l - 1];
-      const lastRight = r === n - 1 ? 1 : nums[r + 1];
-      const val = lastLeft * nums[i] * lastRight;
-      
-      dp[l][r] = Math.max(dp[l][r], leftResult + val + rightResult);
+        // try each balloon as the one burst last
+        for (int i = l; i <= r; i++) {
+            // burst all balloons from l to i-1
+            int leftResult = F(l, i - 1);
+            // burst all balloons from i+1 to r
+            int rightResult = F(i + 1, r);
+            // multipliers, treating out-of-bounds as 1
+            int lastLeft = l == 0 ? 1 : nums[l - 1];
+            int lastRight = r == n - 1 ? 1 : nums[r + 1];
+            int val = lastLeft * nums[i] * lastRight;
+
+            dp[l, r] = Math.Max(dp[l, r], leftResult + val + rightResult);
+        }
+        return dp[l, r];
     }
-    return dp[l][r];
-  }
-  return f(0, n - 1);
+    return F(0, n - 1);
 }
 ```

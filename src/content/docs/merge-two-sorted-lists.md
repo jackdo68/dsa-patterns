@@ -19,16 +19,16 @@ Use a dummy node and iterate both lists simultaneously. At each step, compare th
 
 ### Solution
 
-```typescript
-function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {
+```csharp
+public ListNode? MergeTwoLists(ListNode? list1, ListNode? list2) {
     // Early return if one list is empty
-    if (!list1) return list2;
-    if (!list2) return list1;
+    if (list1 is null) return list2;
+    if (list2 is null) return list1;
 
-    const dummy = new ListNode();
-    let current = dummy;
+    var dummy = new ListNode();
+    var current = dummy;
 
-    while (list1 && list2) {
+    while (list1 is not null && list2 is not null) {
         if (list1.val < list2.val) {
             current.next = list1;
             list1 = list1.next;
@@ -39,7 +39,7 @@ function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode
         current = current.next;
     }
 
-    current.next = list1 || list2;
+    current.next = list1 ?? list2;
     return dummy.next;
 }
 ```

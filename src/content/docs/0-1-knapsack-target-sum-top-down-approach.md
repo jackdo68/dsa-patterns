@@ -23,36 +23,32 @@ frequency: "High"
 
 ### Solution
 
-```typescript
+```csharp
 // top down approach
-function findTargetSumWays(nums: number[], target: number): number {
-  // Map to store previously computed results
-  // Key: `${index},${currentSum}`, Value: number of ways
-  const memo = new Map<string, number>();
+public int FindTargetSumWays(int[] nums, int target) {
+    // memoize previously computed results, keyed by (index, currentSum)
+    var memo = new Dictionary<(int, int), int>();
 
-  function dfs(i: number, currSum: number): number {
-    // Base case: reached end of array
-    if (i === nums.length) {
-      return currSum === target ? 1 : 0;
+    int Dfs(int i, int currSum) {
+        // Base case: reached end of array
+        if (i == nums.Length) {
+            return currSum == target ? 1 : 0;
+        }
+
+        // Check if we have already computed this state
+        if (memo.TryGetValue((i, currSum), out int cached)) {
+            return cached;
+        }
+
+        // Count ways by both adding and subtracting the current number
+        int ways = Dfs(i + 1, currSum + nums[i]) + Dfs(i + 1, currSum - nums[i]);
+
+        // Store result before returning
+        memo[(i, currSum)] = ways;
+        return ways;
     }
 
-    // Create key for current state
-    const key = `${i},${currSum}`;
-
-    // Check if we have already computed this state
-    if (memo.has(key)) {
-      return memo.get(key)!;
-    }
-
-    // Calculate number of ways by adding and subtracting current number
-    const ways = dfs(i + 1, currSum + nums[i]) + dfs(i + 1, currSum - nums[i]);
-
-    // Store result in memo before returning
-    memo.set(key, ways);
-    return ways;
-  }
-
-  return dfs(0, 0);
+    return Dfs(0, 0);
 }
 ```
 
@@ -72,23 +68,23 @@ So instead of exploring all `+/-` assignments, we just count how many subsets su
 
 Edge cases: if `(total + target)` is odd or `|target| > total`, no solution exists.
 
-```typescript
-function findTargetSumWays(nums: number[], target: number): number {
-  const total = nums.reduce((a, b) => a + b, 0);
+```csharp
+public int FindTargetSumWays(int[] nums, int target) {
+    int total = nums.Sum();
 
-  // P = (target + total) / 2 must be a non-negative integer
-  if ((target + total) % 2 !== 0 || Math.abs(target) > total) return 0;
+    // P = (target + total) / 2 must be a non-negative integer
+    if ((target + total) % 2 != 0 || Math.Abs(target) > total) return 0;
 
-  const subsetSum = (target + total) / 2;
-  const dp = new Array(subsetSum + 1).fill(0);
-  dp[0] = 1;
+    int subsetSum = (target + total) / 2;
+    int[] dp = new int[subsetSum + 1];
+    dp[0] = 1;
 
-  for (const num of nums) {
-    for (let i = subsetSum; i >= num; i--) {  // backward — each number used once
-      dp[i] += dp[i - num];
+    foreach (int num in nums) {
+        for (int i = subsetSum; i >= num; i--) {  // backward — each number used once
+            dp[i] += dp[i - num];
+        }
     }
-  }
 
-  return dp[subsetSum];
+    return dp[subsetSum];
 }
 ```

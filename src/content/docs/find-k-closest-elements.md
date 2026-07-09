@@ -47,25 +47,25 @@ Window: arr[1..3] = [2, 3, 4] ✓
 
 ### Solution
 
-```typescript
-function findClosestElements(arr: number[], k: number, x: number): number[] {
-  if (arr.length === k) return arr;
+```csharp
+public IList<int> FindClosestElements(int[] arr, int k, int x) {
+    if (arr.Length == k) return arr.ToList();
 
-  let left = 0;
-  let right = arr.length - k - 1;   // last position where arr[mid + k] is in bounds
-  let result = arr.length - k;       // default: slide all the way right
+    int left = 0;
+    int right = arr.Length - k - 1;   // last position where arr[mid + k] is in bounds
+    int result = arr.Length - k;       // default: slide all the way right
 
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    // predicate: sliding right would NOT improve — mid is a candidate
-    if (arr[mid + k] - x >= x - arr[mid]) {
-      result = mid;
-      right = mid - 1;
-    } else {
-      left = mid + 1;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        // predicate: sliding right would NOT improve — mid is a candidate
+        if (arr[mid + k] - x >= x - arr[mid]) {
+            result = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
     }
-  }
 
-  return arr.slice(result, result + k);
+    return arr.Skip(result).Take(k).ToList();
 }
 ```

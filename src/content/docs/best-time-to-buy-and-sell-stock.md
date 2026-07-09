@@ -57,18 +57,18 @@ The "buy on day 1, sell on day 4" pair gives the max profit of 5 — and the alg
 
 ### Solution
 
-```typescript
-function maxProfit(prices: number[]): number {
-  let buy = 0;
-  let maxProfit = 0;
-  for (let sell = 1; sell < prices.length; sell++) {
-    if (prices[sell] < prices[buy]) {
-      buy = sell;   // found a cheaper buying day; reset
-    } else {
-      maxProfit = Math.max(maxProfit, prices[sell] - prices[buy]);
+```csharp
+public int MaxProfit(int[] prices) {
+    int buy = 0;
+    int maxProfit = 0;
+    for (int sell = 1; sell < prices.Length; sell++) {
+        if (prices[sell] < prices[buy]) {
+            buy = sell;   // found a cheaper buying day; reset
+        } else {
+            maxProfit = Math.Max(maxProfit, prices[sell] - prices[buy]);
+        }
     }
-  }
-  return maxProfit;
+    return maxProfit;
 }
 ```
 

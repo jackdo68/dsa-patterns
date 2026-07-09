@@ -34,22 +34,24 @@ Explanation: You can allocate to the first, second and third child with 2, 1, 2 
 
 ### Solution
 
-```typescript
-function candy(ratings: number[]): number {
-  const n = ratings.length;
-  const travelFromLeft = Array.from({ length: n }, () => 1); // min 1 candy
-  const travelFromRight = Array.from({ length: n }, () => 1); // min 1 candy
-  for (let i = 1; i < n; i++) {
-    if (ratings[i] > ratings[i - 1]) travelFromLeft[i] = travelFromLeft[i - 1] + 1;
-  }
-  for (let i = n - 2; i >= 0; i--) {
-    if (ratings[i] > ratings[i + 1]) travelFromRight[i] = travelFromRight[i + 1] + 1;
-  }
-  let res = 0;
-  for (let i = 0; i < n; i++) {
-    // need maximum as the the minimum number of candies required
-    res += Math.max(travelFromLeft[i], travelFromRight[i]);
-  }
-  return res;
+```csharp
+public int Candy(int[] ratings) {
+    int n = ratings.Length;
+    int[] travelFromLeft = new int[n];
+    int[] travelFromRight = new int[n];
+    Array.Fill(travelFromLeft, 1);  // min 1 candy
+    Array.Fill(travelFromRight, 1); // min 1 candy
+    for (int i = 1; i < n; i++) {
+        if (ratings[i] > ratings[i - 1]) travelFromLeft[i] = travelFromLeft[i - 1] + 1;
+    }
+    for (int i = n - 2; i >= 0; i--) {
+        if (ratings[i] > ratings[i + 1]) travelFromRight[i] = travelFromRight[i + 1] + 1;
+    }
+    int res = 0;
+    for (int i = 0; i < n; i++) {
+        // need the maximum to satisfy both neighbors
+        res += Math.Max(travelFromLeft[i], travelFromRight[i]);
+    }
+    return res;
 }
 ```

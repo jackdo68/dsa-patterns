@@ -21,39 +21,42 @@ right  = 2i + 2  (or just left + 1)
 
 ### Solution
 
-```typescript
-class MinHeap {
-  private heap: number[] = [];
+```csharp
+// Note: .NET already ships PriorityQueue<TElement, TPriority> (a min-heap).
+// This hand-rolled version shows the mechanics.
+public class MinHeap {
+    private readonly List<int> heap = new();
 
-  push(value: number) {
-    this.heap.push(value);
-    let index = this.heap.length - 1;
-    while (index > 0) {
-      const parent = Math.floor((index - 1) / 2);
-      if (this.heap[parent] <= this.heap[index]) break;
-      [this.heap[parent], this.heap[index]] = [this.heap[index], this.heap[parent]];
-      index = parent;
+    public void Push(int value) {
+        heap.Add(value);
+        int index = heap.Count - 1;
+        while (index > 0) {
+            int parent = (index - 1) / 2;
+            if (heap[parent] <= heap[index]) break;
+            (heap[parent], heap[index]) = (heap[index], heap[parent]);
+            index = parent;
+        }
     }
-  }
 
-  pop(): number | undefined {
-    if (!this.heap.length) return undefined;
-    [this.heap[0], this.heap[this.heap.length - 1]] = [this.heap[this.heap.length - 1], this.heap[0]];
-    const min = this.heap.pop()!;
-    let index = 0;
-    while (index < this.heap.length) {
-      let smallest = index;
-      const left = 2 * index + 1;
-      const right = 2 * index + 2;
-      if (left < this.heap.length && this.heap[left] < this.heap[smallest]) smallest = left;
-      if (right < this.heap.length && this.heap[right] < this.heap[smallest]) smallest = right;
-      if (smallest === index) break;
-      [this.heap[index], this.heap[smallest]] = [this.heap[smallest], this.heap[index]];
-      index = smallest;
+    public int? Pop() {
+        if (heap.Count == 0) return null;
+        (heap[0], heap[^1]) = (heap[^1], heap[0]);
+        int min = heap[^1];
+        heap.RemoveAt(heap.Count - 1);
+        int index = 0;
+        while (index < heap.Count) {
+            int smallest = index;
+            int left = 2 * index + 1;
+            int right = 2 * index + 2;
+            if (left < heap.Count && heap[left] < heap[smallest]) smallest = left;
+            if (right < heap.Count && heap[right] < heap[smallest]) smallest = right;
+            if (smallest == index) break;
+            (heap[index], heap[smallest]) = (heap[smallest], heap[index]);
+            index = smallest;
+        }
+        return min;
     }
-    return min;
-  }
 
-  size() { return this.heap.length; }
+    public int Size() => heap.Count;
 }
 ```

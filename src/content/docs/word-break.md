@@ -30,22 +30,22 @@ Explanation: Return true because "leetcode" can be segmented as "leet code".
 
 ### Solution
 
-```typescript
-  function wordBreak(s: string, wordDict: string[]): boolean {
-    // for "leetcode" with 8 chars, we need array that has index 8 because substring(i,j) will include the last index
-    const dp = Array(s.length + 1).fill(false);
-    const set = new Set(wordDict);
-    dp[0] = true; // base case, empty string
+```csharp
+public bool WordBreak(string s, IList<string> wordDict) {
+    // dp has length s.Length + 1 so dp[i] covers the prefix s[0..i)
+    bool[] dp = new bool[s.Length + 1];
+    var set = new HashSet<string>(wordDict);
+    dp[0] = true; // base case: empty string
 
-    for (let i = 1; i <= s.length; i++) {
-      for (let j = 0; j < i; j++) {
-        // the substring(0,j) can be segmented, and substring(j,i) exist in wordDict
-        if (dp[j] && set.has(s.substring(j, i))) {
-          dp[i] = true;
-          break;
+    for (int i = 1; i <= s.Length; i++) {
+        for (int j = 0; j < i; j++) {
+            // s[0..j) can be segmented, and s[j..i) is in the dictionary
+            if (dp[j] && set.Contains(s.Substring(j, i - j))) {
+                dp[i] = true;
+                break;
+            }
         }
-      }
     }
-    return dp[s.length];
-  }
+    return dp[s.Length];
+}
 ```

@@ -17,27 +17,27 @@ The key is to **backtrack** (pop the last element) after exploring each node, so
 
 ### Solution
 
-```typescript
-function pathSum(root: TreeNode | null, targetSum: number): number[][] {
-  const result: number[][] = [];
+```csharp
+public IList<IList<int>> PathSum(TreeNode? root, int targetSum) {
+    var result = new List<IList<int>>();
 
-  function dfs(node: TreeNode | null, remaining: number, path: number[]): void {
-    if (!node) return;
+    void Dfs(TreeNode? node, int remaining, List<int> path) {
+        if (node is null) return;
 
-    path.push(node.val);
+        path.Add(node.val);
 
-    // Leaf node with correct sum
-    if (!node.left && !node.right && remaining === node.val) {
-      result.push([...path]);
-    } else {
-      dfs(node.left, remaining - node.val, path);
-      dfs(node.right, remaining - node.val, path);
+        // Leaf node with correct sum
+        if (node.left is null && node.right is null && remaining == node.val) {
+            result.Add(new List<int>(path));
+        } else {
+            Dfs(node.left, remaining - node.val, path);
+            Dfs(node.right, remaining - node.val, path);
+        }
+
+        path.RemoveAt(path.Count - 1); // backtrack
     }
 
-    path.pop(); // backtrack
-  }
-
-  dfs(root, targetSum, []);
-  return result;
+    Dfs(root, targetSum, new List<int>());
+    return result;
 }
 ```

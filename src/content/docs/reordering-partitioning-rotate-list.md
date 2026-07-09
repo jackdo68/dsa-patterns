@@ -19,30 +19,30 @@ Since `k` can exceed the list length, first compute the length and normalize wit
 
 ### Solution
 
-```typescript
-function rotateRight(head: ListNode | null, k: number): ListNode | null {
-  // early return
-  if (!head || !head.next) return head;
-  // find the length
-  let length = 1;
-  let curr = head;
-  while (curr.next) {
-    length++;
-    curr = curr.next;
-  }
-  // normalize k
-  k = k % length;
-  if (k === 0) return head;
+```csharp
+public ListNode? RotateRight(ListNode? head, int k) {
+    // early return
+    if (head is null || head.next is null) return head;
+    // find the length
+    int length = 1;
+    var curr = head;
+    while (curr.next is not null) {
+        length++;
+        curr = curr.next;
+    }
+    // normalize k
+    k = k % length;
+    if (k == 0) return head;
 
-  const tail = curr; // will point to the original head
-  // partial traverse
-  curr = head; // reset curr
-  for (let i = 0; i < length - k - 1; i++) {
-    curr = curr.next!;
-  }
-  const newHead = curr.next;
-  curr.next = null;
-  tail.next = head;
-  return newHead;
+    var tail = curr; // will point to the original head
+    // partial traverse
+    curr = head; // reset curr
+    for (int i = 0; i < length - k - 1; i++) {
+        curr = curr.next!;
+    }
+    var newHead = curr.next;
+    curr.next = null;
+    tail.next = head;
+    return newHead;
 }
 ```

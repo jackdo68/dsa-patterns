@@ -18,37 +18,39 @@ frequency: "Very Low"
 
 ### Solution
 
-```typescript
-function kruskalAlgorithm(V: number, edges: [number, number, number][]): number {
+```csharp
+public int KruskalAlgorithm(int V, int[][] edges) {
     // Sort edges by weight
-    edges.sort((a, b) => a[2] - b[2]);
-    
-    const parent = Array.from({length: V}, (_, i) => i);
-    let mstCost = 0;
-    let edgesUsed = 0;
-    
-    // Find set of vertex i
-    function find(i: number): number {
-        if (parent[i] !== i) {
-            parent[i] = find(parent[i]);
+    Array.Sort(edges, (a, b) => a[2] - b[2]);
+
+    int[] parent = new int[V];
+    for (int i = 0; i < V; i++) parent[i] = i;
+    int mstCost = 0;
+    int edgesUsed = 0;
+
+    // Find set of vertex i (with path compression)
+    int Find(int i) {
+        if (parent[i] != i) {
+            parent[i] = Find(parent[i]);
         }
         return parent[i];
     }
-    
+
     // Union of two sets
-    function union(i: number, j: number): void {
-        parent[find(i)] = find(j);
+    void Union(int i, int j) {
+        parent[Find(i)] = Find(j);
     }
-    
-    for (const [u, v, weight] of edges) {
-        if (find(u) !== find(v)) {
-            union(u, v);
+
+    foreach (var edge in edges) {
+        int u = edge[0], v = edge[1], weight = edge[2];
+        if (Find(u) != Find(v)) {
+            Union(u, v);
             mstCost += weight;
             edgesUsed++;
-            if (edgesUsed === V - 1) break;
+            if (edgesUsed == V - 1) break;
         }
     }
-    
+
     return mstCost;
 }
 ```

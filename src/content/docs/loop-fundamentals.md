@@ -9,12 +9,12 @@ Use `for` when:
 - You're iterating through an entire array/string sequentially
 - Index moves predictably (usually `i++`)
 
-```typescript
+```csharp
 // Iterating entire array
-for (let i = 0; i < arr.length; i++) { ... }
+for (int i = 0; i < arr.Length; i++) { ... }
 
-// Using for-of
-for (const item of arr) { ... }
+// Using foreach
+foreach (var item in arr) { ... }
 ```
 
 ### When to Use While Loop
@@ -24,9 +24,9 @@ Use `while` when:
 - Index moves unpredictably (might skip, might stay)
 - Multiple pointers moving at different rates
 
-```typescript
+```csharp
 // Skipping whitespace - don't know how many
-while (i < n && s[i] === ' ') i++;
+while (i < n && s[i] == ' ') i++;
 
 // Two pointers moving differently
 while (left < right) { ... }

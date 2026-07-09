@@ -85,25 +85,25 @@ Notice how matches create a diagonal step (`dp[i+1][j+1]`), while non-matches ta
 
 ### Solution
 
-```typescript
-  function longestCommonSubsequence(text1: string, text2: string): number {
-    // We need a 2-d grid to solve this problem using DP
-    const n = text1.length;
-    const m = text2.length;
-    // we go out of bound by 1 because we need to get the value of the next grid
-    const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
+```csharp
+public int LongestCommonSubsequence(string text1, string text2) {
+    // We need a 2-D grid to solve this with DP
+    int n = text1.Length;
+    int m = text2.Length;
+    // one extra row/column so the "next" cell exists for the base case
+    int[,] dp = new int[n + 1, m + 1];
 
-    for (let i = n - 1; i >= 0; i--) {
-      for (let j = m - 1; j >= 0; j--) {
-        if (text1[i] === text2[j]) {
-          // if 2 characters matched, the value of the grid equas the value longest common subsequence of postfix plus 1
-          dp[i][j] = 1 + dp[i + 1][j + 1]; // out of bound value is required here
-        } else {
-          // No matched, we have 2 options, get the max value of both
-          dp[i][j] = Math.max(dp[i][j + 1], dp[i + 1][j]);
+    for (int i = n - 1; i >= 0; i--) {
+        for (int j = m - 1; j >= 0; j--) {
+            if (text1[i] == text2[j]) {
+                // characters match: extend the LCS of the suffixes by 1
+                dp[i, j] = 1 + dp[i + 1, j + 1];
+            } else {
+                // no match: take the best of skipping either character
+                dp[i, j] = Math.Max(dp[i, j + 1], dp[i + 1, j]);
+            }
         }
-      }
     }
-    return dp[0][0];
-  }
+    return dp[0, 0];
+}
 ```

@@ -47,25 +47,25 @@ dfs(start=0, sum=0)
 
 ### Solution
 
-```typescript
-function combinationSum(candidates: number[], target: number): number[][] {
-  const results: number[][] = [];
+```csharp
+public IList<IList<int>> CombinationSum(int[] candidates, int target) {
+    var results = new List<IList<int>>();
 
-  function dfs(start: number, path: number[], sum: number) {
-    if (sum === target) {
-      results.push([...path]);
-      return;
+    void Dfs(int start, List<int> path, int sum) {
+        if (sum == target) {
+            results.Add(new List<int>(path));
+            return;
+        }
+
+        for (int i = start; i < candidates.Length; i++) {
+            if (sum + candidates[i] > target) continue;
+            path.Add(candidates[i]);
+            Dfs(i, path, sum + candidates[i]);
+            path.RemoveAt(path.Count - 1);
+        }
     }
 
-    for (let i = start; i < candidates.length; i++) {
-      if (sum + candidates[i] > target) continue;
-      path.push(candidates[i]);
-      dfs(i, path, sum + candidates[i]);
-      path.pop();
-    }
-  }
-
-  dfs(0, [], 0);
-  return results;
+    Dfs(0, new List<int>(), 0);
+    return results;
 }
 ```

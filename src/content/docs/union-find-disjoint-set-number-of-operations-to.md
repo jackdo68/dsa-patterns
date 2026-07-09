@@ -29,10 +29,10 @@ It tracks which elements belong to the same group (connected component). Use it 
 
 **Path compression:** In `find`, set each node's parent directly to the root. This flattens the tree, making future lookups nearly O(1).
 
-```typescript
-function find(i: number): number {
-  if (parent[i] !== i) parent[i] = find(parent[i]); // path compression
-  return parent[i];
+```csharp
+int Find(int i) {
+    if (parent[i] != i) parent[i] = Find(parent[i]); // path compression
+    return parent[i];
 }
 ```
 
@@ -47,35 +47,36 @@ function find(i: number): number {
 
 ### Solution
 
-```typescript
-function makeConnected(n: number, connections: number[][]): number {
-  // we need minimum n-1 connections
-  if (connections.length < n - 1) return -1;
+```csharp
+public int MakeConnected(int n, int[][] connections) {
+    // we need a minimum of n-1 connections
+    if (connections.Length < n - 1) return -1;
 
-  // use union find to determine number of connected components
-  const parent = Array.from({ length: n }, (curr, index) => index);
+    // use union find to determine the number of connected components
+    int[] parent = new int[n];
+    for (int i = 0; i < n; i++) parent[i] = i;
 
-  // recursively look up
-  function findParent(i: number): number {
-    if (parent[i] !== i) parent[i] = findParent(parent[i]);
-    return parent[i];
-  }
+    // recursively look up (with path compression)
+    int FindParent(int i) {
+        if (parent[i] != i) parent[i] = FindParent(parent[i]);
+        return parent[i];
+    }
 
-  // set parent of y as parent of x
-  function union(x: number, y: number): void {
-        parent[findParent(x)] = findParent(y);
-  }
+    // set the parent of x's root to y's root
+    void Union(int x, int y) {
+        parent[FindParent(x)] = FindParent(y);
+    }
 
-  for (const [i, j] of connections) {
-    union(i, j);
-  }
+    foreach (var edge in connections) {
+        Union(edge[0], edge[1]);
+    }
 
-  // for each components/sub networks, there will always 1 computer that is the parent of itself
-  let num = 0;
-  for (let i = 0; i < n; i++) {
-    if (parent[i] === i) num++;
-  }
-  // to connect all subnet to make the whole network connected, we need num - 1 connections
-  return num - 1;
+    // each component/subnetwork has exactly one computer that is its own parent
+    int num = 0;
+    for (int i = 0; i < n; i++) {
+        if (parent[i] == i) num++;
+    }
+    // to connect all subnets into one network, we need num - 1 connections
+    return num - 1;
 }
 ```

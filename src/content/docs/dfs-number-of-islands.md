@@ -19,35 +19,29 @@ frequency: "High"
 
 ### Solution
 
-```typescript
-function numIslands(grid: string[][]): number {
-  let total = 0;
-  const rows = grid.length;
-  const columns = grid[0].length;
-  const moves = [
-    [-1, 0],
-    [1, 0],
-    [0, 1],
-    [0, -1]
-  ];
+```csharp
+public int NumIslands(char[][] grid) {
+    int total = 0;
+    int rows = grid.Length;
+    int columns = grid[0].Length;
+    int[][] moves = { new[] { -1, 0 }, new[] { 1, 0 }, new[] { 0, 1 }, new[] { 0, -1 } };
 
-  function dfs(x: number, y: number): number {
-    if (x > rows - 1 || x < 0 || y > columns - 1 || y < 0) return 0; // out of bound
-    const cur = grid[x][y];
-    if (cur === "0") {
-      return 0;
-    } else {
-      grid[x][y] = "0";
-      for (const [a, b] of moves) dfs(x + a, y + b);
-      return 1;
+    int Dfs(int x, int y) {
+        if (x > rows - 1 || x < 0 || y > columns - 1 || y < 0) return 0; // out of bounds
+        if (grid[x][y] == '0') {
+            return 0;
+        } else {
+            grid[x][y] = '0';
+            foreach (var move in moves) Dfs(x + move[0], y + move[1]);
+            return 1;
+        }
     }
-  }
 
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < columns; j++) {
-      total += dfs(i, j);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            total += Dfs(i, j);
+        }
     }
-  }
-  return total;
+    return total;
 }
 ```

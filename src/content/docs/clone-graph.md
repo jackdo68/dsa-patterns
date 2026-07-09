@@ -27,34 +27,34 @@ Both are O(V + E) time and O(V) space.
 
 ### Solution
 
-```typescript
-class GraphNode {
-  val: number;
-  neighbors: GraphNode[];
-  constructor(val?: number, neighbors?: GraphNode[]) {
-    this.val = val === undefined ? 0 : val;
-    this.neighbors = neighbors === undefined ? [] : neighbors;
-  }
+```csharp
+public class GraphNode {
+    public int val;
+    public List<GraphNode> neighbors;
+    public GraphNode(int val = 0, List<GraphNode>? neighbors = null) {
+        this.val = val;
+        this.neighbors = neighbors ?? new List<GraphNode>();
+    }
 }
 
-function cloneGraph(node: GraphNode | null): GraphNode | null {
-  if (!node) return null;
+public GraphNode? CloneGraph(GraphNode? node) {
+    if (node is null) return null;
 
-  const visited = new Map<GraphNode, GraphNode>();
+    var visited = new Dictionary<GraphNode, GraphNode>();
 
-  function dfs(original: GraphNode): GraphNode {
-    if (visited.has(original)) return visited.get(original)!;
+    GraphNode Dfs(GraphNode original) {
+        if (visited.TryGetValue(original, out var existing)) return existing;
 
-    const clone = new GraphNode(original.val);
-    visited.set(original, clone);
+        var clone = new GraphNode(original.val);
+        visited[original] = clone;
 
-    for (const neighbor of original.neighbors) {
-      clone.neighbors.push(dfs(neighbor));
+        foreach (var neighbor in original.neighbors) {
+            clone.neighbors.Add(Dfs(neighbor));
+        }
+
+        return clone;
     }
 
-    return clone;
-  }
-
-  return dfs(node);
+    return Dfs(node);
 }
 ```

@@ -54,20 +54,20 @@ result = [[1,6], [8,10], [15,18]]
 
 ### Solution
 
-```typescript
-function merge(intervals: number[][]): number[][] {
-  const res: number[][] = [];
-  intervals.sort((a, b) => a[0] - b[0]);
-  let temp = intervals[0];
-  for (const curr of intervals) {
-    if (curr[0] <= temp[1]) {
-      temp[1] = Math.max(temp[1], curr[1]);
-    } else {
-      res.push(temp);
-      temp = curr;
+```csharp
+public int[][] Merge(int[][] intervals) {
+    var res = new List<int[]>();
+    Array.Sort(intervals, (a, b) => a[0] - b[0]);
+    int[] temp = intervals[0];
+    foreach (var curr in intervals) {
+        if (curr[0] <= temp[1]) {
+            temp[1] = Math.Max(temp[1], curr[1]);
+        } else {
+            res.Add(temp);
+            temp = curr;
+        }
     }
-  }
-  res.push(temp);
-  return res;
+    res.Add(temp);
+    return res.ToArray();
 }
 ```

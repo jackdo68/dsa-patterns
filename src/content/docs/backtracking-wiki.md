@@ -20,18 +20,18 @@ Backtracking is the right tool whenever you need to **enumerate or explore all p
 
 ### The Universal Template
 
-```typescript
-function backtrack(state: State): void {
-  if (isComplete(state)) {
-    record(state);            // save a copy — state will be mutated next
-    return;
-  }
-  for (const choice of choices(state)) {
-    if (!isValid(choice, state)) continue;   // pruning (optional)
-    apply(choice, state);     // make
-    backtrack(state);         // recurse
-    undo(choice, state);      // undo
-  }
+```csharp
+void Backtrack(State state) {
+    if (IsComplete(state)) {
+        Record(state);            // save a copy — state will be mutated next
+        return;
+    }
+    foreach (var choice in Choices(state)) {
+        if (!IsValid(choice, state)) continue;   // pruning (optional)
+        Apply(choice, state);     // make
+        Backtrack(state);         // recurse
+        Undo(choice, state);      // undo
+    }
 }
 ```
 
@@ -46,15 +46,15 @@ Three things every backtracking function does:
 
 **The core rule:** every recursive call must correspond to exactly one choice — applied before recursing, undone before returning. The `apply` and `undo` must wrap the recursive call **inside** the loop:
 
-```typescript
-function dfs(state) {
-  if (isComplete(state)) { record(state); return; }
-  for (const c of choices) {
-    if (!isValid(c, state)) continue;
-    apply(c, state);
-    dfs(state);
-    undo(c, state);
-  }
+```csharp
+void Dfs(State state) {
+    if (IsComplete(state)) { Record(state); return; }
+    foreach (var c in choices) {
+        if (!IsValid(c, state)) continue;
+        Apply(c, state);
+        Dfs(state);
+        Undo(c, state);
+    }
 }
 ```
 
@@ -64,14 +64,14 @@ Each iteration: apply one choice → recurse → undo. The `undo` after the recu
 
 **The wrong version — choice not tied to a branch:**
 
-```typescript
-function dfs(state) {
-  if (isComplete(state)) { record(state); return; }
-  apply(someFixedChoice, state);      // ❌ one choice for ALL branches
-  for (const c of choices) {
-    if (!used(c)) dfs(state);          // every branch sees the same state
-  }
-  undo(someFixedChoice, state);
+```csharp
+void Dfs(State state) {
+    if (IsComplete(state)) { Record(state); return; }
+    Apply(someFixedChoice, state);      // ❌ one choice for ALL branches
+    foreach (var c in choices) {
+        if (!Used(c)) Dfs(state);        // every branch sees the same state
+    }
+    Undo(someFixedChoice, state);
 }
 ```
 
@@ -98,10 +98,10 @@ Each iteration starts from the same S, applies one choice, recurses, then restor
 
 ### Always Copy When Recording
 
-```typescript
-if (isComplete(state)) {
-  res.push([...path]);   // ✓ copy
-  return;
+```csharp
+if (IsComplete(state)) {
+    res.Add(new List<int>(path));   // ✓ copy
+    return;
 }
 ```
 
@@ -130,16 +130,16 @@ Different backtracking problems share the template but vary in **what counts as 
 
 **"Do I include this element or not?"** → **Subsets pattern (binary choice)**
 
-```typescript
+```csharp
 // At each index, two choices: include or skip
-function dfs(i: number, path: number[]) {
-  if (i === nums.length) { res.push([...path]); return; }
-  // Skip
-  dfs(i + 1, path);
-  // Include
-  path.push(nums[i]);
-  dfs(i + 1, path);
-  path.pop();
+void Dfs(int i, List<int> path) {
+    if (i == nums.Length) { res.Add(new List<int>(path)); return; }
+    // Skip
+    Dfs(i + 1, path);
+    // Include
+    path.Add(nums[i]);
+    Dfs(i + 1, path);
+    path.RemoveAt(path.Count - 1);
 }
 ```
 
@@ -149,17 +149,17 @@ Use when: every state is potentially valid (subsets, target sum count, etc.).
 
 **"In what order can I arrange these?"** → **Permutations pattern (used-array)**
 
-```typescript
-function dfs(path: number[]) {
-  if (path.length === n) { res.push([...path]); return; }
-  for (let i = 0; i < n; i++) {
-    if (used[i]) continue;
-    used[i] = true;
-    path.push(nums[i]);
-    dfs(path);
-    path.pop();
-    used[i] = false;
-  }
+```csharp
+void Dfs(List<int> path) {
+    if (path.Count == n) { res.Add(new List<int>(path)); return; }
+    for (int i = 0; i < n; i++) {
+        if (used[i]) continue;
+        used[i] = true;
+        path.Add(nums[i]);
+        Dfs(path);
+        path.RemoveAt(path.Count - 1);
+        used[i] = false;
+    }
 }
 ```
 
@@ -169,15 +169,15 @@ Use when: order matters, and you can't pick the same element twice.
 
 **"Which subset sums to / matches a target?"** → **Combinations pattern (start index)**
 
-```typescript
-function dfs(start: number, path: number[], remaining: number) {
-  if (remaining === 0) { res.push([...path]); return; }
-  if (remaining < 0) return;       // prune
-  for (let i = start; i < candidates.length; i++) {
-    path.push(candidates[i]);
-    dfs(i, path, remaining - candidates[i]);   // i (not i+1) for unbounded
-    path.pop();
-  }
+```csharp
+void Dfs(int start, List<int> path, int remaining) {
+    if (remaining == 0) { res.Add(new List<int>(path)); return; }
+    if (remaining < 0) return;       // prune
+    for (int i = start; i < candidates.Length; i++) {
+        path.Add(candidates[i]);
+        Dfs(i, path, remaining - candidates[i]);   // i (not i+1) for unbounded
+        path.RemoveAt(path.Count - 1);
+    }
 }
 ```
 
@@ -187,14 +187,14 @@ Use when: order doesn't matter, want to enumerate combinations. Pass `start` to 
 
 **"Build a sequence under a constraint"** → **Constraint-driven pattern (early pruning)**
 
-```typescript
-function dfs(state: State) {
-  if (isComplete(state)) { res.push(format(state)); return; }
-  for (const choice of validChoices(state)) {   // prune at the source
-    apply(choice, state);
-    dfs(state);
-    undo(choice, state);
-  }
+```csharp
+void Dfs(State state) {
+    if (IsComplete(state)) { res.Add(Format(state)); return; }
+    foreach (var choice in ValidChoices(state)) {   // prune at the source
+        Apply(choice, state);
+        Dfs(state);
+        Undo(choice, state);
+    }
 }
 ```
 
@@ -204,15 +204,15 @@ Use when: the structure of valid solutions can be enforced incrementally (Genera
 
 **"Explore connected positions in a grid/tree"** → **Spatial pattern (mark/unmark visited)**
 
-```typescript
-function dfs(r: number, c: number, ...): boolean {
-  if (outOfBounds || visited || invalid) return false;
-  if (goalReached) return true;
+```csharp
+bool Dfs(int r, int c /* ... */) {
+    if (outOfBounds || visited || invalid) return false;
+    if (goalReached) return true;
 
-  mark(r, c);
-  const found = dfs(r+1, c, ...) || dfs(r-1, c, ...) || ...;
-  unmark(r, c);
-  return found;
+    Mark(r, c);
+    bool found = Dfs(r + 1, c /* ... */) || Dfs(r - 1, c /* ... */) /* || ... */;
+    Unmark(r, c);
+    return found;
 }
 ```
 
@@ -222,15 +222,15 @@ Use when: the state IS the grid/tree, and you explore by movement. Mark visited 
 
 **"Match X to Y one-to-one, maximize/minimize a sum"** → **Assignment pattern (two sequences + running accumulator)**
 
-```typescript
-function dfs(i: number, currentScore: number) {
-  if (i === m) { best = Math.max(best, currentScore); return; }
-  for (let j = 0; j < m; j++) {
-    if (used[j]) continue;
-    used[j] = true;
-    dfs(i + 1, currentScore + score[i][j]);
-    used[j] = false;
-  }
+```csharp
+void Dfs(int i, int currentScore) {
+    if (i == m) { best = Math.Max(best, currentScore); return; }
+    for (int j = 0; j < m; j++) {
+        if (used[j]) continue;
+        used[j] = true;
+        Dfs(i + 1, currentScore + score[i][j]);
+        used[j] = false;
+    }
 }
 ```
 
@@ -253,7 +253,7 @@ Three-question diagnostic: *one input or two? enumerate or optimize? per-step sc
 
 4. **No pruning when it's the whole point** — for constraint problems (Generate Parentheses, N-Queens), forgetting to skip clearly-invalid branches makes brute force timeout.
 
-5. **Wrong duplicate handling** — for "unique permutations" or "unique combinations" with input duplicates, you need to sort the input first AND skip duplicates at the choice level (`if (i > start && nums[i] === nums[i-1]) continue;`).
+5. **Wrong duplicate handling** — for "unique permutations" or "unique combinations" with input duplicates, you need to sort the input first AND skip duplicates at the choice level (`if (i > start && nums[i] == nums[i-1]) continue;`).
 
 ---
 

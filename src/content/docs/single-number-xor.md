@@ -49,11 +49,11 @@ If we XOR all numbers together:
 
 ### Implementation
 
-```tsx
-function singleNumber(nums: number[]): number {
-    let result = 0;
+```csharp
+public int SingleNumber(int[] nums) {
+    int result = 0;
 
-    for (const num of nums) {
+    foreach (int num in nums) {
         result ^= num;
     }
 
@@ -67,23 +67,23 @@ function singleNumber(nums: number[]): number {
 
 ### Common Bit Manipulation Operations
 
-```tsx
+```csharp
 // Check if bit at position i is set
-const isSet = (n >> i) & 1;
+int isSet = (n >> i) & 1;
 
 // Set bit at position i
-const setBit = n | (1 << i);
+int setBit = n | (1 << i);
 
 // Clear bit at position i
-const clearBit = n & ~(1 << i);
+int clearBit = n & ~(1 << i);
 
 // Toggle bit at position i
-const toggleBit = n ^ (1 << i);
+int toggleBit = n ^ (1 << i);
 
 // Count number of 1 bits (Brian Kernighan's algorithm)
-function countBits(n: number): number {
-    let count = 0;
-    while (n) {
+int CountBits(int n) {
+    int count = 0;
+    while (n != 0) {
         n &= (n - 1);  // Clear the lowest set bit
         count++;
     }
@@ -91,7 +91,7 @@ function countBits(n: number): number {
 }
 
 // Check if n is power of 2
-const isPowerOfTwo = n > 0 && (n & (n - 1)) === 0;
+bool isPowerOfTwo = n > 0 && (n & (n - 1)) == 0;
 ```
 
 ### Related Problems

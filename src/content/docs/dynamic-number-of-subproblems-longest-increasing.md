@@ -35,17 +35,18 @@ frequency: "Medium"
 
 ### Solution
 
-```typescript
-function lengthOfLIS(nums: number[]): number {
-    const dp: number[] = Array(nums.length).fill(1); // start from this position
+```csharp
+public int LengthOfLIS(int[] nums) {
+    int[] dp = new int[nums.Length];
+    Array.Fill(dp, 1); // each element alone is a subsequence of length 1
 
-    for (let i = 1; i < nums.length; i++) {
-      for (let j = i - 1; j >= 0; j--) {
-        if (nums[i] > nums[j]) { // we can extends the subsequence
-          dp[i] = Math.max(dp[i], dp[j] + 1);
+    for (int i = 1; i < nums.Length; i++) {
+        for (int j = i - 1; j >= 0; j--) {
+            if (nums[i] > nums[j]) { // we can extend the subsequence
+                dp[i] = Math.Max(dp[i], dp[j] + 1);
+            }
         }
-      }
     }
-    return Math.max(...dp)
-};
+    return dp.Max();
+}
 ```

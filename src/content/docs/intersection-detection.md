@@ -38,18 +38,18 @@ pointerB: 4 -> 5 -> 1 -> 2 -> 3 -> [null]
 
 ### Solution
 
-```typescript
-function getIntersectionNode(headA: ListNode | null, headB: ListNode | null): ListNode | null {
-    if (!headA || !headB) return null;
-    
-    let pointerA: ListNode | null = headA;
-    let pointerB: ListNode | null = headB;
-    
-    while (pointerA !== pointerB) {
-        pointerA = pointerA ? pointerA.next : headB;
-        pointerB = pointerB ? pointerB.next : headA;
+```csharp
+public ListNode? GetIntersectionNode(ListNode? headA, ListNode? headB) {
+    if (headA is null || headB is null) return null;
+
+    ListNode? pointerA = headA;
+    ListNode? pointerB = headB;
+
+    while (pointerA != pointerB) {
+        pointerA = pointerA is not null ? pointerA.next : headB;
+        pointerB = pointerB is not null ? pointerB.next : headA;
     }
-    
+
     return pointerA; // Will be null if lists don't intersect
 }
 ```

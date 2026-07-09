@@ -35,19 +35,18 @@ frequency: "High"
 
 ### Solution
 
-```typescript
-function coinChange(coins: number[], amount: number): number {
-  const n = coins.length;
-  const dp = Array.from({ length: amount + 1 }, () => Infinity);
-  dp[0] = 0;
-  for (let i = 1; i <= amount; i++) {
-    for (const c of coins) {
-      if (i - c >= 0) {
-        dp[i] = Math.min(dp[i], dp[i - c] + 1);
-      }
+```csharp
+public int CoinChange(int[] coins, int amount) {
+    int[] dp = new int[amount + 1];
+    Array.Fill(dp, int.MaxValue);
+    dp[0] = 0;
+    for (int i = 1; i <= amount; i++) {
+        foreach (int c in coins) {
+            if (i - c >= 0 && dp[i - c] != int.MaxValue) {
+                dp[i] = Math.Min(dp[i], dp[i - c] + 1);
+            }
+        }
     }
-  }
-  return dp[amount] === Infinity ? -1 : dp[amount];
+    return dp[amount] == int.MaxValue ? -1 : dp[amount];
 }
-
 ```

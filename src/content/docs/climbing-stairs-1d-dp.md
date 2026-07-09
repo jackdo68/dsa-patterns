@@ -47,15 +47,15 @@ So: `dp[n] = dp[n-1] + dp[n-2]`
 
 **Approach 1: Bottom-up DP with O(n) space**
 
-```tsx
-function climbStairs(n: number): number {
+```csharp
+public int ClimbStairs(int n) {
     if (n <= 2) return n;
 
-    const dp: number[] = new Array(n + 1);
+    int[] dp = new int[n + 1];
     dp[1] = 1;
     dp[2] = 2;
 
-    for (let i = 3; i <= n; i++) {
+    for (int i = 3; i <= n; i++) {
         dp[i] = dp[i - 1] + dp[i - 2];
     }
 
@@ -65,15 +65,15 @@ function climbStairs(n: number): number {
 
 **Approach 2: Space-optimized O(1)**
 
-```tsx
-function climbStairs(n: number): number {
+```csharp
+public int ClimbStairs(int n) {
     if (n <= 2) return n;
 
-    let prev2 = 1;  // dp[i-2]
-    let prev1 = 2;  // dp[i-1]
+    int prev2 = 1;  // dp[i-2]
+    int prev1 = 2;  // dp[i-1]
 
-    for (let i = 3; i <= n; i++) {
-        const current = prev1 + prev2;
+    for (int i = 3; i <= n; i++) {
+        int current = prev1 + prev2;
         prev2 = prev1;
         prev1 = current;
     }
@@ -84,20 +84,20 @@ function climbStairs(n: number): number {
 
 **Approach 3: Top-down with memoization**
 
-```tsx
-function climbStairs(n: number): number {
-    const memo: Map<number, number> = new Map();
+```csharp
+public int ClimbStairs(int n) {
+    var memo = new Dictionary<int, int>();
 
-    function dp(i: number): number {
+    int Dp(int i) {
         if (i <= 2) return i;
-        if (memo.has(i)) return memo.get(i)!;
+        if (memo.TryGetValue(i, out int cached)) return cached;
 
-        const result = dp(i - 1) + dp(i - 2);
-        memo.set(i, result);
+        int result = Dp(i - 1) + Dp(i - 2);
+        memo[i] = result;
         return result;
     }
 
-    return dp(n);
+    return Dp(n);
 }
 ```
 
@@ -120,13 +120,13 @@ This is the foundational **1D DP pattern**. Similar problems:
 
 If you can take 1 to k steps at a time:
 
-```tsx
-function climbStairsK(n: number, k: number): number {
-    const dp: number[] = new Array(n + 1).fill(0);
+```csharp
+public int ClimbStairsK(int n, int k) {
+    int[] dp = new int[n + 1];
     dp[0] = 1;
 
-    for (let i = 1; i <= n; i++) {
-        for (let j = 1; j <= Math.min(i, k); j++) {
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= Math.Min(i, k); j++) {
             dp[i] += dp[i - j];
         }
     }

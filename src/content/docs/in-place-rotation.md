@@ -36,26 +36,23 @@ Reverse k..n-1: [5,6,7,1,2,3,4] ✓
 
 ### Solution
 
-```typescript
-/**
- Do not return anything, modify nums in-place instead.
- */
-function rotate(nums: number[], k: number): void {
-    const n = nums.length;
+```csharp
+// Do not return anything, modify nums in-place instead.
+public void Rotate(int[] nums, int k) {
+    int n = nums.Length;
     k %= n;
-    const reverse = (start: number, end: number) => {
-      while (start < end) {
-        [nums[start], nums[end]] = [nums[end], nums[start]];
-        start++;
-        end--;
-      }
-    };
-    //reverse the whole array
-    reverse(0, n - 1);
-    //reverse the first half
-    reverse(0, k - 1);
-    //revert the second half
-    reverse(k, n - 1);
-
-};
+    void Reverse(int start, int end) {
+        while (start < end) {
+            (nums[start], nums[end]) = (nums[end], nums[start]);
+            start++;
+            end--;
+        }
+    }
+    // reverse the whole array
+    Reverse(0, n - 1);
+    // reverse the first k elements
+    Reverse(0, k - 1);
+    // reverse the remaining elements
+    Reverse(k, n - 1);
+}
 ```

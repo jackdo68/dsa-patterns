@@ -23,23 +23,23 @@ The key insight is that height computation naturally visits every node, so we pi
 
 ### Solution
 
-```typescript
-function diameterOfBinaryTree(root: TreeNode | null): number {
-  let maxDiameter = 0;
+```csharp
+public int DiameterOfBinaryTree(TreeNode? root) {
+    int maxDiameter = 0;
 
-  function height(node: TreeNode | null): number {
-    if (!node) return 0;
+    int Height(TreeNode? node) {
+        if (node is null) return 0;
 
-    const left = height(node.left);
-    const right = height(node.right);
+        int left = Height(node.left);
+        int right = Height(node.right);
 
-    // Diameter through this node
-    maxDiameter = Math.max(maxDiameter, left + right);
+        // Diameter through this node
+        maxDiameter = Math.Max(maxDiameter, left + right);
 
-    return 1 + Math.max(left, right);
-  }
+        return 1 + Math.Max(left, right);
+    }
 
-  height(root);
-  return maxDiameter;
+    Height(root);
+    return maxDiameter;
 }
 ```

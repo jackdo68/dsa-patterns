@@ -16,53 +16,48 @@ frequency: "Medium"
 
 ### Solution
 
-```typescript
-class Node {
-  next: Map<string, Node>;
-  isEnd: boolean;
-
-  constructor() {
-    this.next = new Map();
-    this.isEnd = false;
-  }
+```csharp
+public class Node {
+    public Dictionary<char, Node> Next = new();
+    public bool IsEnd = false;
 }
 
-class Trie {
-  root: Node;
+public class Trie {
+    private readonly Node root;
 
-  constructor() {
-    this.root = new Node();
-  }
-
-  insert(word: string): void {
-    let curr = this.root;
-    for (const char of word) {
-      if (!curr.next.has(char)) {
-        curr.next.set(char, new Node());
-      }
-      curr = curr.next.get(char)!; // Move to the next node
+    public Trie() {
+        root = new Node();
     }
-    curr.isEnd = true; // Mark the end of the word
-  }
 
-  search(word: string): boolean {
-    const node = this.traverse(word);
-    return node !== null && node.isEnd;
-  }
-
-  startsWith(prefix: string): boolean {
-    return this.traverse(prefix) !== null;
-  }
-
-  private traverse(word: string): Node | null {
-    let curr = this.root;
-    for (const char of word) {
-      if (!curr.next.has(char)) {
-        return null; // Prefix or word does not exist
-      }
-      curr = curr.next.get(char)!; // Move to the next node
+    public void Insert(string word) {
+        var curr = root;
+        foreach (char c in word) {
+            if (!curr.Next.ContainsKey(c)) {
+                curr.Next[c] = new Node();
+            }
+            curr = curr.Next[c]; // Move to the next node
+        }
+        curr.IsEnd = true; // Mark the end of the word
     }
-    return curr; // Return the node at the end of the traversal
-  }
+
+    public bool Search(string word) {
+        var node = Traverse(word);
+        return node is not null && node.IsEnd;
+    }
+
+    public bool StartsWith(string prefix) {
+        return Traverse(prefix) is not null;
+    }
+
+    private Node? Traverse(string word) {
+        var curr = root;
+        foreach (char c in word) {
+            if (!curr.Next.TryGetValue(c, out var next)) {
+                return null; // Prefix or word does not exist
+            }
+            curr = next; // Move to the next node
+        }
+        return curr; // Return the node at the end of the traversal
+    }
 }
 ```

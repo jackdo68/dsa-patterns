@@ -20,49 +20,49 @@ frequency: "Low"
 *Return the integer as the final result.*
 ### Solution
 
-```typescript
-function myAtoi(s: string): number {
-  let result = 0;
-  let sign = 1;
+```csharp
+public int MyAtoi(string s) {
+    int result = 0;
+    int sign = 1;
 
-  const INT_MAX = Math.pow(2, 31) - 1;
-  const INT_MIN = -Math.pow(2, 31);
+    const int INT_MAX = int.MaxValue;   //  2^31 - 1
+    const int INT_MIN = int.MinValue;   // -2^31
 
-  const n = s.length;
-  let i = 0;
-  // Phase 1: Skip leading whitespace
-  while (i < n && s[i] === " ") {
-    i++;
-  }
-
-  if (i === n) return result;
-  // Phase 2: Check for sign
-  if (s[i] === "+") {
-    i++;
-  } else if (s[i] === "-") {
-    sign = -1;
-    i++;
-  }
-
-  // Phase 3: Read digits and build number
-  // Character comparison works lexicographically via charCodeAt ('0'-'9' are consecutive: 48-57)
-  while (i < n && s[i] >= "0" && s[i] <= "9") {
-    const digit = s[i].charCodeAt(0) - "0".charCodeAt(0);
-
-    // Check for overflow BEFORE updating result
-    // Case 1: result would exceed INT_MAX / 10
-    if (result > Math.floor(INT_MAX / 10)) {
-      return sign === 1 ? INT_MAX : INT_MIN;
+    int n = s.Length;
+    int i = 0;
+    // Phase 1: Skip leading whitespace
+    while (i < n && s[i] == ' ') {
+        i++;
     }
 
-    // Case 2: result == INT_MAX / 10, check the last digit
-    if (result === Math.floor(INT_MAX / 10) && digit > INT_MAX % 10) {
-      return sign === 1 ? INT_MAX : INT_MIN;
+    if (i == n) return result;
+    // Phase 2: Check for sign
+    if (s[i] == '+') {
+        i++;
+    } else if (s[i] == '-') {
+        sign = -1;
+        i++;
     }
 
-    result = result * 10 + digit;
-    i++;
-  }
-  return result * sign;
+    // Phase 3: Read digits and build number
+    // '0'-'9' are consecutive in the char code, so this range check works
+    while (i < n && s[i] >= '0' && s[i] <= '9') {
+        int digit = s[i] - '0';
+
+        // Check for overflow BEFORE updating result
+        // Case 1: result would exceed INT_MAX / 10
+        if (result > INT_MAX / 10) {
+            return sign == 1 ? INT_MAX : INT_MIN;
+        }
+
+        // Case 2: result == INT_MAX / 10, check the last digit
+        if (result == INT_MAX / 10 && digit > INT_MAX % 10) {
+            return sign == 1 ? INT_MAX : INT_MIN;
+        }
+
+        result = result * 10 + digit;
+        i++;
+    }
+    return result * sign;
 }
 ```

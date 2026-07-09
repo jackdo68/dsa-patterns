@@ -184,9 +184,9 @@ title: "Quick Reference Cheat Sheet"
 ## 🔑 Code Templates
 
 ### 1. Two Pointers (Opposite Ends)
-```javascript
-function twoPointers(arr) {
-    let left = 0, right = arr.length - 1;
+```csharp
+void TwoPointers(int[] arr) {
+    int left = 0, right = arr.Length - 1;
     while (left < right) {
         // Check condition
         if (condition) {
@@ -202,15 +202,15 @@ function twoPointers(arr) {
 ```
 
 ### 2. Sliding Window (Variable Size)
-```javascript
-function slidingWindow(s) {
-    let left = 0, right = 0;
-    let maxLen = 0;
-    let window = {};
+```csharp
+int SlidingWindow(string s) {
+    int left = 0, right = 0;
+    int maxLen = 0;
+    var window = new Dictionary<char, int>();
 
-    while (right < s.length) {
+    while (right < s.Length) {
         // Expand window
-        window[s[right]]++;
+        window[s[right]] = window.GetValueOrDefault(s[right], 0) + 1;
         right++;
 
         // Contract window when invalid
@@ -219,7 +219,7 @@ function slidingWindow(s) {
             left++;
         }
 
-        maxLen = Math.max(maxLen, right - left);
+        maxLen = Math.Max(maxLen, right - left);
     }
     return maxLen;
 }
@@ -228,67 +228,68 @@ function slidingWindow(s) {
 ### 3. Tree Traversals
 
 **Pre-order (Root → Left → Right)** — building a copy of tree, serialization, prefix expressions
-```javascript
-function preorder(node) {
-    if (!node) return;
-    process(node);
-    preorder(node.left);
-    preorder(node.right);
+```csharp
+void Preorder(TreeNode? node) {
+    if (node is null) return;
+    Process(node);
+    Preorder(node.left);
+    Preorder(node.right);
 }
 ```
 
 **In-order (Left → Root → Right)** — BST gives sorted order, validate BST, kth smallest
-```javascript
-function inorder(node) {
-    if (!node) return;
-    inorder(node.left);
-    process(node);
-    inorder(node.right);
+```csharp
+void Inorder(TreeNode? node) {
+    if (node is null) return;
+    Inorder(node.left);
+    Process(node);
+    Inorder(node.right);
 }
 ```
 
 **Post-order (Left → Right → Root)** — delete tree, calculate height/diameter, evaluate expressions
-```javascript
-function postorder(node) {
-    if (!node) return;
-    postorder(node.left);
-    postorder(node.right);
-    process(node);
+```csharp
+void Postorder(TreeNode? node) {
+    if (node is null) return;
+    Postorder(node.left);
+    Postorder(node.right);
+    Process(node);
 }
 ```
 
 ### 4. Graph Traversals
 
 **DFS (Recursive)**
-```javascript
-function dfs(node, visited = new Set()) {
-    if (!node || visited.has(node)) return;
+```csharp
+void Dfs(Node node, HashSet<Node> visited) {
+    if (node is null || visited.Contains(node)) return;
 
-    visited.add(node);
+    visited.Add(node);
     // Process node
 
-    for (let neighbor of node.neighbors) {
-        dfs(neighbor, visited);
+    foreach (var neighbor in node.neighbors) {
+        Dfs(neighbor, visited);
     }
 }
 ```
 
 **BFS (Level Order)**
-```javascript
-function bfs(start) {
-    let queue = [start];
-    let visited = new Set([start]);
+```csharp
+void Bfs(Node start) {
+    var queue = new Queue<Node>();
+    queue.Enqueue(start);
+    var visited = new HashSet<Node> { start };
 
-    while (queue.length) {
-        let size = queue.length;
-        for (let i = 0; i < size; i++) {
-            let node = queue.shift();
+    while (queue.Count > 0) {
+        int size = queue.Count;
+        for (int i = 0; i < size; i++) {
+            var node = queue.Dequeue();
             // Process node
 
-            for (let neighbor of node.neighbors) {
-                if (!visited.has(neighbor)) {
-                    visited.add(neighbor);
-                    queue.push(neighbor);
+            foreach (var neighbor in node.neighbors) {
+                if (!visited.Contains(neighbor)) {
+                    visited.Add(neighbor);
+                    queue.Enqueue(neighbor);
                 }
             }
         }
@@ -297,22 +298,22 @@ function bfs(start) {
 ```
 
 ### 5. Backtracking
-```javascript
-function backtrack(path, choices, result) {
-    if (isComplete(path)) {
-        result.push([...path]);
+```csharp
+void Backtrack(List<int> path, IEnumerable<int> choices, List<IList<int>> result) {
+    if (IsComplete(path)) {
+        result.Add(new List<int>(path));
         return;
     }
 
-    for (let choice of choices) {
+    foreach (var choice in choices) {
         // Make choice
-        path.push(choice);
+        path.Add(choice);
 
         // Recurse
-        backtrack(path, newChoices, result);
+        Backtrack(path, newChoices, result);
 
         // Undo choice
-        path.pop();
+        path.RemoveAt(path.Count - 1);
     }
 }
 ```
@@ -320,37 +321,37 @@ function backtrack(path, choices, result) {
 ### 6. Dynamic Programming
 
 **Top-down (Memoization)**
-```javascript
-function dp(n, memo = {}) {
+```csharp
+int Dp(int n, Dictionary<int, int> memo) {
     if (baseCase) return baseValue;
-    if (memo[n]) return memo[n];
+    if (memo.TryGetValue(n, out int cached)) return cached;
 
-    memo[n] = // compute from subproblems
+    memo[n] = /* compute from subproblems */;
     return memo[n];
 }
 ```
 
 **Bottom-up (Tabulation)**
-```javascript
-function dp(n) {
-    let dp = new Array(n + 1).fill(0);
+```csharp
+int Dp(int n) {
+    int[] dp = new int[n + 1];
     dp[0] = baseValue;
 
-    for (let i = 1; i <= n; i++) {
-        dp[i] = // compute from dp[i-1], dp[i-2], etc.
+    for (int i = 1; i <= n; i++) {
+        dp[i] = /* compute from dp[i-1], dp[i-2], etc. */;
     }
     return dp[n];
 }
 ```
 
 **0/1 Knapsack** — each item used at most once → iterate BACKWARD. Use when: subset sum, partition equal subset, target sum
-```javascript
-function knapsack01(nums, target) {
-    const dp = new Array(target + 1).fill(false);
+```csharp
+bool Knapsack01(int[] nums, int target) {
+    bool[] dp = new bool[target + 1];
     dp[0] = true;
 
-    for (const num of nums) {
-        for (let i = target; i >= num; i--) {  // backward prevents reuse
+    foreach (int num in nums) {
+        for (int i = target; i >= num; i--) {  // backward prevents reuse
             dp[i] = dp[i] || dp[i - num];
         }
     }
@@ -359,13 +360,13 @@ function knapsack01(nums, target) {
 ```
 
 **Unbounded Knapsack** — each item used unlimited times → iterate FORWARD. Use when: coin change, unbounded supply, combinations to reach target
-```javascript
-function knapsackUnbounded(coins, target) {
-    const dp = new Array(target + 1).fill(0);
+```csharp
+int KnapsackUnbounded(int[] coins, int target) {
+    int[] dp = new int[target + 1];
     dp[0] = 1;
 
-    for (const coin of coins) {
-        for (let i = coin; i <= target; i++) {  // forward allows reuse
+    foreach (int coin in coins) {
+        for (int i = coin; i <= target; i++) {  // forward allows reuse
             dp[i] += dp[i - coin];
         }
     }
@@ -374,78 +375,77 @@ function knapsackUnbounded(coins, target) {
 ```
 
 **LCS (Longest Common Subsequence)** — Use when: longest common subsequence, edit distance, diff
-```javascript
-function lcs(s1, s2) {
-    const dp = Array.from({ length: s1.length + 1 }, () =>
-        new Array(s2.length + 1).fill(0)
-    );
+```csharp
+int Lcs(string s1, string s2) {
+    int[,] dp = new int[s1.Length + 1, s2.Length + 1];
 
-    for (let i = 1; i <= s1.length; i++) {
-        for (let j = 1; j <= s2.length; j++) {
-            if (s1[i - 1] === s2[j - 1]) {
-                dp[i][j] = dp[i - 1][j - 1] + 1;
+    for (int i = 1; i <= s1.Length; i++) {
+        for (int j = 1; j <= s2.Length; j++) {
+            if (s1[i - 1] == s2[j - 1]) {
+                dp[i, j] = dp[i - 1, j - 1] + 1;
             } else {
-                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                dp[i, j] = Math.Max(dp[i - 1, j], dp[i, j - 1]);
             }
         }
     }
-    return dp[s1.length][s2.length];
+    return dp[s1.Length, s2.Length];
 }
 ```
 
 **LIS (Longest Increasing Subsequence)** — O(n log n) via patience sorting + binary search. Use when: longest increasing subsequence, Russian doll envelopes
-```javascript
-function lis(nums) {
-    const tails = []; // tails[i] = smallest tail of increasing subseq of length i+1
+```csharp
+int Lis(int[] nums) {
+    var tails = new List<int>(); // tails[i] = smallest tail of increasing subseq of length i+1
 
-    for (const num of nums) {
-        let lo = 0, hi = tails.length;
+    foreach (int num in nums) {
+        int lo = 0, hi = tails.Count;
         while (lo < hi) {
-            const mid = (lo + hi) >> 1;
+            int mid = (lo + hi) >> 1;
             if (tails[mid] < num) lo = mid + 1;
             else hi = mid;
         }
-        tails[lo] = num;
+        if (lo == tails.Count) tails.Add(num);
+        else tails[lo] = num;
     }
-    return tails.length;
+    return tails.Count;
 }
 ```
 
 **Grid DP** — Use when: unique paths, min path sum, grid traversal
-```javascript
-function gridDP(grid) {
-    const m = grid.length, n = grid[0].length;
-    const dp = Array.from({ length: m }, () => new Array(n).fill(0));
-    dp[0][0] = grid[0][0];
+```csharp
+int GridDP(int[][] grid) {
+    int m = grid.Length, n = grid[0].Length;
+    int[,] dp = new int[m, n];
+    dp[0, 0] = grid[0][0];
 
-    for (let i = 0; i < m; i++) {
-        for (let j = 0; j < n; j++) {
-            if (i === 0 && j === 0) continue;
-            const top = i > 0 ? dp[i - 1][j] : Infinity;
-            const left = j > 0 ? dp[i][j - 1] : Infinity;
-            dp[i][j] = grid[i][j] + Math.min(top, left);
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i == 0 && j == 0) continue;
+            int top = i > 0 ? dp[i - 1, j] : int.MaxValue;
+            int left = j > 0 ? dp[i, j - 1] : int.MaxValue;
+            dp[i, j] = grid[i][j] + Math.Min(top, left);
         }
     }
-    return dp[m - 1][n - 1];
+    return dp[m - 1, n - 1];
 }
 ```
 
 **Interval DP** — Use when: burst balloons, matrix chain multiplication, palindrome partitioning
-```javascript
-function intervalDP(arr) {
-    const n = arr.length;
-    const dp = Array.from({ length: n }, () => new Array(n).fill(0));
+```csharp
+int IntervalDP(int[] arr) {
+    int n = arr.Length;
+    int[,] dp = new int[n, n];
 
-    for (let len = 2; len <= n; len++) {          // subproblem length
-        for (let i = 0; i <= n - len; i++) {      // start index
-            const j = i + len - 1;                // end index
-            dp[i][j] = Infinity;
-            for (let k = i; k < j; k++) {         // split point
-                dp[i][j] = Math.min(dp[i][j], dp[i][k] + dp[k + 1][j] + cost(i, j));
+    for (int len = 2; len <= n; len++) {          // subproblem length
+        for (int i = 0; i <= n - len; i++) {      // start index
+            int j = i + len - 1;                  // end index
+            dp[i, j] = int.MaxValue;
+            for (int k = i; k < j; k++) {         // split point
+                dp[i, j] = Math.Min(dp[i, j], dp[i, k] + dp[k + 1, j] + Cost(i, j));
             }
         }
     }
-    return dp[0][n - 1];
+    return dp[0, n - 1];
 }
 ```
 
@@ -453,12 +453,12 @@ function intervalDP(arr) {
 
 **The one form to memorize.** Every binary search problem reduces to *"find the first index where a predicate is true."* Reframe the question, then apply this template — it handles exact match, first/last occurrence, insertion position, and binary search on answer.
 
-```javascript
-function binarySearch(nums, predicate) {
-    let left = 0, right = nums.length - 1;
-    let result = nums.length;                 // default: predicate never true
+```csharp
+int BinarySearch(int[] nums, Func<int, bool> predicate) {
+    int left = 0, right = nums.Length - 1;
+    int result = nums.Length;                 // default: predicate never true
     while (left <= right) {
-        const mid = Math.floor((left + right) / 2);
+        int mid = (left + right) / 2;
         if (predicate(mid)) {
             result = mid;                     // record this candidate
             right = mid - 1;                  // search left for an earlier match
@@ -484,34 +484,38 @@ function binarySearch(nums, predicate) {
 See [Binary Search Variations Explained](/dsa-patterns/binary-search-variations-explained/) for the mental model, walkthroughs, and worked examples for every case.
 
 ### 8. Union Find
-```javascript
-class UnionFind {
-    constructor(n) {
-        this.parent = Array.from({length: n}, (_, i) => i);
-        this.rank = new Array(n).fill(0);
+```csharp
+public class UnionFind {
+    private readonly int[] parent;
+    private readonly int[] rank;
+
+    public UnionFind(int n) {
+        parent = new int[n];
+        for (int i = 0; i < n; i++) parent[i] = i;
+        rank = new int[n];
     }
 
-    find(x) {
-        if (this.parent[x] !== x) {
-            this.parent[x] = this.find(this.parent[x]); // path compression
+    public int Find(int x) {
+        if (parent[x] != x) {
+            parent[x] = Find(parent[x]); // path compression
         }
-        return this.parent[x];
+        return parent[x];
     }
 
-    union(x, y) {
-        let rootX = this.find(x);
-        let rootY = this.find(y);
+    public bool Union(int x, int y) {
+        int rootX = Find(x);
+        int rootY = Find(y);
 
-        if (rootX === rootY) return false;
+        if (rootX == rootY) return false;
 
         // Union by rank
-        if (this.rank[rootX] < this.rank[rootY]) {
-            this.parent[rootX] = rootY;
-        } else if (this.rank[rootX] > this.rank[rootY]) {
-            this.parent[rootY] = rootX;
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
         } else {
-            this.parent[rootY] = rootX;
-            this.rank[rootX]++;
+            parent[rootY] = rootX;
+            rank[rootX]++;
         }
         return true;
     }
@@ -519,21 +523,23 @@ class UnionFind {
 ```
 
 ### 9. Dijkstra's Algorithm
-```javascript
-function dijkstra(graph, start) {
-    let dist = new Array(n).fill(Infinity);
-    let heap = new MinHeap([[0, start]]); // [distance, node]
+```csharp
+int[] Dijkstra(List<(int neighbor, int weight)>[] graph, int start, int n) {
+    int[] dist = new int[n];
+    Array.Fill(dist, int.MaxValue);
+    // .NET's built-in min-heap: element = node, priority = distance
+    var heap = new PriorityQueue<int, int>();
     dist[start] = 0;
+    heap.Enqueue(start, 0);
 
-    while (!heap.isEmpty()) {
-        let [d, node] = heap.pop();
+    while (heap.TryDequeue(out int node, out int d)) {
         if (d > dist[node]) continue;
 
-        for (let [neighbor, weight] of graph[node]) {
-            let newDist = dist[node] + weight;
+        foreach (var (neighbor, weight) in graph[node]) {
+            int newDist = dist[node] + weight;
             if (newDist < dist[neighbor]) {
                 dist[neighbor] = newDist;
-                heap.push([newDist, neighbor]);
+                heap.Enqueue(neighbor, newDist);
             }
         }
     }
@@ -544,16 +550,16 @@ function dijkstra(graph, start) {
 ### 10. Linked List
 
 **Reverse Linked List** — Pattern: save → flip → advance → advance. After the loop, `curr` is `null` and `prev` is the new head.
-```javascript
-function reverseList(head) {
-    let prev = null;
-    let curr = head;
+```csharp
+ListNode? ReverseList(ListNode? head) {
+    ListNode? prev = null;
+    ListNode? curr = head;
 
-    while (curr) {
-        const next = curr.next;  // 1. save next before breaking link
-        curr.next = prev;         // 2. flip pointer backward
-        prev = curr;              // 3. advance prev
-        curr = next;              // 4. advance curr
+    while (curr is not null) {
+        ListNode? next = curr.next;  // 1. save next before breaking link
+        curr.next = prev;            // 2. flip pointer backward
+        prev = curr;                 // 3. advance prev
+        curr = next;                 // 4. advance curr
     }
 
     return prev; // new head

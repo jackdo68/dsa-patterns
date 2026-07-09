@@ -12,14 +12,14 @@ frequency: "Low"
 
 ### Solution
 
-```typescript
-function reverseString(s: string[]): void {
-    let i = 0;
-    let j = s.length - 1;
+```csharp
+public void ReverseString(char[] s) {
+    int i = 0;
+    int j = s.Length - 1;
     while (i < j) {
-      [s[i], s[j]] = [s[j], s[i]];
-      i++;
-      j--;
+        (s[i], s[j]) = (s[j], s[i]);
+        i++;
+        j--;
     }
-};
+}
 ```

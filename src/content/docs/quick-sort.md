@@ -48,23 +48,26 @@ Final: [2, 3, 5, 10, 23, 99]
 
 ### Solution (Out-of-place — easier to read)
 
-```typescript
-function quickSort(arr: number[]): number[] {
-  if (arr.length <= 1) return arr;
+```csharp
+public int[] QuickSort(int[] arr) {
+    if (arr.Length <= 1) return arr;
 
-  const pivot = arr[arr.length - 1];
-  const left: number[] = [];
-  const right: number[] = [];
+    int pivot = arr[arr.Length - 1];
+    var left = new List<int>();
+    var right = new List<int>();
 
-  for (let i = 0; i < arr.length - 1; i++) {
-    if (arr[i] < pivot) {
-      left.push(arr[i]);
-    } else {
-      right.push(arr[i]);
+    for (int i = 0; i < arr.Length - 1; i++) {
+        if (arr[i] < pivot) {
+            left.Add(arr[i]);
+        } else {
+            right.Add(arr[i]);
+        }
     }
-  }
 
-  return [...quickSort(left), pivot, ...quickSort(right)];
+    return QuickSort(left.ToArray())
+        .Append(pivot)
+        .Concat(QuickSort(right.ToArray()))
+        .ToArray();
 }
 ```
 
@@ -95,25 +98,27 @@ For interviews, picking the last element is fine — it shows you understand the
 
 The classic in-place version uses two pointers to partition without creating new arrays — better memory (O(log n) total instead of O(n)).
 
-```typescript
-function quickSortInPlace(arr: number[], lo = 0, hi = arr.length - 1): void {
-  if (lo >= hi) return;
+```csharp
+public void QuickSortInPlace(int[] arr) => QuickSortInPlace(arr, 0, arr.Length - 1);
 
-  const pivot = arr[hi];        // last element as pivot
-  let partition = lo;            // boundary: arr[lo..partition-1] are < pivot
+public void QuickSortInPlace(int[] arr, int lo, int hi) {
+    if (lo >= hi) return;
 
-  for (let i = lo; i < hi; i++) {
-    if (arr[i] < pivot) {
-      [arr[i], arr[partition]] = [arr[partition], arr[i]];
-      partition++;
+    int pivot = arr[hi];        // last element as pivot
+    int partition = lo;         // boundary: arr[lo..partition-1] are < pivot
+
+    for (int i = lo; i < hi; i++) {
+        if (arr[i] < pivot) {
+            (arr[i], arr[partition]) = (arr[partition], arr[i]);
+            partition++;
+        }
     }
-  }
 
-  // Swap pivot into its final position
-  [arr[partition], arr[hi]] = [arr[hi], arr[partition]];
+    // Swap pivot into its final position
+    (arr[partition], arr[hi]) = (arr[hi], arr[partition]);
 
-  quickSortInPlace(arr, lo, partition - 1);
-  quickSortInPlace(arr, partition + 1, hi);
+    QuickSortInPlace(arr, lo, partition - 1);
+    QuickSortInPlace(arr, partition + 1, hi);
 }
 ```
 

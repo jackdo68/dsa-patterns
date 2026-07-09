@@ -41,95 +41,96 @@ Three approaches:
 
 **Approach 1: Quick Select (Optimal)**
 
-```tsx
-function findKthLargest(nums: number[], k: number): number {
-    const targetIndex = nums.length - k;  // kth largest = (n-k)th smallest
+```csharp
+public int FindKthLargest(int[] nums, int k) {
+    int targetIndex = nums.Length - k;  // kth largest = (n-k)th smallest
 
-    function quickSelect(left: number, right: number): number {
+    int QuickSelect(int left, int right) {
         // Partition around rightmost element
-        const pivot = nums[right];
-        let partitionIndex = left;
+        int pivot = nums[right];
+        int partitionIndex = left;
 
-        for (let i = left; i < right; i++) {
+        for (int i = left; i < right; i++) {
             if (nums[i] <= pivot) {
-                [nums[i], nums[partitionIndex]] = [nums[partitionIndex], nums[i]];
+                (nums[i], nums[partitionIndex]) = (nums[partitionIndex], nums[i]);
                 partitionIndex++;
             }
         }
 
         // Place pivot in its final position
-        [nums[partitionIndex], nums[right]] = [nums[right], nums[partitionIndex]];
+        (nums[partitionIndex], nums[right]) = (nums[right], nums[partitionIndex]);
 
         // Check if we found the target
-        if (partitionIndex === targetIndex) {
+        if (partitionIndex == targetIndex) {
             return nums[partitionIndex];
         } else if (partitionIndex < targetIndex) {
-            return quickSelect(partitionIndex + 1, right);
+            return QuickSelect(partitionIndex + 1, right);
         } else {
-            return quickSelect(left, partitionIndex - 1);
+            return QuickSelect(left, partitionIndex - 1);
         }
     }
 
-    return quickSelect(0, nums.length - 1);
+    return QuickSelect(0, nums.Length - 1);
 }
 ```
 
 **Approach 2: Quick Select with Random Pivot (Better worst case)**
 
-```tsx
-function findKthLargest(nums: number[], k: number): number {
-    const targetIndex = nums.length - k;
+```csharp
+private static readonly Random Rng = new();
 
-    function quickSelect(left: number, right: number): number {
-        if (left === right) return nums[left];
+public int FindKthLargest(int[] nums, int k) {
+    int targetIndex = nums.Length - k;
+
+    int QuickSelect(int left, int right) {
+        if (left == right) return nums[left];
 
         // Random pivot to avoid worst case
-        const randomIndex = left + Math.floor(Math.random() * (right - left + 1));
-        [nums[randomIndex], nums[right]] = [nums[right], nums[randomIndex]];
+        int randomIndex = left + Rng.Next(right - left + 1);
+        (nums[randomIndex], nums[right]) = (nums[right], nums[randomIndex]);
 
-        const pivot = nums[right];
-        let partitionIndex = left;
+        int pivot = nums[right];
+        int partitionIndex = left;
 
-        for (let i = left; i < right; i++) {
+        for (int i = left; i < right; i++) {
             if (nums[i] <= pivot) {
-                [nums[i], nums[partitionIndex]] = [nums[partitionIndex], nums[i]];
+                (nums[i], nums[partitionIndex]) = (nums[partitionIndex], nums[i]);
                 partitionIndex++;
             }
         }
 
-        [nums[partitionIndex], nums[right]] = [nums[right], nums[partitionIndex]];
+        (nums[partitionIndex], nums[right]) = (nums[right], nums[partitionIndex]);
 
-        if (partitionIndex === targetIndex) {
+        if (partitionIndex == targetIndex) {
             return nums[partitionIndex];
         } else if (partitionIndex < targetIndex) {
-            return quickSelect(partitionIndex + 1, right);
+            return QuickSelect(partitionIndex + 1, right);
         } else {
-            return quickSelect(left, partitionIndex - 1);
+            return QuickSelect(left, partitionIndex - 1);
         }
     }
 
-    return quickSelect(0, nums.length - 1);
+    return QuickSelect(0, nums.Length - 1);
 }
 ```
 
 **Approach 3: Min Heap of size K**
 
-```tsx
-function findKthLargest(nums: number[], k: number): number {
-    // Use a min heap of size k
-    // The top of heap will be the kth largest
-    const minHeap = new MinPriorityQueue();
+```csharp
+public int FindKthLargest(int[] nums, int k) {
+    // Use a min heap of size k; the top of the heap is the kth largest
+    var minHeap = new PriorityQueue<int, int>();
 
-    for (const num of nums) {
-        minHeap.enqueue(num);
+    foreach (int num in nums) {
+        minHeap.Enqueue(num, num);
 
-        // Keep only k largest elements
-        if (minHeap.size() > k) {
-            minHeap.dequeue();
+        // Keep only the k largest elements
+        if (minHeap.Count > k) {
+            minHeap.Dequeue();
         }
     }
 
-    return minHeap.front().element;
+    return minHeap.Peek();
 }
 ```
 

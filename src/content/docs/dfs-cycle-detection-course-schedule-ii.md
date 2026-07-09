@@ -83,42 +83,42 @@ The result is built bottom-up: deepest prerequisites first, then everything that
 
 ### Solution
 
-```typescript
-function findOrder(numCourses: number, prerequisites: number[][]): number[] {
-  const result: number[] = [];
-  const prereqList = new Map<number, number[]>();
+```csharp
+public int[] FindOrder(int numCourses, int[][] prerequisites) {
+    var result = new List<int>();
+    var prereqList = new Dictionary<int, List<int>>();
 
-  for (const [main, pre] of prerequisites) {
-    prereqList.set(main, [...(prereqList.get(main) || []), pre]);
-  }
-  const visited = new Set<number>();
-  // detect cycle
-  const cycle = new Set<number>();
+    foreach (var edge in prerequisites) {
+        int main = edge[0], pre = edge[1];
+        if (!prereqList.ContainsKey(main)) prereqList[main] = new List<int>();
+        prereqList[main].Add(pre);
+    }
+    var visited = new HashSet<int>();
+    // detect cycle
+    var cycle = new HashSet<int>();
 
-  /**
-   * loop through any prerequisite if existed
-   * return true if there is cycle
-   * add to visited and the course to result if no cycle detected
-   */
-  function hasCycle(course: number): boolean {
-    if (cycle.has(course)) return true;
-    if (visited.has(course)) return false;
+    // returns true if a cycle is found; otherwise finishes the course and records it
+    bool HasCycle(int course) {
+        if (cycle.Contains(course)) return true;
+        if (visited.Contains(course)) return false;
 
-    cycle.add(course);
-    for (const pre of prereqList.get(course) || []) {
-      if (hasCycle(pre)) return true;
+        cycle.Add(course);
+        if (prereqList.TryGetValue(course, out var prereqs)) {
+            foreach (int pre in prereqs) {
+                if (HasCycle(pre)) return true;
+            }
+        }
+
+        cycle.Remove(course);
+        visited.Add(course);
+        result.Add(course);
+        return false;
     }
 
-    cycle.delete(course);
-    visited.add(course);
-    result.push(course);
-    return false;
-  }
-
-  for (let i = 0; i < numCourses; i++) {
-    if (hasCycle(i)) return [];
-  }
-  return result;
+    for (int i = 0; i < numCourses; i++) {
+        if (HasCycle(i)) return Array.Empty<int>();
+    }
+    return result.ToArray();
 }
 ```
 

@@ -25,46 +25,46 @@ This gives O(n log n) time and O(log n) space (recursion stack only, no auxiliar
 
 ### Solution
 
-```typescript
-function sortList(head: ListNode | null): ListNode | null {
-  if (!head || !head.next) return head;
+```csharp
+public ListNode? SortList(ListNode? head) {
+    if (head is null || head.next is null) return head;
 
-  // Find middle using fast/slow pointers
-  let slow: ListNode = head;
-  let fast: ListNode | null = head.next;
-  while (fast && fast.next) {
-    slow = slow.next!;
-    fast = fast.next.next;
-  }
+    // Find middle using fast/slow pointers
+    ListNode slow = head;
+    ListNode? fast = head.next;
+    while (fast is not null && fast.next is not null) {
+        slow = slow.next!;
+        fast = fast.next.next;
+    }
 
-  // Split the list
-  const mid = slow.next;
-  slow.next = null;
+    // Split the list
+    var mid = slow.next;
+    slow.next = null;
 
-  // Sort both halves
-  const left = sortList(head);
-  const right = sortList(mid);
+    // Sort both halves
+    var left = SortList(head);
+    var right = SortList(mid);
 
-  // Merge sorted halves
-  return mergeTwoLists(left, right);
+    // Merge sorted halves
+    return MergeTwoLists(left, right);
 }
 
-function mergeTwoLists(l1: ListNode | null, l2: ListNode | null): ListNode | null {
-  const dummy = new ListNode(0);
-  let current = dummy;
+private ListNode? MergeTwoLists(ListNode? l1, ListNode? l2) {
+    var dummy = new ListNode(0);
+    var current = dummy;
 
-  while (l1 && l2) {
-    if (l1.val <= l2.val) {
-      current.next = l1;
-      l1 = l1.next;
-    } else {
-      current.next = l2;
-      l2 = l2.next;
+    while (l1 is not null && l2 is not null) {
+        if (l1.val <= l2.val) {
+            current.next = l1;
+            l1 = l1.next;
+        } else {
+            current.next = l2;
+            l2 = l2.next;
+        }
+        current = current.next;
     }
-    current = current.next;
-  }
 
-  current.next = l1 || l2;
-  return dummy.next;
+    current.next = l1 ?? l2;
+    return dummy.next;
 }
 ```

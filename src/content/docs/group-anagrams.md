@@ -19,18 +19,20 @@ Alternatively, use a character frequency count as the key (e.g., `"1a2b0c..."`) 
 
 ### Solution
 
-```typescript
-function groupAnagrams(strs: string[]): string[][] {
-  const map = new Map<string, string[]>();
+```csharp
+public IList<IList<string>> GroupAnagrams(string[] strs) {
+    var map = new Dictionary<string, IList<string>>();
 
-  for (const str of strs) {
-    const key = str.split("").sort().join("");
-    if (!map.has(key)) {
-      map.set(key, []);
+    foreach (string str in strs) {
+        var chars = str.ToCharArray();
+        Array.Sort(chars);
+        string key = new string(chars);
+        if (!map.ContainsKey(key)) {
+            map[key] = new List<string>();
+        }
+        map[key].Add(str);
     }
-    map.get(key)!.push(str);
-  }
 
-  return Array.from(map.values());
+    return map.Values.ToList();
 }
 ```

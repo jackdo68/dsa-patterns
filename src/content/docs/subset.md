@@ -40,24 +40,24 @@ Output: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
 
 ### Solution
 
-```typescript
-function subsets(nums: number[]): number[][] {
-  const result: number[][] = [];
+```csharp
+public IList<IList<int>> Subsets(int[] nums) {
+    var result = new List<IList<int>>();
 
-  function dfs(idx: number, path: number[]) {
-    if (idx === nums.length) {
-      result.push([...path]);
-      return;
+    void Dfs(int idx, List<int> path) {
+        if (idx == nums.Length) {
+            result.Add(new List<int>(path));
+            return;
+        }
+        // Exclude nums[idx]
+        Dfs(idx + 1, path);
+        // Include nums[idx]
+        path.Add(nums[idx]);
+        Dfs(idx + 1, path);
+        path.RemoveAt(path.Count - 1);
     }
-    // Exclude nums[idx]
-    dfs(idx + 1, path);
-    // Include nums[idx]
-    path.push(nums[idx]);
-    dfs(idx + 1, path);
-    path.pop();
-  }
 
-  dfs(0, []);
-  return result;
+    Dfs(0, new List<int>());
+    return result;
 }
 ```

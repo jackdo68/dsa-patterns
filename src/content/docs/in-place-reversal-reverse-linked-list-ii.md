@@ -61,33 +61,33 @@ Phase 3 - Reconnect:
 
 ### Solution
 
-```typescript
-function reverseBetween(head: ListNode | null, left: number, right: number): ListNode | null {
-  if (!head) return null;
-  const dummy = new ListNode(-1, head);
-  let prev: ListNode | null = dummy;
+```csharp
+public ListNode? ReverseBetween(ListNode? head, int left, int right) {
+    if (head is null) return null;
+    var dummy = new ListNode(-1, head);
+    ListNode? prev = dummy;
 
-  for (let i = 0; i < left - 1; i++) {
-    prev = prev!.next;
-  }
+    for (int i = 0; i < left - 1; i++) {
+        prev = prev!.next;
+    }
 
-  let prevReserved = prev;
-  let curr = prev?.next;
-  let next = curr!.next;
-  for (let i = left; i <= right; i++) {
-    // save `curr.next`, then point `curr` backward
-    next = curr?.next!;
-    curr!.next = prevReserved;
-    // slide both pointers one step forward
-    prevReserved = curr!;
-    curr = next;
-  }
+    ListNode? prevReversed = prev;
+    ListNode? curr = prev!.next;
+    ListNode? next;
+    for (int i = left; i <= right; i++) {
+        // save `curr.next`, then point `curr` backward
+        next = curr!.next;
+        curr.next = prevReversed;
+        // slide both pointers one step forward
+        prevReversed = curr;
+        curr = next;
+    }
 
-  // prev.next used to point to the node that was first, now last
-  // curr is outside of the range
-  prev!.next!.next = curr!;
-  // point to the new head of the range
-  prev!.next = prevReserved;
-  return dummy.next;
+    // prev.next used to point to the node that was first, now last
+    // curr is outside of the range
+    prev.next!.next = curr;
+    // point to the new head of the range
+    prev.next = prevReversed;
+    return dummy.next;
 }
 ```

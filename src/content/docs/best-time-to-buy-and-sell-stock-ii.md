@@ -78,15 +78,15 @@ Consecutive is never worse, sometimes better. So we just sum all positive differ
 
 ### Solution (Greedy)
 
-```typescript
-function maxProfit(prices: number[]): number {
-  let profit = 0;
-  for (let i = 1; i < prices.length; i++) {
-    if (prices[i] > prices[i - 1]) {
-      profit += prices[i] - prices[i - 1];
+```csharp
+public int MaxProfit(int[] prices) {
+    int profit = 0;
+    for (int i = 1; i < prices.Length; i++) {
+        if (prices[i] > prices[i - 1]) {
+            profit += prices[i] - prices[i - 1];
+        }
     }
-  }
-  return profit;
+    return profit;
 }
 ```
 
@@ -158,17 +158,17 @@ return hold0Stock = 9
 
 ### Solution (DP)
 
-```typescript
-function maxProfit(prices: number[]): number {
-  let hold1Stock = -prices[0];
-  let hold0Stock = 0;
+```csharp
+public int MaxProfit(int[] prices) {
+    int hold1Stock = -prices[0];
+    int hold0Stock = 0;
 
-  for (let i = 1; i < prices.length; i++) {
-    hold1Stock = Math.max(hold1Stock, hold0Stock - prices[i]);
-    hold0Stock = Math.max(hold0Stock, hold1Stock + prices[i]);
-  }
+    for (int i = 1; i < prices.Length; i++) {
+        hold1Stock = Math.Max(hold1Stock, hold0Stock - prices[i]);
+        hold0Stock = Math.Max(hold0Stock, hold1Stock + prices[i]);
+    }
 
-  return hold0Stock;
+    return hold0Stock;
 }
 ```
 

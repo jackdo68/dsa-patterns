@@ -47,61 +47,58 @@ Output: [1]
 
 **Approach 1: With HashMap (Optimal)**
 
-```tsx
-function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
+```csharp
+public TreeNode? BuildTree(int[] preorder, int[] inorder) {
     // Map value to index in inorder for O(1) lookup
-    const inorderMap = new Map<number, number>();
-    inorder.forEach((val, idx) => inorderMap.set(val, idx));
+    var inorderMap = new Dictionary<int, int>();
+    for (int idx = 0; idx < inorder.Length; idx++) inorderMap[inorder[idx]] = idx;
 
-    let preorderIndex = 0;
+    int preorderIndex = 0;
 
-    function build(inLeft: number, inRight: number): TreeNode | null {
+    TreeNode? Build(int inLeft, int inRight) {
         if (inLeft > inRight) return null;
 
         // Root is current preorder element
-        const rootVal = preorder[preorderIndex++];
-        const root = new TreeNode(rootVal);
+        int rootVal = preorder[preorderIndex++];
+        var root = new TreeNode(rootVal);
 
         // Find root position in inorder
-        const inorderIndex = inorderMap.get(rootVal)!;
+        int inorderIndex = inorderMap[rootVal];
 
         // Build left subtree first (preorder: root -> left -> right)
-        root.left = build(inLeft, inorderIndex - 1);
-        root.right = build(inorderIndex + 1, inRight);
+        root.left = Build(inLeft, inorderIndex - 1);
+        root.right = Build(inorderIndex + 1, inRight);
 
         return root;
     }
 
-    return build(0, inorder.length - 1);
+    return Build(0, inorder.Length - 1);
 }
 ```
 
 **Approach 2: Without HashMap (Clearer logic)**
 
-```tsx
-function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
-    function build(
-        preStart: number, preEnd: number,
-        inStart: number, inEnd: number
-    ): TreeNode | null {
+```csharp
+public TreeNode? BuildTree(int[] preorder, int[] inorder) {
+    TreeNode? Build(int preStart, int preEnd, int inStart, int inEnd) {
         if (preStart > preEnd) return null;
 
-        const rootVal = preorder[preStart];
-        const root = new TreeNode(rootVal);
+        int rootVal = preorder[preStart];
+        var root = new TreeNode(rootVal);
 
         // Find root in inorder
-        let rootIndex = inStart;
-        while (inorder[rootIndex] !== rootVal) rootIndex++;
+        int rootIndex = inStart;
+        while (inorder[rootIndex] != rootVal) rootIndex++;
 
-        const leftSize = rootIndex - inStart;
+        int leftSize = rootIndex - inStart;
 
         // Preorder: [root, ...left..., ...right...]
         // Inorder:  [...left..., root, ...right...]
-        root.left = build(
+        root.left = Build(
             preStart + 1, preStart + leftSize,
             inStart, rootIndex - 1
         );
-        root.right = build(
+        root.right = Build(
             preStart + leftSize + 1, preEnd,
             rootIndex + 1, inEnd
         );
@@ -109,7 +106,7 @@ function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
         return root;
     }
 
-    return build(0, preorder.length - 1, 0, inorder.length - 1);
+    return Build(0, preorder.Length - 1, 0, inorder.Length - 1);
 }
 ```
 
@@ -148,29 +145,29 @@ Result:
 
 **Key difference:** Postorder's **last** element is root, and we build **right subtree first**.
 
-```tsx
-function buildTreeFromPostorder(inorder: number[], postorder: number[]): TreeNode | null {
-    const inorderMap = new Map<number, number>();
-    inorder.forEach((val, idx) => inorderMap.set(val, idx));
+```csharp
+public TreeNode? BuildTreeFromPostorder(int[] inorder, int[] postorder) {
+    var inorderMap = new Dictionary<int, int>();
+    for (int idx = 0; idx < inorder.Length; idx++) inorderMap[inorder[idx]] = idx;
 
-    let postorderIndex = postorder.length - 1;
+    int postorderIndex = postorder.Length - 1;
 
-    function build(inLeft: number, inRight: number): TreeNode | null {
+    TreeNode? Build(int inLeft, int inRight) {
         if (inLeft > inRight) return null;
 
-        const rootVal = postorder[postorderIndex--];
-        const root = new TreeNode(rootVal);
+        int rootVal = postorder[postorderIndex--];
+        var root = new TreeNode(rootVal);
 
-        const inorderIndex = inorderMap.get(rootVal)!;
+        int inorderIndex = inorderMap[rootVal];
 
         // Build RIGHT subtree first (postorder: left -> right -> root)
-        root.right = build(inorderIndex + 1, inRight);
-        root.left = build(inLeft, inorderIndex - 1);
+        root.right = Build(inorderIndex + 1, inRight);
+        root.left = Build(inLeft, inorderIndex - 1);
 
         return root;
     }
 
-    return build(0, inorder.length - 1);
+    return Build(0, inorder.Length - 1);
 }
 ```
 

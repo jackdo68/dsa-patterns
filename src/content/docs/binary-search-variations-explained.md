@@ -10,21 +10,21 @@ frequency: "Medium"
 
 Every binary search problem reduces to: **"find the first index where some predicate is true."** This single template handles every case.
 
-```typescript
-function binarySearch(nums: number[], predicate: (i: number) => boolean): number {
-  let left = 0;
-  let right = nums.length - 1;
-  let result = nums.length;          // default: predicate never true
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    if (predicate(mid)) {
-      result = mid;                   // record this candidate
-      right = mid - 1;                // keep searching left for an earlier match
-    } else {
-      left = mid + 1;                 // mid is not the answer — exclude it
+```csharp
+public int BinarySearch(int[] nums, Func<int, bool> predicate) {
+    int left = 0;
+    int right = nums.Length - 1;
+    int result = nums.Length;          // default: predicate never true
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (predicate(mid)) {
+            result = mid;              // record this candidate
+            right = mid - 1;           // keep searching left for an earlier match
+        } else {
+            left = mid + 1;            // mid is not the answer — exclude it
+        }
     }
-  }
-  return result;                      // first index where predicate is true (or n if none)
+    return result;                     // first index where predicate is true (or n if none)
 }
 ```
 
@@ -52,21 +52,21 @@ function binarySearch(nums: number[], predicate: (i: number) => boolean): number
 
 Reframe as: "Find the first index where `nums[i] >= X`. Then check if it equals X."
 
-```typescript
-function search(nums: number[], target: number): number {
-  let left = 0, right = nums.length - 1;
-  let result = nums.length;
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    if (nums[mid] >= target) {
-      result = mid;
-      right = mid - 1;
-    } else {
-      left = mid + 1;
+```csharp
+public int Search(int[] nums, int target) {
+    int left = 0, right = nums.Length - 1;
+    int result = nums.Length;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (nums[mid] >= target) {
+            result = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
     }
-  }
-  if (result === nums.length || nums[result] !== target) return -1;
-  return result;
+    if (result == nums.Length || nums[result] != target) return -1;
+    return result;
 }
 ```
 
@@ -74,31 +74,31 @@ function search(nums: number[], target: number): number {
 
 Same as exact match — `lowerBound` naturally lands on the first copy.
 
-```typescript
+```csharp
 // predicate: nums[i] >= target
-// returns: first index where nums[i] === target, or -1
+// returns: first index where nums[i] == target, or -1
 ```
 
 ### 3. Last Occurrence — "Last index where `nums[i] === X`"
 
 Reframe as: "Find first index where `nums[i] > X`, then subtract 1."
 
-```typescript
-function findLast(nums: number[], target: number): number {
-  let left = 0, right = nums.length - 1;
-  let result = nums.length;
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    if (nums[mid] > target) {
-      result = mid;
-      right = mid - 1;
-    } else {
-      left = mid + 1;
+```csharp
+public int FindLast(int[] nums, int target) {
+    int left = 0, right = nums.Length - 1;
+    int result = nums.Length;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (nums[mid] > target) {
+            result = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
     }
-  }
-  // result is now the first index > target
-  if (result === 0 || nums[result - 1] !== target) return -1;
-  return result - 1;
+    // result is now the first index > target
+    if (result == 0 || nums[result - 1] != target) return -1;
+    return result - 1;
 }
 ```
 
@@ -106,21 +106,21 @@ function findLast(nums: number[], target: number): number {
 
 Direct lowerBound — no post-processing needed.
 
-```typescript
+```csharp
 // predicate: nums[i] >= target
-// returns: index where target should be inserted (could be nums.length)
+// returns: index where target should be inserted (could be nums.Length)
 ```
 
 ### 5. Range of Target — "Find [first, last] indices of X"
 
 Combine lowerBound and upperBound.
 
-```typescript
-function searchRange(nums: number[], target: number): [number, number] {
-  const first = lowerBound(nums, target);    // first index >= target
-  const last = upperBound(nums, target) - 1; // first index > target, minus 1
-  if (first >= nums.length || nums[first] !== target) return [-1, -1];
-  return [first, last];
+```csharp
+public int[] SearchRange(int[] nums, int target) {
+    int first = LowerBound(nums, target);    // first index >= target
+    int last = UpperBound(nums, target) - 1; // first index > target, minus 1
+    if (first >= nums.Length || nums[first] != target) return new[] { -1, -1 };
+    return new[] { first, last };
 }
 ```
 
@@ -128,22 +128,22 @@ function searchRange(nums: number[], target: number): [number, number] {
 
 Used when the answer isn't an array index but a *value* (e.g., minimum capacity, smallest divisor). The predicate becomes a feasibility check.
 
-```typescript
+```csharp
 // predicate: isFeasible(value)
 // search space: [minPossible, maxPossible]
-function smallestValid(lo: number, hi: number, isFeasible: (v: number) => boolean): number {
-  let left = lo, right = hi;
-  let result = hi + 1;
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    if (isFeasible(mid)) {
-      result = mid;
-      right = mid - 1;
-    } else {
-      left = mid + 1;
+public int SmallestValid(int lo, int hi, Func<int, bool> isFeasible) {
+    int left = lo, right = hi;
+    int result = hi + 1;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (isFeasible(mid)) {
+            result = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
     }
-  }
-  return result;
+    return result;
 }
 ```
 
@@ -151,7 +151,7 @@ function smallestValid(lo: number, hi: number, isFeasible: (v: number) => boolea
 
 The most direct application — predicate is the boolean check itself.
 
-```typescript
+```csharp
 // predicate: isTrue(i)
 // returns: first index where predicate is true
 ```
@@ -212,35 +212,35 @@ All 3s are in range `[1, 4)` → 3 elements (`upperBound - lowerBound = 3`).
 
 ## Reference Implementations
 
-```typescript
-function lowerBound(arr: number[], target: number): number {
-  let left = 0, right = arr.length - 1;
-  let result = arr.length;
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    if (arr[mid] >= target) {
-      result = mid;
-      right = mid - 1;
-    } else {
-      left = mid + 1;
+```csharp
+public int LowerBound(int[] arr, int target) {
+    int left = 0, right = arr.Length - 1;
+    int result = arr.Length;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (arr[mid] >= target) {
+            result = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
     }
-  }
-  return result;
+    return result;
 }
 
-function upperBound(arr: number[], target: number): number {
-  let left = 0, right = arr.length - 1;
-  let result = arr.length;
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    if (arr[mid] > target) {
-      result = mid;
-      right = mid - 1;
-    } else {
-      left = mid + 1;
+public int UpperBound(int[] arr, int target) {
+    int left = 0, right = arr.Length - 1;
+    int result = arr.Length;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (arr[mid] > target) {
+            result = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
     }
-  }
-  return result;
+    return result;
 }
 ```
 

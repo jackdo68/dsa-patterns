@@ -16,7 +16,7 @@ frequency: "Medium"
 - *`int seat()` — returns the label of the seat the next student will sit in.*
 - *`void leave(int p)` — the student sitting at seat `p` leaves.*
 
-```typescript
+```
 Input: ["ExamRoom","seat","seat","seat","seat","leave","seat"]
        [[10],[],[],[],[],[4],[]]
 Output: [null, 0, 9, 4, 2, null, 5]
@@ -57,66 +57,66 @@ Right wall [a, n]:      achievable = n - 1 - a         (sit at n-1)
 
 ### Solution
 
-```typescript
-type Gap = [number, number, number]; // [achievableDistance, start, end]
+```csharp
+public class ExamRoom {
+    // Gap = (achievableDistance, start, end)
+    private readonly List<(int dist, int start, int end)> gaps;
+    private readonly int n;
 
-class ExamRoom {
-  private gaps: Gap[];
-  private n: number;
-
-  constructor(n: number) {
-    this.n = n;
-    // Virtual walls at -1 and n. Initially one big gap covering the room.
-    this.gaps = [[this.getDis(-1, n), -1, n]];
-    // OPTIMIZATION: also initialize a max-heap with this single gap,
-    // plus two Map<number, Gap> for O(1) lookup in leave().
-  }
-
-  /** Achievable distance for sitting in this gap. */
-  private getDis(a: number, b: number): number {
-    if (a === -1) return b;                   // left wall: sit at 0
-    if (b === this.n) return this.n - 1 - a;  // right wall: sit at n-1
-    return Math.floor((b - a) / 2);           // interior: midpoint
-  }
-
-  /** Best seat number for this gap. */
-  private getPos(a: number, b: number): number {
-    if (a === -1) return 0;
-    if (b === this.n) return this.n - 1;
-    return a + Math.floor((b - a) / 2);
-  }
-
-  seat(): number {
-    // OPTIMIZATION: replace sort() with a max-heap pop().
-    // With lazy deletion: pop until the top is not marked stale.
-    this.gaps.sort((a, b) => (a[0] !== b[0] ? a[0] - b[0] : b[1] - a[1]));
-    const [, start, end] = this.gaps.pop()!;
-    const pos = this.getPos(start, end);
-    // Each sub-gap has its OWN achievable distance — compute separately.
-    this.gaps.push([this.getDis(start, pos), start, pos]);
-    this.gaps.push([this.getDis(pos, end), pos, end]);
-    return pos;
-  }
-
-  leave(p: number): void {
-    // OPTIMIZATION: replace this scan with two Map<number, Gap> lookups:
-    //   const leftGap  = this.gapEndingAt.get(p)!;   // O(1)
-    //   const rightGap = this.gapStartingAt.get(p)!; // O(1)
-    // Then mark both gaps stale in the heap (lazy deletion).
-    let low = -1;
-    let high = -1;
-    for (let i = 0; i < this.gaps.length; i++) {
-      if (this.gaps[i][1] === p) high = i;
-      if (this.gaps[i][2] === p) low = i;
+    public ExamRoom(int n) {
+        this.n = n;
+        // Virtual walls at -1 and n. Initially one big gap covering the room.
+        gaps = new List<(int, int, int)> { (GetDis(-1, n), -1, n) };
+        // OPTIMIZATION: also initialize a max-heap with this single gap,
+        // plus two Dictionary<int, Gap> for O(1) lookup in Leave().
     }
-    const start = this.gaps[low][1];
-    const end = this.gaps[high][2];
-    // Splice the higher index first so the lower one doesn't shift.
-    const L = low < high ? low : high;
-    const R = low < high ? high : low;
-    this.gaps.splice(R, 1);
-    this.gaps.splice(L, 1);
-    this.gaps.push([this.getDis(start, end), start, end]);
-  }
+
+    // Achievable distance for sitting in this gap.
+    private int GetDis(int a, int b) {
+        if (a == -1) return b;             // left wall: sit at 0
+        if (b == n) return n - 1 - a;      // right wall: sit at n-1
+        return (b - a) / 2;                // interior: midpoint
+    }
+
+    // Best seat number for this gap.
+    private int GetPos(int a, int b) {
+        if (a == -1) return 0;
+        if (b == n) return n - 1;
+        return a + (b - a) / 2;
+    }
+
+    public int Seat() {
+        // OPTIMIZATION: replace Sort() with a max-heap pop().
+        // With lazy deletion: pop until the top is not marked stale.
+        gaps.Sort((a, b) => a.dist != b.dist ? a.dist - b.dist : b.start - a.start);
+        var (_, start, end) = gaps[^1];
+        gaps.RemoveAt(gaps.Count - 1);
+        int pos = GetPos(start, end);
+        // Each sub-gap has its OWN achievable distance — compute separately.
+        gaps.Add((GetDis(start, pos), start, pos));
+        gaps.Add((GetDis(pos, end), pos, end));
+        return pos;
+    }
+
+    public void Leave(int p) {
+        // OPTIMIZATION: replace this scan with two Dictionary<int, Gap> lookups:
+        //   var leftGap  = gapEndingAt[p];   // O(1)
+        //   var rightGap = gapStartingAt[p]; // O(1)
+        // Then mark both gaps stale in the heap (lazy deletion).
+        int low = -1;
+        int high = -1;
+        for (int i = 0; i < gaps.Count; i++) {
+            if (gaps[i].start == p) high = i;
+            if (gaps[i].end == p) low = i;
+        }
+        int start = gaps[low].start;
+        int end = gaps[high].end;
+        // Remove the higher index first so the lower one doesn't shift.
+        int L = low < high ? low : high;
+        int R = low < high ? high : low;
+        gaps.RemoveAt(R);
+        gaps.RemoveAt(L);
+        gaps.Add((GetDis(start, end), start, end));
+    }
 }
 ```

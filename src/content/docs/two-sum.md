@@ -19,18 +19,18 @@ The key insight is that for any pair `(a, b)` where `a + b = target`, when you r
 
 ### Solution
 
-```typescript
-function twoSum(nums: number[], target: number): number[] {
-  const map = new Map<number, number>();
+```csharp
+public int[] TwoSum(int[] nums, int target) {
+    var seen = new Dictionary<int, int>(); // value -> index
 
-  for (let i = 0; i < nums.length; i++) {
-    const complement = target - nums[i];
-    if (map.has(complement)) {
-      return [map.get(complement)!, i];
+    for (int i = 0; i < nums.Length; i++) {
+        int complement = target - nums[i];
+        if (seen.TryGetValue(complement, out int j)) {
+            return new[] { j, i };
+        }
+        seen[nums[i]] = i;
     }
-    map.set(nums[i], i);
-  }
 
-  return [];
+    return Array.Empty<int>();
 }
 ```

@@ -13,14 +13,14 @@ frequency: "High"
 
 ### Solution
 
-```typescript
-function containerWithMostWater(height: number[]): number {
-    let left = 0;
-    let right = height.length - 1;
-    let maxArea = 0;
+```csharp
+public int MaxArea(int[] height) {
+    int left = 0;
+    int right = height.Length - 1;
+    int maxArea = 0;
     while (left < right) {
-        const currentArea = Math.min(height[left], height[right]) * (right - left);
-        maxArea = Math.max(maxArea, currentArea);
+        int currentArea = Math.Min(height[left], height[right]) * (right - left);
+        maxArea = Math.Max(maxArea, currentArea);
         if (height[left] < height[right]) {
             left++;
         } else {

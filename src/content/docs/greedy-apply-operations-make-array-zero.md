@@ -10,14 +10,14 @@ frequency: "Medium"
 
 *You are given a 0-indexed integer array `nums` and a positive integer `k`. You can apply the following operation on the array any number of times: choose any subarray of size `k` and decrease all its elements by 1. Return `true` if you can make all array elements equal to 0, otherwise return `false`.*
 
-```typescript
+```
 Input: nums = [2,2,3,1,1,0], k = 3
 Output: true
 // Apply window [2,2,3] twice → [0,0,1,1,1,0]
 // Apply window [1,1,1] once  → [0,0,0,0,0,0]
 ```
 
-```typescript
+```
 Input: nums = [1,3,1,1], k = 2
 Output: false
 ```
@@ -55,21 +55,21 @@ The optimization: instead of updating `k` slots in `ops`, track a **single runni
 
 That's O(1) per iteration → O(n) total. Same forced-greedy logic, faster bookkeeping.
 
-```typescript
+```csharp
 // O(n) sliding window version
-function checkArray(nums: number[], k: number): boolean {
-  const n = nums.length;
-  const ops = new Array(n).fill(0);
-  let active = 0;
-  for (let i = 0; i < n; i++) {
-    if (i >= k) active -= ops[i - k];          // expire old op
-    const needed = nums[i] - active;
-    if (needed < 0) return false;
-    if (needed > 0 && i + k > n) return false;
-    ops[i] = needed;
-    active += needed;                           // current op enters window
-  }
-  return true;
+public bool CheckArray(int[] nums, int k) {
+    int n = nums.Length;
+    int[] ops = new int[n];
+    int active = 0;
+    for (int i = 0; i < n; i++) {
+        if (i >= k) active -= ops[i - k];          // expire old op
+        int needed = nums[i] - active;
+        if (needed < 0) return false;
+        if (needed > 0 && i + k > n) return false;
+        ops[i] = needed;
+        active += needed;                           // current op enters window
+    }
+    return true;
 }
 ```
 
@@ -83,19 +83,19 @@ function checkArray(nums: number[], k: number): boolean {
 
 ### Solution
 
-```typescript
-function checkArray(nums: number[], k: number): boolean {
-  const n = nums.length;
-  const ops = Array.from({ length: n }, () => 0);
-  for (let i = 0; i < n; i++) {
-    const val = nums[i] - ops[i];
-    if (val > 0 && i + k > n) return false;
-    if (val < 0) return false;
-    for (let j = i; j < i + k && j < n; j++) {
-      ops[j] = ops[j] + val;
+```csharp
+public bool CheckArray(int[] nums, int k) {
+    int n = nums.Length;
+    int[] ops = new int[n];
+    for (int i = 0; i < n; i++) {
+        int val = nums[i] - ops[i];
+        if (val > 0 && i + k > n) return false;
+        if (val < 0) return false;
+        for (int j = i; j < i + k && j < n; j++) {
+            ops[j] = ops[j] + val;
+        }
     }
-  }
 
-  return true;
+    return true;
 }
 ```

@@ -20,19 +20,19 @@ frequency: "Low"
 
 ### Solution
 
-```typescript
-function maxSlidingWindow(nums: number[], k: number): number[] {
-  const queue: number[] = [];
-  const res: number[] = [];
+```csharp
+public int[] MaxSlidingWindow(int[] nums, int k) {
+    var queue = new LinkedList<int>(); // stores indices, values decreasing front→back
+    var res = new List<int>();
 
-  for (let i = 0; i < nums.length; i++) {
-    // keep the queue in decreasing order
-    while (queue.length && nums[queue[queue.length - 1]] < nums[i]) queue.pop();
-    queue.push(i); // push the current index
+    for (int i = 0; i < nums.Length; i++) {
+        // keep the queue in decreasing order
+        while (queue.Count > 0 && nums[queue.Last!.Value] < nums[i]) queue.RemoveLast();
+        queue.AddLast(i); // push the current index
 
-    if (i === queue[0] + k) queue.shift(); // left element out of the window
-    if (i >= k - 1) res.push(nums[queue[0]]); // first element always the largest
-  }
-  return res;
+        if (i == queue.First!.Value + k) queue.RemoveFirst(); // left element out of window
+        if (i >= k - 1) res.Add(nums[queue.First!.Value]); // front is always the largest
+    }
+    return res.ToArray();
 }
 ```

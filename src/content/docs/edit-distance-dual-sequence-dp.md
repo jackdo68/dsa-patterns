@@ -59,67 +59,65 @@ This is a classic **dual-sequence DP** problem.
 
 **Approach 1: 2D DP**
 
-```tsx
-function minDistance(word1: string, word2: string): number {
-    const m = word1.length;
-    const n = word2.length;
+```csharp
+public int MinDistance(string word1, string word2) {
+    int m = word1.Length;
+    int n = word2.Length;
 
-    // dp[i][j] = min operations to convert word1[0..i-1] to word2[0..j-1]
-    const dp: number[][] = Array.from(
-        { length: m + 1 },
-        () => new Array(n + 1).fill(0)
-    );
+    // dp[i, j] = min operations to convert word1[0..i-1] to word2[0..j-1]
+    int[,] dp = new int[m + 1, n + 1];
 
     // Base cases
-    for (let i = 0; i <= m; i++) dp[i][0] = i;  // Delete all
-    for (let j = 0; j <= n; j++) dp[0][j] = j;  // Insert all
+    for (int i = 0; i <= m; i++) dp[i, 0] = i;  // Delete all
+    for (int j = 0; j <= n; j++) dp[0, j] = j;  // Insert all
 
     // Fill DP table
-    for (let i = 1; i <= m; i++) {
-        for (let j = 1; j <= n; j++) {
-            if (word1[i - 1] === word2[j - 1]) {
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (word1[i - 1] == word2[j - 1]) {
                 // Characters match, no operation needed
-                dp[i][j] = dp[i - 1][j - 1];
+                dp[i, j] = dp[i - 1, j - 1];
             } else {
-                dp[i][j] = 1 + Math.min(
-                    dp[i - 1][j - 1],  // Replace
-                    dp[i - 1][j],      // Delete
-                    dp[i][j - 1]       // Insert
+                dp[i, j] = 1 + Math.Min(
+                    dp[i - 1, j - 1],           // Replace
+                    Math.Min(dp[i - 1, j],      // Delete
+                             dp[i, j - 1])      // Insert
                 );
             }
         }
     }
 
-    return dp[m][n];
+    return dp[m, n];
 }
 ```
 
 **Approach 2: Space-optimized O(n)**
 
-```tsx
-function minDistance(word1: string, word2: string): number {
-    const m = word1.length;
-    const n = word2.length;
+```csharp
+public int MinDistance(string word1, string word2) {
+    int m = word1.Length;
+    int n = word2.Length;
 
-    let prev: number[] = Array.from({ length: n + 1 }, (_, j) => j);
-    let curr: number[] = new Array(n + 1);
+    int[] prev = new int[n + 1];
+    for (int j = 0; j <= n; j++) prev[j] = j;
+    int[] curr = new int[n + 1];
 
-    for (let i = 1; i <= m; i++) {
+    for (int i = 1; i <= m; i++) {
         curr[0] = i;  // Base case: delete all
 
-        for (let j = 1; j <= n; j++) {
-            if (word1[i - 1] === word2[j - 1]) {
+        for (int j = 1; j <= n; j++) {
+            if (word1[i - 1] == word2[j - 1]) {
                 curr[j] = prev[j - 1];
             } else {
-                curr[j] = 1 + Math.min(
-                    prev[j - 1],  // Replace
-                    prev[j],      // Delete
-                    curr[j - 1]   // Insert
+                curr[j] = 1 + Math.Min(
+                    prev[j - 1],           // Replace
+                    Math.Min(prev[j],      // Delete
+                             curr[j - 1])  // Insert
                 );
             }
         }
 
-        [prev, curr] = [curr, prev];
+        (prev, curr) = (curr, prev);
     }
 
     return prev[n];
@@ -160,9 +158,9 @@ Answer: `dp[5][3] = 3`
 If replace is not allowed, edit distance equals:
 `m + n - 2 * LCS(word1, word2)`
 
-```tsx
-function minDistanceNoReplace(word1: string, word2: string): number {
-    const lcs = longestCommonSubsequence(word1, word2);
-    return word1.length + word2.length - 2 * lcs;
+```csharp
+public int MinDistanceNoReplace(string word1, string word2) {
+    int lcs = LongestCommonSubsequence(word1, word2);
+    return word1.Length + word2.Length - 2 * lcs;
 }
 ```

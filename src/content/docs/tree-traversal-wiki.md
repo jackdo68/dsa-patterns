@@ -58,27 +58,27 @@ A recurring shape in tree problems: the recursion **returns one thing to the par
 
 **The shape:**
 
-```typescript
-function solve(root: TreeNode | null): ResultType {
-  let answer = initialValue;  // global accumulator (closure variable)
+```csharp
+public ResultType Solve(TreeNode? root) {
+    ResultType answer = initialValue;  // global accumulator (captured variable)
 
-  function dfs(node: TreeNode | null): LocalInfo {
-    if (!node) return baseCase;
+    LocalInfo Dfs(TreeNode? node) {
+        if (node is null) return baseCase;
 
-    const left = dfs(node.left);
-    const right = dfs(node.right);
+        var left = Dfs(node.left);
+        var right = Dfs(node.right);
 
-    // Combine children's info with current node
-    const localInfo = combine(left, right, node);
+        // Combine children's info with current node
+        var localInfo = Combine(left, right, node);
 
-    // Update the global answer using whatever spans through this node
-    answer = updateAnswer(answer, left, right, node);
+        // Update the global answer using whatever spans through this node
+        answer = UpdateAnswer(answer, left, right, node);
 
-    return localInfo;  // what the parent needs
-  }
+        return localInfo;  // what the parent needs
+    }
 
-  dfs(root);
-  return answer;
+    Dfs(root);
+    return answer;
 }
 ```
 

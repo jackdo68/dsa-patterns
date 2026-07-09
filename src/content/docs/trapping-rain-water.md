@@ -21,26 +21,26 @@ This works because we process the side with the smaller max first — guaranteei
 
 ### Solution
 
-```typescript
-function trap(height: number[]): number {
-  let left = 0;
-  let right = height.length - 1;
-  let leftMax = 0;
-  let rightMax = 0;
-  let water = 0;
+```csharp
+public int Trap(int[] height) {
+    int left = 0;
+    int right = height.Length - 1;
+    int leftMax = 0;
+    int rightMax = 0;
+    int water = 0;
 
-  while (left < right) {
-    if (height[left] < height[right]) {
-      leftMax = Math.max(leftMax, height[left]);
-      water += leftMax - height[left];
-      left++;
-    } else {
-      rightMax = Math.max(rightMax, height[right]);
-      water += rightMax - height[right];
-      right--;
+    while (left < right) {
+        if (height[left] < height[right]) {
+            leftMax = Math.Max(leftMax, height[left]);
+            water += leftMax - height[left];
+            left++;
+        } else {
+            rightMax = Math.Max(rightMax, height[right]);
+            water += rightMax - height[right];
+            right--;
+        }
     }
-  }
 
-  return water;
+    return water;
 }
 ```

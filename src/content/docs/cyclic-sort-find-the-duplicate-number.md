@@ -33,27 +33,27 @@ Index: 0 → 1 → 3 → 2 → 4 → 2 → 4 → ...
 
 ### Solution
 
-```typescript
-  function findDuplicate(nums: number[]): number {
+```csharp
+public int FindDuplicate(int[] nums) {
     // Floyd's algorithm
-    // Part 1: place 2 pointers 1 slow, 1 fast and we find the meeting point
-    let fast = nums[0];
-    let slow = nums[0];
+    // Part 1: place 2 pointers 1 slow, 1 fast and find the meeting point
+    int fast = nums[0];
+    int slow = nums[0];
     // find their meeting point
     while (true) {
-      slow = nums[slow]; // slow pointer move 1 step at a time
-      fast = nums[nums[fast]]; // fast pointer move 2 steps at a time
-      if (slow === fast) break;
+        slow = nums[slow];        // slow pointer moves 1 step at a time
+        fast = nums[nums[fast]];  // fast pointer moves 2 steps at a time
+        if (slow == fast) break;
     }
 
-    // part 2: Place a new pointer at the start, move the same speed with the slow pointer at last meeting point
-    let ptr1 = nums[0];
-    let ptr2 = slow; // or fast as they both same pos
-    while (ptr1 !== ptr2) {
-      ptr1 = nums[ptr1];
-      ptr2 = nums[ptr2];
+    // Part 2: place a new pointer at the start, move at the same speed as slow
+    int ptr1 = nums[0];
+    int ptr2 = slow; // or fast, they are at the same position
+    while (ptr1 != ptr2) {
+        ptr1 = nums[ptr1];
+        ptr2 = nums[ptr2];
     }
-    // where this 2 pointers meet is the beginning of the cycle
+    // where these 2 pointers meet is the beginning of the cycle
     return ptr1;
-  }
+}
 ```

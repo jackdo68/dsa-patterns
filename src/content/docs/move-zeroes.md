@@ -28,19 +28,19 @@ Output: [1,3,12,0,0]
 
 ### Solution
 
-```typescript
-function moveZeroes(nums: number[]): void {
-  const n = nums.length;
-  let l = 0;
-  for (let i = 0; i < n; i++) {
-    if (nums[i] !== 0) {
-      nums[l] = nums[i];
-      l++;
+```csharp
+public void MoveZeroes(int[] nums) {
+    int n = nums.Length;
+    int l = 0;
+    for (int i = 0; i < n; i++) {
+        if (nums[i] != 0) {
+            nums[l] = nums[i];
+            l++;
+        }
     }
-  }
-  while (l < n) {
-    nums[l] = 0;
-    l++;
-  }
+    while (l < n) {
+        nums[l] = 0;
+        l++;
+    }
 }
 ```

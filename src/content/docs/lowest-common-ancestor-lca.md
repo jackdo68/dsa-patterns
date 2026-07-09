@@ -35,31 +35,27 @@ If both answers are "yes" at some node, that node is a common ancestor. The **lo
 
 ### Solution
 
-```typescript
-function lowestCommonAncestor(
-  root: TreeNode | null,
-  p: TreeNode,
-  q: TreeNode,
-): TreeNode | null {
-  let lca: TreeNode | null = null;
+```csharp
+public TreeNode? LowestCommonAncestor(TreeNode? root, TreeNode p, TreeNode q) {
+    TreeNode? lca = null;
 
-  function dfs(node: TreeNode | null): { foundP: boolean; foundQ: boolean } {
-    if (!node) return { foundP: false, foundQ: false };
+    (bool foundP, bool foundQ) Dfs(TreeNode? node) {
+        if (node is null) return (false, false);
 
-    const left = dfs(node.left);
-    const right = dfs(node.right);
+        var left = Dfs(node.left);
+        var right = Dfs(node.right);
 
-    const foundP = left.foundP || right.foundP || node === p;
-    const foundQ = left.foundQ || right.foundQ || node === q;
+        bool foundP = left.foundP || right.foundP || node == p;
+        bool foundQ = left.foundQ || right.foundQ || node == q;
 
-    if (foundP && foundQ && lca === null) {
-      lca = node;
+        if (foundP && foundQ && lca is null) {
+            lca = node;
+        }
+        return (foundP, foundQ);
     }
-    return { foundP, foundQ };
-  }
 
-  dfs(root);
-  return lca;
+    Dfs(root);
+    return lca;
 }
 ```
 

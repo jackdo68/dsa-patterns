@@ -11,35 +11,32 @@ frequency: "Low"
 *Given an `m x n` `matrix`, return all elements of the `matrix` in spiral order.*
 ### Solution
 
-```typescript
-function spiralOrder(matrix: number[][]): number[] {
-  const result: number[] = [];
-  let top = 0;
-  let bottom = matrix.length - 1;
-  let left = 0;
-  let right = matrix[0].length - 1;
+```csharp
+public IList<int> SpiralOrder(int[][] matrix) {
+    var result = new List<int>();
+    int top = 0;
+    int bottom = matrix.Length - 1;
+    int left = 0;
+    int right = matrix[0].Length - 1;
 
-  while (top <= bottom && left <= right) {
-    // move right
-    for (let i = left; i <= right; i++) result.push(matrix[top][i]);
-    top++;
-    // move down
-    for (let i = top; i <= bottom; i++) result.push(matrix[i][right]);
-    right--;
-    // move left
-    // after increment top, we need to check again if we're still inbound
-    if (top <= bottom) {
-      for (let i = right; i >= left; i--) result.push(matrix[bottom][i]);
-      bottom--;
+    while (top <= bottom && left <= right) {
+        // move right
+        for (int i = left; i <= right; i++) result.Add(matrix[top][i]);
+        top++;
+        // move down
+        for (int i = top; i <= bottom; i++) result.Add(matrix[i][right]);
+        right--;
+        // move left (after incrementing top, re-check we're still in bounds)
+        if (top <= bottom) {
+            for (int i = right; i >= left; i--) result.Add(matrix[bottom][i]);
+            bottom--;
+        }
+        // move up (after decrementing right, re-check we're still in bounds)
+        if (left <= right) {
+            for (int i = bottom; i >= top; i--) result.Add(matrix[i][left]);
+            left++;
+        }
     }
-
-    // move up
-    // after decrement right, check if we still inbound
-    if (left <= right) {
-      for (let i = bottom; i >= top; i--) result.push(matrix[i][left]);
-      left++;
-    }
-  }
-  return result;
+    return result;
 }
 ```

@@ -43,50 +43,49 @@ Output: 1
 
 **Approach 1: Min Heap (Intuitive)**
 
-```tsx
-function minMeetingRooms(intervals: number[][]): number {
-    if (intervals.length === 0) return 0;
+```csharp
+public int MinMeetingRooms(int[][] intervals) {
+    if (intervals.Length == 0) return 0;
 
     // Sort by start time
-    intervals.sort((a, b) => a[0] - b[0]);
+    Array.Sort(intervals, (a, b) => a[0] - b[0]);
 
-    // Min heap of end times (using array, smallest end time first)
-    const minHeap = new MinPriorityQueue();
+    // Min heap of end times (smallest end time first)
+    var minHeap = new PriorityQueue<int, int>();
 
     // Add first meeting's end time
-    minHeap.enqueue(intervals[0][1]);
+    minHeap.Enqueue(intervals[0][1], intervals[0][1]);
 
-    for (let i = 1; i < intervals.length; i++) {
-        const [start, end] = intervals[i];
+    for (int i = 1; i < intervals.Length; i++) {
+        int start = intervals[i][0], end = intervals[i][1];
 
-        // If current meeting starts after earliest ending meeting
-        // We can reuse that room
-        if (start >= minHeap.front().element) {
-            minHeap.dequeue();
+        // If current meeting starts after the earliest ending meeting, reuse that room
+        if (start >= minHeap.Peek()) {
+            minHeap.Dequeue();
         }
 
         // Add current meeting's end time
-        minHeap.enqueue(end);
+        minHeap.Enqueue(end, end);
     }
 
     // Heap size = number of rooms needed
-    return minHeap.size();
+    return minHeap.Count;
 }
 ```
 
 **Approach 2: Two Pointers (Optimal)**
 
-```tsx
-function minMeetingRooms(intervals: number[][]): number {
-    const starts = intervals.map(i => i[0]).sort((a, b) => a - b);
-    const ends = intervals.map(i => i[1]).sort((a, b) => a - b);
+```csharp
+public int MinMeetingRooms(int[][] intervals) {
+    int[] starts = intervals.Select(i => i[0]).OrderBy(x => x).ToArray();
+    int[] ends = intervals.Select(i => i[1]).OrderBy(x => x).ToArray();
 
-    let rooms = 0;
-    let maxRooms = 0;
-    let startPtr = 0;
-    let endPtr = 0;
+    int rooms = 0;
+    int maxRooms = 0;
+    int startPtr = 0;
+    int endPtr = 0;
 
-    while (startPtr < intervals.length) {
+    while (startPtr < intervals.Length) {
         if (starts[startPtr] < ends[endPtr]) {
             // A meeting starts before another ends
             rooms++;
@@ -96,7 +95,7 @@ function minMeetingRooms(intervals: number[][]): number {
             rooms--;
             endPtr++;
         }
-        maxRooms = Math.max(maxRooms, rooms);
+        maxRooms = Math.Max(maxRooms, rooms);
     }
 
     return maxRooms;
@@ -105,25 +104,25 @@ function minMeetingRooms(intervals: number[][]): number {
 
 **Approach 3: Event-based (Clearest)**
 
-```tsx
-function minMeetingRooms(intervals: number[][]): number {
-    const events: [number, number][] = [];
+```csharp
+public int MinMeetingRooms(int[][] intervals) {
+    var events = new List<(int time, int type)>();
 
     // Create events: (time, type) where type: 1=start, -1=end
-    for (const [start, end] of intervals) {
-        events.push([start, 1]);   // Meeting starts
-        events.push([end, -1]);    // Meeting ends
+    foreach (var interval in intervals) {
+        events.Add((interval[0], 1));   // Meeting starts
+        events.Add((interval[1], -1));  // Meeting ends
     }
 
-    // Sort by time, if same time, process ends before starts
-    events.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    // Sort by time; if same time, process ends before starts
+    events.Sort((a, b) => a.time != b.time ? a.time - b.time : a.type - b.type);
 
-    let currentRooms = 0;
-    let maxRooms = 0;
+    int currentRooms = 0;
+    int maxRooms = 0;
 
-    for (const [time, type] of events) {
+    foreach (var (time, type) in events) {
         currentRooms += type;
-        maxRooms = Math.max(maxRooms, currentRooms);
+        maxRooms = Math.Max(maxRooms, currentRooms);
     }
 
     return maxRooms;
@@ -155,23 +154,24 @@ Max rooms = 2
 
 This pattern combines sorting intervals with a heap for tracking state:
 
-```tsx
-function intervalHeapPattern(intervals) {
+```csharp
+public int IntervalHeapPattern(int[][] intervals) {
     // 1. Sort by start time
-    intervals.sort((a, b) => a[0] - b[0]);
+    Array.Sort(intervals, (a, b) => a[0] - b[0]);
 
-    // 2. Process with min heap tracking end times
-    const minHeap = new MinHeap();
+    // 2. Process with a min heap tracking end times
+    var minHeap = new PriorityQueue<int, int>();
 
-    for (const [start, end] of intervals) {
-        // Check if can reuse (start >= earliest end)
-        if (minHeap.size > 0 && start >= minHeap.peek()) {
-            minHeap.pop();  // Reuse this slot
+    foreach (var interval in intervals) {
+        int start = interval[0], end = interval[1];
+        // Check if we can reuse a slot (start >= earliest end)
+        if (minHeap.Count > 0 && start >= minHeap.Peek()) {
+            minHeap.Dequeue();  // Reuse this slot
         }
-        minHeap.push(end);  // Add current end time
+        minHeap.Enqueue(end, end);  // Add current end time
     }
 
-    return minHeap.size;  // Active slots needed
+    return minHeap.Count;  // Active slots needed
 }
 ```
 
@@ -190,11 +190,11 @@ function intervalHeapPattern(intervals) {
 
 Can a person attend all meetings? (No overlaps)
 
-```tsx
-function canAttendMeetings(intervals: number[][]): boolean {
-    intervals.sort((a, b) => a[0] - b[0]);
+```csharp
+public bool CanAttendMeetings(int[][] intervals) {
+    Array.Sort(intervals, (a, b) => a[0] - b[0]);
 
-    for (let i = 1; i < intervals.length; i++) {
+    for (int i = 1; i < intervals.Length; i++) {
         // If current starts before previous ends, overlap!
         if (intervals[i][0] < intervals[i - 1][1]) {
             return false;

@@ -12,36 +12,31 @@ frequency: "Medium"
 
 ### Solution
 
-```typescript
-/*
- * Encodes a tree to a single string.
- */
-function serialize(root: TreeNode | null): string {
-    if (root === null) return "x";
-    return `${root.val} ${serialize(root.left)} ${serialize(root.right)}`
+```csharp
+// Encodes a tree to a single string.
+public string Serialize(TreeNode? root) {
+    if (root is null) return "x";
+    return $"{root.val} {Serialize(root.left)} {Serialize(root.right)}";
+}
 
-};
+// Decodes your encoded data to tree.
+public TreeNode? Deserialize(string data) {
+    string[] tokens = data.Split(' ');
+    int index = 0;
 
-/*
- * Decodes your encoded data to tree.
- */
-function deserialize(data: string): TreeNode | null {
-    const tokens = data.split(" ")
-    let index = 0;
-
-    // call on each token
-    function helper() : TreeNode | null {
-        if (tokens[index] === "x" || index >= tokens.length) {
+    // consume tokens in preorder
+    TreeNode? Helper() {
+        if (index >= tokens.Length || tokens[index] == "x") {
             index++;
-            return null
+            return null;
         }
-        const val = parseInt(tokens[index])
+        int val = int.Parse(tokens[index]);
         index++;
-        const node = new TreeNode(val)
-        node.left = helper()
-        node.right = helper()
-        return node
+        var node = new TreeNode(val);
+        node.left = Helper();
+        node.right = Helper();
+        return node;
     }
-    return helper()
-};
+    return Helper();
+}
 ```

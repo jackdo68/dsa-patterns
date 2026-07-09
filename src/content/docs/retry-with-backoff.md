@@ -8,23 +8,20 @@ frequency: "Medium"
 
 Implement a `retryWithBackoff` function that retries a failed async operation up to `maxRetries` times with exponential backoff. Add optional jitter to avoid thundering herd. Only retry on transient errors (e.g. `429`, `500`, `503`) — never on client errors (`400`, `401`).
 
-```typescript
-async function retryWithBackoff<T>(
-  fn: () => Promise<T>,
-  options?: {
-    maxRetries?: number;
-    baseDelayMs?: number;
-    maxDelayMs?: number;
-    jitter?: boolean;
-    retryableStatuses?: number[];
-  }
-): Promise<T>;
+```csharp
+class RetryOptions {
+    public int MaxRetries = 3;
+    public int BaseDelayMs = 1000;
+    public int MaxDelayMs = 30_000;
+    public bool Jitter = true;
+    public int[] RetryableStatuses = { 429, 500, 502, 503, 504 };
+}
+
+Task<T> RetryWithBackoff<T>(Func<Task<T>> fn, RetryOptions? options = null);
 
 // Example:
-// const result = await retryWithBackoff(() => callFlakyAPI(), {
-//   maxRetries: 3,
-//   baseDelayMs: 1000,
-// });
+// var result = await RetryWithBackoff(() => CallFlakyApiAsync(),
+//     new RetryOptions { MaxRetries = 3, BaseDelayMs = 1000 });
 ```
 
 ### Ideas
@@ -53,44 +50,32 @@ Total wait: 15 seconds across 5 attempts. With `maxDelay=10_000`, attempt 5 woul
 
 ### Solution
 
-```typescript
-async function retryWithBackoff<T>(
-  fn: () => Promise<T>,
-  options: {
-    maxRetries?: number;
-    baseDelayMs?: number;
-    maxDelayMs?: number;
-    jitter?: boolean;
-    retryableStatuses?: number[];
-  } = {}
-): Promise<T> {
-  const {
-    maxRetries = 3,
-    baseDelayMs = 1000,
-    maxDelayMs = 30_000,
-    jitter = true,
-    retryableStatuses = [429, 500, 502, 503, 504],
-  } = options;
+```csharp
+// Assumes an exception type that carries an HTTP status, e.g.
+//   class ApiException : Exception { public int Status; }
+public async Task<T> RetryWithBackoff<T>(Func<Task<T>> fn, RetryOptions? options = null) {
+    options ??= new RetryOptions();
 
-  let lastError: unknown;
+    Exception? lastError = null;
 
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      return await fn();
-    } catch (error: any) {
-      lastError = error;
+    for (int attempt = 0; attempt <= options.MaxRetries; attempt++) {
+        try {
+            return await fn();
+        } catch (Exception error) {
+            lastError = error;
 
-      const isRetryable = retryableStatuses.includes(error?.status);
-      if (!isRetryable || attempt === maxRetries) throw error;
+            bool isRetryable = error is ApiException api
+                && options.RetryableStatuses.Contains(api.Status);
+            if (!isRetryable || attempt == options.MaxRetries) throw;
 
-      let delay = Math.min(baseDelayMs * 2 ** attempt, maxDelayMs);
-      if (jitter) delay *= 0.5 + Math.random() * 0.5;
+            double delay = Math.Min(options.BaseDelayMs * Math.Pow(2, attempt), options.MaxDelayMs);
+            if (options.Jitter) delay *= 0.5 + Random.Shared.NextDouble() * 0.5;
 
-      await new Promise((resolve) => setTimeout(resolve, delay));
+            await Task.Delay((int)delay);
+        }
     }
-  }
 
-  throw lastError;
+    throw lastError!;
 }
 ```
 

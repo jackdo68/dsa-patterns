@@ -43,48 +43,44 @@ Minute 0:     Minute 1:     Minute 2:
 
 ### Solution
 
-```typescript
-function orangesRotting(grid: number[][]): number {
-  let fresh = 0;
-  const rowSize = grid.length;
-  const columnSize = grid[0].length;
-  const rotten: number[][] = [];
+```csharp
+public int OrangesRotting(int[][] grid) {
+    int fresh = 0;
+    int rowSize = grid.Length;
+    int columnSize = grid[0].Length;
+    var rotten = new List<int[]>();
 
-  for (let i = 0; i < rowSize; i++) {
-    for (let j = 0; j < columnSize; j++) {
-      if (grid[i][j] === 1) fresh++;
-      else if (grid[i][j] === 2) rotten.push([i, j]);
+    for (int i = 0; i < rowSize; i++) {
+        for (int j = 0; j < columnSize; j++) {
+            if (grid[i][j] == 1) fresh++;
+            else if (grid[i][j] == 2) rotten.Add(new[] { i, j });
+        }
     }
-  }
 
-  const moves = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1]
-  ];
-  const isValid = (r: number, c: number) => r >= 0 && r < rowSize && c >= 0 && c < columnSize;
+    int[][] moves = { new[] { -1, 0 }, new[] { 1, 0 }, new[] { 0, -1 }, new[] { 0, 1 } };
+    bool IsValid(int r, int c) => r >= 0 && r < rowSize && c >= 0 && c < columnSize;
 
-  let minutes = 0;
-  let head = 0;
+    int minutes = 0;
+    int head = 0;
 
-  while (head < rotten.length) {
-    const size = rotten.length - head;
-    for (let i = 0; i < size; i++) {
-      const [row, col] = rotten[head];
-      head++;
-      for (const [x, y] of moves) {
-        const newRow = row + x;
-        const newCol = col + y;
-        if (!isValid(newRow, newCol) || grid[newRow][newCol] !== 1) continue;
-        grid[newRow][newCol] = 2;
-        fresh--;
-        rotten.push([newRow, newCol]);
-      }
+    while (head < rotten.Count) {
+        int size = rotten.Count - head;
+        for (int i = 0; i < size; i++) {
+            int row = rotten[head][0];
+            int col = rotten[head][1];
+            head++;
+            foreach (var move in moves) {
+                int newRow = row + move[0];
+                int newCol = col + move[1];
+                if (!IsValid(newRow, newCol) || grid[newRow][newCol] != 1) continue;
+                grid[newRow][newCol] = 2;
+                fresh--;
+                rotten.Add(new[] { newRow, newCol });
+            }
+        }
+        if (head < rotten.Count) minutes++;
     }
-    if (head < rotten.length) minutes++;
-  }
 
-  return fresh === 0 ? minutes : -1;
+    return fresh == 0 ? minutes : -1;
 }
 ```

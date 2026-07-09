@@ -54,87 +54,79 @@ The crucial insight that makes them click together: **the hash map doesn't store
 
 ### Solution
 
-```typescript
-class _Node {
-  value: number;
-  key: number;
-  next: _Node | null;
-  prev: _Node | null;
-  constructor(key: number, value: number) {
-    this.key = key;
-    this.value = value;
-    this.next = null;
-    this.prev = null;
-  }
+```csharp
+public class NodeLru {
+    public int Value;
+    public int Key;
+    public NodeLru? Next;
+    public NodeLru? Prev;
+    public NodeLru(int key, int value) {
+        Key = key;
+        Value = value;
+    }
 }
 
-class LRUCache {
-  capacity: number;
-  map: Map<number, _Node>;
-  size: number;
-  head: _Node; // pointer to the front
-  tail: _Node; // pointer to the back
-  constructor(cap: number) {
-    this.capacity = cap;
-    this.map = new Map();
-    this.size = 0;
-    this.head = new _Node(-1, -1);
-    this.tail = new _Node(-1, -1);
-    this.head.next = this.tail;
-    this.tail.prev = this.head;
-  }
+public class LRUCache {
+    private readonly int capacity;
+    private readonly Dictionary<int, NodeLru> map;
+    private int size;
+    private readonly NodeLru head; // pointer to the front
+    private readonly NodeLru tail; // pointer to the back
 
-  get(key: number): number {
-    if (!this.map.has(key)) return -1;
-    const node = this.map.get(key)!;
-    this.remove(node);
-    this.moveToFront(node);
-    return node.value;
-  }
-
-  private remove(node: _Node) {
-    const prev = node.prev!;
-    const next = node.next!;
-    prev.next = next;
-    next.prev = prev;
-    node.prev = null;
-    node.next = null;
-  }
-
-  private moveToFront(node: _Node) {
-    const front = this.head.next!;
-    // node will become new front
-    this.head.next = node;
-    node.prev = this.head;
-    front.prev = node;
-    node.next = front;
-  }
-
-  put(key: number, value: number): void {
-    let updatedNode: _Node | null = null;
-    if (this.map.has(key)) {
-      // existing
-      updatedNode = this.map.get(key)!;
-      updatedNode.value = value;
-      // remove from current position
-      this.remove(updatedNode);
-      // move to the front
-      this.moveToFront(updatedNode);
-    } else {
-      // new
-      updatedNode = new _Node(key, value);
-      // add to map
-      this.map.set(key, updatedNode);
-      // add to front
-      this.moveToFront(updatedNode);
-      this.size++;
-      if (this.size > this.capacity) {
-        const toRemove = this.tail.prev!;
-        this.remove(toRemove);
-        this.map.delete(toRemove.key);
-        this.size--;
-      }
+    public LRUCache(int cap) {
+        capacity = cap;
+        map = new Dictionary<int, NodeLru>();
+        size = 0;
+        head = new NodeLru(-1, -1);
+        tail = new NodeLru(-1, -1);
+        head.Next = tail;
+        tail.Prev = head;
     }
-  }
+
+    public int Get(int key) {
+        if (!map.TryGetValue(key, out var node)) return -1;
+        Remove(node);
+        MoveToFront(node);
+        return node.Value;
+    }
+
+    private void Remove(NodeLru node) {
+        var prev = node.Prev!;
+        var next = node.Next!;
+        prev.Next = next;
+        next.Prev = prev;
+        node.Prev = null;
+        node.Next = null;
+    }
+
+    private void MoveToFront(NodeLru node) {
+        var front = head.Next!;
+        // node will become the new front
+        head.Next = node;
+        node.Prev = head;
+        front.Prev = node;
+        node.Next = front;
+    }
+
+    public void Put(int key, int value) {
+        if (map.TryGetValue(key, out var existing)) {
+            // existing
+            existing.Value = value;
+            Remove(existing);
+            MoveToFront(existing);
+        } else {
+            // new
+            var node = new NodeLru(key, value);
+            map[key] = node;
+            MoveToFront(node);
+            size++;
+            if (size > capacity) {
+                var toRemove = tail.Prev!;
+                Remove(toRemove);
+                map.Remove(toRemove.Key);
+                size--;
+            }
+        }
+    }
 }
 ```

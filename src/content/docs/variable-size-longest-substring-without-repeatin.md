@@ -22,21 +22,21 @@ Track `max` after each valid expansion.
 
 ### Solution
 
-```typescript
-function lengthOfLongestSubstring(s: string): number {
-  const set = new Set<string>();
-  let l = 0;
-  let r = 0;
-  let max = 0;
-  while (r < s.length) {
-    while (set.has(s[r])) {
-      set.delete(s[l]);
-      l++;
+```csharp
+public int LengthOfLongestSubstring(string s) {
+    var set = new HashSet<char>();
+    int l = 0;
+    int r = 0;
+    int max = 0;
+    while (r < s.Length) {
+        while (set.Contains(s[r])) {
+            set.Remove(s[l]);
+            l++;
+        }
+        set.Add(s[r]);
+        r++;
+        max = Math.Max(max, set.Count);
     }
-    set.add(s[r]);
-    r++;
-    max = Math.max(max, set.size);
-  }
-  return max;
+    return max;
 }
 ```

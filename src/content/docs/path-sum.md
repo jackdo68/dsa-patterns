@@ -23,16 +23,16 @@ Recurse on left and right children with the reduced target. Return true if eithe
 
 ### Solution
 
-```typescript
-function hasPathSum(root: TreeNode | null, targetSum: number): boolean {
-  if (!root) return false;
+```csharp
+public bool HasPathSum(TreeNode? root, int targetSum) {
+    if (root is null) return false;
 
-  // Leaf node check
-  if (!root.left && !root.right) {
-    return targetSum - root.val === 0;
-  }
+    // Leaf node check
+    if (root.left is null && root.right is null) {
+        return targetSum - root.val == 0;
+    }
 
-  const remaining = targetSum - root.val;
-  return hasPathSum(root.left, remaining) || hasPathSum(root.right, remaining);
+    int remaining = targetSum - root.val;
+    return HasPathSum(root.left, remaining) || HasPathSum(root.right, remaining);
 }
 ```

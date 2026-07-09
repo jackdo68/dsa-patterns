@@ -51,25 +51,25 @@ Result: `"1219"`
 
 ### Solution
 
-```typescript
-function removeKdigits(num: string, k: number): string {
-  if (k >= num.length) return "0";
-  const stack: string[] = [];
+```csharp
+public string RemoveKdigits(string num, int k) {
+    if (k >= num.Length) return "0";
+    var stack = new List<char>();
 
-  // create a monotonic stack
-  for (const c of num) {
-    while (stack.length && stack[stack.length - 1]! > c && k > 0) {
-      stack.pop();
-      k--;
+    // build a monotonic (non-decreasing) stack
+    foreach (char c in num) {
+        while (stack.Count > 0 && stack[^1] > c && k > 0) {
+            stack.RemoveAt(stack.Count - 1);
+            k--;
+        }
+        // skip leading zeros
+        if (stack.Count == 0 && c == '0') continue;
+        stack.Add(c);
     }
-    // leading zeros
-    if (stack.length === 0 && c === "0") continue;
-    stack.push(c);
-  }
-  // if k still greater than 0, remove from the right
-  if (k > 0) {
-    stack.splice(stack.length - k, k);
-  }
-  return stack.length === 0 ? "0" : stack.join("");
+    // if k is still greater than 0, remove from the right
+    if (k > 0) {
+        stack.RemoveRange(stack.Count - k, k);
+    }
+    return stack.Count == 0 ? "0" : new string(stack.ToArray());
 }
 ```

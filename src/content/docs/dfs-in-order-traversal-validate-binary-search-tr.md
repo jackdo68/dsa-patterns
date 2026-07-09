@@ -40,13 +40,13 @@ This is **pre-order** — you validate the node first, then descend into childre
 
 ### Solution
 
-```typescript
-function isValidBST(root: TreeNode | null): boolean {
-    function helper(node: TreeNode | null, min: number | null, max: number | null): boolean {
-      if (!node) return true;
-      if ((min !== null && node.val <= min) || (max !== null && node.val >= max)) return false;
-      return helper(node.left, min, node.val) && helper(node.right, node.val, max);
+```csharp
+public bool IsValidBST(TreeNode? root) {
+    bool Helper(TreeNode? node, long? min, long? max) {
+        if (node is null) return true;
+        if ((min is not null && node.val <= min) || (max is not null && node.val >= max)) return false;
+        return Helper(node.left, min, node.val) && Helper(node.right, node.val, max);
     }
-    return helper(root, null, null);
-  }
+    return Helper(root, null, null);
+}
 ```

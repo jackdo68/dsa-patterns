@@ -10,14 +10,14 @@ You're building a chat application backed by a service with a fixed token budget
 - Always keeps the system message (it's pinned, never evicted)
 - Evicts the **oldest** user/assistant messages first when adding a new message would exceed the budget
 
-```typescript
-type Message = { role: 'system' | 'user' | 'assistant'; content: string; tokens: number };
+```csharp
+record Message(string Role, string Content, int Tokens); // Role: "system" | "user" | "assistant"
 
 class ContextManager {
-  constructor(maxTokens: number);
-  setSystemMessage(message: Message): void;
-  addMessage(message: Message): void;
-  getMessages(): Message[];
+    public ContextManager(int maxTokens);
+    public void SetSystemMessage(Message message);
+    public void AddMessage(Message message);
+    public List<Message> GetMessages();
 }
 ```
 
@@ -47,51 +47,55 @@ When `C` arrives, the running total would be 60. We evict `A` (oldest in queue),
 
 ### Solution
 
-```typescript
-type Message = { role: 'system' | 'user' | 'assistant'; content: string; tokens: number };
+```csharp
+record Message(string Role, string Content, int Tokens); // Role: "system" | "user" | "assistant"
 
-class ContextManager {
-  private maxTokens: number;
-  private systemMessage: Message | null = null;
-  private messages: Message[] = [];
-  private currentTokens = 0;
+public class ContextManager {
+    private readonly int maxTokens;
+    private Message? systemMessage = null;
+    private readonly LinkedList<Message> messages = new(); // O(1) front eviction
+    private int currentTokens = 0;
 
-  constructor(maxTokens: number) {
-    this.maxTokens = maxTokens;
-  }
-
-  setSystemMessage(message: Message): void {
-    if (message.tokens > this.maxTokens) {
-      throw new Error('System message exceeds max token budget');
+    public ContextManager(int maxTokens) {
+        this.maxTokens = maxTokens;
     }
-    if (this.systemMessage) {
-      this.currentTokens -= this.systemMessage.tokens;
-    }
-    this.systemMessage = message;
-    this.currentTokens += message.tokens;
-    this.evict();
-  }
 
-  addMessage(message: Message): void {
-    const availableBudget = this.maxTokens - (this.systemMessage?.tokens ?? 0);
-    if (message.tokens > availableBudget) {
-      throw new Error('Single message exceeds available token budget');
+    public void SetSystemMessage(Message message) {
+        if (message.Tokens > maxTokens) {
+            throw new Exception("System message exceeds max token budget");
+        }
+        if (systemMessage is not null) {
+            currentTokens -= systemMessage.Tokens;
+        }
+        systemMessage = message;
+        currentTokens += message.Tokens;
+        Evict();
     }
-    this.messages.push(message);
-    this.currentTokens += message.tokens;
-    this.evict();
-  }
 
-  getMessages(): Message[] {
-    return this.systemMessage ? [this.systemMessage, ...this.messages] : [...this.messages];
-  }
-
-  private evict(): void {
-    while (this.currentTokens > this.maxTokens && this.messages.length > 0) {
-      const removed = this.messages.shift()!;
-      this.currentTokens -= removed.tokens;
+    public void AddMessage(Message message) {
+        int availableBudget = maxTokens - (systemMessage?.Tokens ?? 0);
+        if (message.Tokens > availableBudget) {
+            throw new Exception("Single message exceeds available token budget");
+        }
+        messages.AddLast(message);
+        currentTokens += message.Tokens;
+        Evict();
     }
-  }
+
+    public List<Message> GetMessages() {
+        var result = new List<Message>();
+        if (systemMessage is not null) result.Add(systemMessage);
+        result.AddRange(messages);
+        return result;
+    }
+
+    private void Evict() {
+        while (currentTokens > maxTokens && messages.Count > 0) {
+            var removed = messages.First!.Value;
+            messages.RemoveFirst();
+            currentTokens -= removed.Tokens;
+        }
+    }
 }
 ```
 

@@ -42,40 +42,40 @@ findMedian Time Complexity: O(1)
 
 ### Solution
 
-```typescript
-class MedianFinder {
-  minHeap: _MinHeap;
-  maxHeap: _MinHeap;
-  constructor() {
-    this.minHeap = new _MinHeap();
-    this.maxHeap = new _MinHeap();
-  }
+```csharp
+public class MedianFinder {
+    // maxHeap holds the smaller half as NEGATED values, so its top is the largest small-half value.
+    // minHeap holds the larger half as-is, so its top is the smallest large-half value.
+    private readonly PriorityQueue<int, int> minHeap = new();
+    private readonly PriorityQueue<int, int> maxHeap = new();
 
-  // keep both set either even in size or the max heap greater than 1
-  private balance(): void {
-    if (this.maxHeap.size() < this.minHeap.size()) {
-      this.maxHeap.push(-this.minHeap.pop()!);
+    // keep both sets equal in size, or maxHeap larger by exactly 1
+    private void Balance() {
+        if (maxHeap.Count < minHeap.Count) {
+            int v = minHeap.Dequeue();
+            maxHeap.Enqueue(-v, -v);
+        }
+        if (maxHeap.Count > minHeap.Count + 1) {
+            int v = maxHeap.Dequeue();
+            minHeap.Enqueue(-v, -v);
+        }
     }
-    if (this.maxHeap.size() > this.minHeap.size() + 1) {
-      this.minHeap.push(-this.maxHeap.pop()!);
-    }
-  }
 
-  addNum(num: number): void {
-    if (this.maxHeap.size() === 0 || num <= -this.maxHeap.peak()) {
-      this.maxHeap.push(-num);
-    } else {
-      this.minHeap.push(num);
+    public void AddNum(int num) {
+        if (maxHeap.Count == 0 || num <= -maxHeap.Peek()) {
+            maxHeap.Enqueue(-num, -num);
+        } else {
+            minHeap.Enqueue(num, num);
+        }
+        Balance();
     }
-    this.balance();
-  }
 
-  findMedian(): number {
-    if (this.maxHeap.size() === this.minHeap.size()) {
-      return (-this.maxHeap.peak() + this.minHeap.peak()) / 2;
-    } else {
-      return -this.maxHeap.peak();
+    public double FindMedian() {
+        if (maxHeap.Count == minHeap.Count) {
+            return (-maxHeap.Peek() + minHeap.Peek()) / 2.0;
+        } else {
+            return -maxHeap.Peek();
+        }
     }
-  }
 }
 ```
