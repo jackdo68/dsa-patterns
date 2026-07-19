@@ -21,18 +21,22 @@ Alternatively, use a character frequency count as the key (e.g., `"1a2b0c..."`) 
 
 ```csharp
 public IList<IList<string>> GroupAnagrams(string[] strs) {
-    var map = new Dictionary<string, IList<string>>();
+        var map = new Dictionary<string, IList<string>>();
 
-    foreach (string str in strs) {
-        var chars = str.ToCharArray();
-        Array.Sort(chars);
-        string key = new string(chars);
-        if (!map.ContainsKey(key)) {
-            map[key] = new List<string>();
+        foreach (string str in strs)
+        {
+            var count = new int[26];
+            foreach (char c in str)
+            {
+                count[c - 'a']++;
+            }
+            string key = string.Join("#", count);
+            if (!map.ContainsKey(key))
+            {
+                map[key] = new List<string>();
+            }
+            map[key].Add(str);
         }
-        map[key].Add(str);
-    }
-
-    return map.Values.ToList();
+        return [.. map.Values];
 }
 ```
